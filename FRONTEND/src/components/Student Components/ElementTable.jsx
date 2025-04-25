@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { Grid, Card, CardActionArea, Typography, Box } from "@mui/material";
+import React from "react";
+import { Grid, Card, CardActionArea, Typography, Box, Tooltip } from "@mui/material";
 
 const elementGroups = [
   ["H", null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null,null,null,null, "He"],
@@ -15,33 +15,62 @@ const elementGroups = [
 
 const ElementTable = ({ selectedElement, setSelectedElement }) => {
   return (
-    <Box sx={{ padding: 3, textAlign: "center", backgroundColor: "#1e1e2e", borderRadius: 2, boxShadow: 3, color: "white", width: "100%", maxHeight: "320px" }}>
+    <Box
+      sx={{
+        padding: 3,
+        textAlign: "center",
+        backgroundColor: "#1e1e2e",
+        borderRadius: 2,
+        boxShadow: 3,
+        color: "white",
+        width: "100%",
+        maxHeight: "320px",
+        overflowY: "auto",
+        marginBottom: "20px",
+      }}
+    >
       <Grid container spacing={0.3} justifyContent="center">
         {elementGroups.map((row, rowIndex) => (
-          <Grid container item key={rowIndex} spacing={0.3} justifyContent="inherit">
+          <Grid container item key={rowIndex} spacing={0.3} justifyContent="center">
             {row.map((element, colIndex) => (
-              <Grid item key={colIndex} sx={{ width: 30, height: 30 }}>
+              <Grid item key={colIndex} sx={{ width: 40, height: 40 }}>
                 {element ? (
-                  <Card
-                    sx={{
-                      backgroundColor: selectedElement === element ? "#4caf50" : "#333",
-                      color: "white",
-                      textAlign: "center",
-                      border: selectedElement === element ? "2px solid yellow" : "1px solid #555",
-                      borderRadius: 1,
-                      transition: "0.3s",
-                      width: 30,
-                      height: 30,
-                    }}
-                  >
-                    <CardActionArea onClick={() => setSelectedElement(element)}>
-                      <Typography variant="h6" sx={{ padding: 1, fontWeight: "bold", fontSize: ".7rem" }}>
-                        {element}
-                      </Typography>
-                    </CardActionArea>
-                  </Card>
+                  <Tooltip title={`Click to select ${element}`} arrow>
+                    <Card
+                      sx={{
+                        backgroundColor: selectedElement === element ? "#4caf50" : "#333",
+                        color: "white",
+                        textAlign: "center",
+                        border: selectedElement === element ? "2px solid yellow" : "1px solid #555",
+                        borderRadius: 1,
+                        transition: "0.3s",
+                        width: "100%",
+                        height: "100%",
+                        "&:hover": {
+                          backgroundColor: "#666",
+                          cursor: "pointer",
+                        },
+                      }}
+                    >
+                      <CardActionArea onClick={() => setSelectedElement(element)}>
+                        <Typography
+                          variant="h6"
+                          sx={{
+                            padding: 1,
+                            fontWeight: "bold",
+                            fontSize: ".7rem",
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                          }}
+                        >
+                          {element}
+                        </Typography>
+                      </CardActionArea>
+                    </Card>
+                  </Tooltip>
                 ) : (
-                  <Box sx={{ width: 40, height: 40 }} />
+                  <Box sx={{ width: "100%", height: "100%" }} />
                 )}
               </Grid>
             ))}

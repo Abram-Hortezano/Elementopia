@@ -15,6 +15,7 @@ const DiscoveriesCard = () => {
         width: "100%",
         mb: 2,
         border: "2px solid #8bc34a",
+        borderRadius: '10px',
         boxShadow: "0px 0px 15px rgba(139, 195, 74, 0.6)",
         transition: "transform 0.2s, box-shadow 0.3s",
         "&:hover": {
