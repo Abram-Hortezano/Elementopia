@@ -10,6 +10,7 @@ import CreateLab from "./STUDENT/create-lab";
 import CustomRoomView from "./STUDENT/custom-room";
 import Laboratory from "./STUDENT/laboratory";
 import CreateExperimentModal from "./STUDENT/create-experiment";
+import  ProfilePage  from "./STUDENT/profile-page";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -18,9 +19,10 @@ createRoot(document.getElementById("root")).render(
     {/* <Buttons /> */}
     {/* <FeatureCard /> */}
     {/* <Login /> */}
+    <ProfilePage />
     {/* <CreateLab /> */}
     {/* <CustomRoomView /> */}
-    <CreateExperimentModal />
+    {/* <CreateExperimentModal /> */}
     {/* <Laboratory /> */}
      </BrowserRouter>
   </StrictMode>

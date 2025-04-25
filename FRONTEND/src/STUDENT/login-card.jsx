@@ -3,6 +3,7 @@ import "./login-card.css";
 import FeatureCard from "../components/featurecard";
 import UserService from "../services/UserService";
 import { useNavigate } from "react-router-dom";
+import googleLogo from '../assets/google_Logo.png';
 
 export default function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
@@ -62,6 +63,9 @@ export default function Login({ onLoginSuccess }) {
         <button className="input-field login-button" onClick={handleLogin}>
           Login
         </button>
+        <button className="google-login">
+          <img className="logo-img" src={googleLogo} alt="My Image" />
+            Login with Google</button>
         {message && <p className="status-message">{message}</p>}
         <p className="signup-msg">
           Don’t have an account?{" "}
