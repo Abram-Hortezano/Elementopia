@@ -1,7 +1,6 @@
 import axios from "axios";
 
-
-const API_URL = "http://localhost:8080/api/discoveries";
+const API_URL = "https://elementopia.onrender.com/api/discoveries";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
@@ -23,7 +22,10 @@ const DiscoveryService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch all discoveries:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch all discoveries:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -38,7 +40,10 @@ const DiscoveryService = {
       });
       return response.data;
     } catch (error) {
-      console.error(`Failed to fetch discovery with ID ${id}:`, error.response?.data || error.message);
+      console.error(
+        `Failed to fetch discovery with ID ${id}:`,
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -53,23 +58,33 @@ const DiscoveryService = {
       });
       return response.data;
     } catch (error) {
-      console.error(`Failed to fetch discoveries for user ${userId}:`, error.response?.data || error.message);
+      console.error(
+        `Failed to fetch discoveries for user ${userId}:`,
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
 
   // Create a new discovery (user-generated compound)
   createDiscovery: async (userId, discoveryData) => {
-    console.log("Creating discovery for user:", userId); 
+    console.log("Creating discovery for user:", userId);
     try {
-      const response = await axios.post(`${API_URL}/create/${userId}`, discoveryData, {
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
+      const response = await axios.post(
+        `${API_URL}/create/${userId}`,
+        discoveryData,
+        {
+          headers: {
+            ...getAuthHeader(),
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.error("Failed to create discovery:", error.response?.data || error.message);
+      console.error(
+        "Failed to create discovery:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -84,7 +99,10 @@ const DiscoveryService = {
       });
       return response.data;
     } catch (error) {
-      console.error(`Failed to update discovery ${id}:`, error.response?.data || error.message);
+      console.error(
+        `Failed to update discovery ${id}:`,
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -99,7 +117,10 @@ const DiscoveryService = {
       });
       return response.data;
     } catch (error) {
-      console.error(`Failed to delete discovery ${id}:`, error.response?.data || error.message);
+      console.error(
+        `Failed to delete discovery ${id}:`,
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
