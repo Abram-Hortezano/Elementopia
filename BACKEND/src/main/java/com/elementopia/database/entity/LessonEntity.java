@@ -14,7 +14,7 @@ public class LessonEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "lesson_id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "title")

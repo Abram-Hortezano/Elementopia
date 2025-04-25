@@ -11,7 +11,7 @@ public class SubtopicEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "subtopic_id")
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "title")

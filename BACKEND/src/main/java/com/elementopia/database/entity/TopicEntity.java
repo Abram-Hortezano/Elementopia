@@ -14,8 +14,8 @@ import java.util.List;
 public class TopicEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "topic_id")
+    @GeneratedValue(strategy = GenerationType.IDENTITY)  // Ensures auto_increment is handled automatically
+    @Column(name = "id")
     private Long id;
 
     @Column(name = "title")
