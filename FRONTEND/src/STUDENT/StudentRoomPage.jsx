@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
@@ -9,7 +9,7 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 }));
 
 const StudentRoomPage = () => {
-  const [open, setOpen] = useState(false); 
+  const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
@@ -17,12 +17,23 @@ const StudentRoomPage = () => {
   return (
     <Box sx={{ display: "flex" }}>
       <Navbar open={open} />
-      <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
-      <Box component="main" sx={{ flexGrow: 1, p: 3, transition: "margin 0.3s ease", marginLeft: open ? "180px" : "60px" , maxWidth: "100%;"}}>
+      <Sidebar
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
+      />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          transition: "margin 0.3s ease",
+          marginLeft: open ? "180px" : "60px",
+          maxWidth: "100%;",
+        }}
+      >
         <DrawerHeader />
-        <Typography sx={{ marginBottom: 2 }}>
-          This is the Room Page
-        </Typography>
+        <Typography sx={{ marginBottom: 2 }}>This is the Room Page</Typography>
       </Box>
     </Box>
   );
