@@ -1,14 +1,17 @@
-# Use Java 17 base image
+# Use a Java 17 image
 FROM eclipse-temurin:17-jdk
 
-# Set working directory inside the container
+# Set working directory
 WORKDIR /app
 
-# Copy your entire project into the container
+# Copy project files
 COPY . .
 
-# Build the Spring Boot app using Maven Wrapper (skips tests)
+# Grant mvnw execution permissions
+RUN chmod +x ./mvnw
+
+# Build the project (skipping tests for speed)
 RUN ./mvnw clean package -DskipTests
 
-# Run the built JAR file
+# Run the jar file
 CMD ["java", "-jar", "target/Gamified-0.0.1-SNAPSHOT.jar"]

@@ -3,7 +3,7 @@ services:
     name: Elementopia
     env: docker
     plan: free
-    buildCommand: ""        
+    buildCommand: ""
     startCommand: ""
     envVars:
       - key: JAVA_VERSION
