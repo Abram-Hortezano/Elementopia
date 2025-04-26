@@ -4,6 +4,7 @@ import "../components/buttons.css";
 import "./register-card.css";
 import UserService from "../services/UserService";
 import { useNavigate } from "react-router-dom";
+import { Eye, EyeOff } from "lucide-react"
 
 const RegisterCard = ({ onRegisterSuccess }) => {
   const [firstname, setFirstname] = useState("");
@@ -15,6 +16,9 @@ const RegisterCard = ({ onRegisterSuccess }) => {
   const [role, setRole] = useState("");
   const [message, setMessage] = useState("");
   const [isRegistered, setIsRegistered] = useState(false);
+
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
   const navigate = useNavigate();
 
@@ -98,8 +102,9 @@ const RegisterCard = ({ onRegisterSuccess }) => {
             onChange={(e) => setLastname(e.target.value)}
             required
           />
+          
         </div>
-        <div className="form-group">
+        {/* <div className="form-group"> */}
           <input
             type="email"
             className="input-field email"
@@ -116,22 +121,40 @@ const RegisterCard = ({ onRegisterSuccess }) => {
             onChange={(e) => setUsername(e.target.value)}
             required
           />
-          <input
-            type="password"
-            className="input-field password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <input
-            type="password"
-            className="input-field confirm-password"
-            placeholder="Confirm Password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
+          
+          <div className="password-wrapper">
+            <input
+              type={showPassword ? "text" : "password"}
+              className="input-field password"
+              placeholder="Password"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <span
+              className="toggle-password-btn"
+              onClick={() => setShowPassword((prev) => !prev)}
+            >
+              {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+            </span>
+          </div>
+          <div className="password-wrapper">
+            <input
+              type={showConfirmPassword ? "text" : "password"}
+              className="input-field confirm-password"
+              placeholder="Confirm Password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+            <span
+              className="toggle-password-btn"
+              onClick={() => setShowConfirmPassword((prev) => !prev)}
+            >
+              {showConfirmPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+            </span>
+          </div>
+
           <select
             className="input-field role"
             value={role}
@@ -143,7 +166,7 @@ const RegisterCard = ({ onRegisterSuccess }) => {
             <option value="STUDENT">Student</option>
             <option value="TEACHER">Teacher</option>
           </select>
-        </div>
+        {/* </div> */}
         <button className="input-field submit-btn" onClick={handleRegister}>
           Register
         </button>
