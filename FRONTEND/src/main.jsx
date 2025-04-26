@@ -18,8 +18,8 @@ createRoot(document.getElementById("root")).render(
     {/* <App /> */}
     {/* <Buttons /> */}
     {/* <FeatureCard /> */}
-    {/* <Login /> */}
-    <ProfilePage />
+    <Login />
+    {/* <ProfilePage /> */}
     {/* <CreateLab /> */}
     {/* <CustomRoomView /> */}
     {/* <CreateExperimentModal /> */}

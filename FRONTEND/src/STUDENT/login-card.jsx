@@ -4,10 +4,12 @@ import FeatureCard from "../components/featurecard";
 import UserService from "../services/UserService";
 import { useNavigate } from "react-router-dom";
 import googleLogo from '../assets/google_Logo.png';
+import { Eye, EyeOff } from "lucide-react"
 
 export default function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
@@ -47,19 +49,28 @@ export default function Login({ onLoginSuccess }) {
     <div className="login-container">
       <FeatureCard className="login" description="Sign In" gradient="mixed">
         <input
-          type="text"
+          type= "text"
           placeholder="Username"
           className="input-field username"
           value={username}
           onChange={(e) => setUsername(e.target.value)}
         />
-        <input
-          type="password"
-          placeholder="Password"
-          className="input-field password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-        />
+        <div className="input-wrapper">
+          <input
+            type={showPassword ? "text" : "password"}
+            placeholder="Password"
+            className="input-field password"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+          />
+            <span
+              onClick={() => setShowPassword(!showPassword)}
+              className="password-toggle"
+            >
+              {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+            </span>
+        </div>
+
         <button className="input-field login-button" onClick={handleLogin}>
           Login
         </button>
