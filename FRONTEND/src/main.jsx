@@ -15,17 +15,17 @@ import  ProfilePage  from "./STUDENT/profile-page";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    {/* <BrowserRouter> */}
-    <App />
+    <BrowserRouter>
+    {/* <App /> */}
     {/* <Buttons /> */}
     {/* <FeatureCard /> */}
     {/* <Login /> */}
-    {/* <ProfilePage /> */}
+    <ProfilePage />
     {/* <CreateLab /> */}
     {/* <RegisterCard /> */}
     {/* <CustomRoomView /> */}
     {/* <CreateExperimentModal /> */}
     {/* <Laboratory /> */}
-     {/* </BrowserRouter> */}
+     </BrowserRouter>
   </StrictMode>
 );

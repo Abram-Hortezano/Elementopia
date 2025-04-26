@@ -1,5 +1,7 @@
 import { useState } from "react"
 // import { useRouter } from "next/navigation"
+import Sidebar from "../components/Sidebar"
+import Navbar from "../components/NavBar"
 import {
   User,
   Mail,
@@ -72,6 +74,8 @@ export default function ProfilePage() {
 
   return (
     <div className="profile-container">
+      <Navbar/>
+      <Sidebar />
       {/* Profile Header */}
       <div className="profile-header">
         <h1 className="profile-title">My Profile</h1>

@@ -1,9 +1,10 @@
 /* Container styles */
 .profile-container {
-    width: 100vw;
-    margin: 0 auto;
+    width: 90vw;
+    margin: 40px 0 0 150px;
     padding: 2rem 1rem;
-    /* background-color: red; */
+    /* background-color: black; */
+
 }
 
 /* Header styles */
