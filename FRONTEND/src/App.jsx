@@ -11,6 +11,7 @@ import StudentGameRoomPage from "./STUDENT/StudentGameRoomPage";
 import StudentSandboxPage from "./STUDENT/StudentSandboxPage";
 import PageLayout from "./TEACHER/PageLayout";
 import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
+import ProfilePage from "./STUDENT/profile-page";
 
 export default function App() {
   return (
@@ -30,6 +31,7 @@ export default function App() {
         <Route path="/student-home-page/discovery" element={<StudentDiscoveryPage />} />
         <Route path="/student-home-page/game-room" element={<StudentGameRoomPage />} />
         <Route path="/student-home-page/sandbox" element={<StudentSandboxPage />} />
+        <Route path="/student-home-page/profile" element={<ProfilePage />} />
 
         {/* Teacher Route */}
         <Route path="/teacher-home-page" element={<PageLayout />} />

@@ -20,10 +20,10 @@ createRoot(document.getElementById("root")).render(
     {/* <Buttons /> */}
     {/* <FeatureCard /> */}
     {/* <Login /> */}
-    <ProfilePage />
+    {/* <ProfilePage /> */}
     {/* <CreateLab /> */}
     {/* <RegisterCard /> */}
-    {/* <CustomRoomView /> */}
+    <CustomRoomView />
     {/* <CreateExperimentModal /> */}
     {/* <Laboratory /> */}
      </BrowserRouter>

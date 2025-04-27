@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Avatar } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = ({ open }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
+  const navigate = useNavigate();
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -13,13 +15,19 @@ const Navbar = ({ open }) => {
   const handleMenuClose = () => {
     setAnchorEl(null);
   };
+  const handleProfileClick = () => {
+    // Handle profile click logic here
+    navigate("/student-home-page/profile");
+    alert("Profile clicked!");
+
+  }
 
   return (
     <AppBar
       position="fixed"
       sx={{
         bgcolor: "#000000",
-        zIndex: -1300,
+        zIndex: 1300,
         width: `calc(100% - ${open ? "180px" : "60px"})`,
         transition: "width 0.3s ease",
       }}
@@ -27,6 +35,7 @@ const Navbar = ({ open }) => {
       <Toolbar sx={{ display: "flex", justifyContent: "space-between" }}>
         {/* App Name */}
         <Typography
+        onClick={() => navigate("/student-home-page")}
           variant="h6"
           noWrap
           component="div"
@@ -55,7 +64,7 @@ const Navbar = ({ open }) => {
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
         >
-          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+          <MenuItem onClick={handleProfileClick}>Profile</MenuItem>
           <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
           <MenuItem onClick={() => alert("Logged Out")}>Logout</MenuItem>
         </Menu>

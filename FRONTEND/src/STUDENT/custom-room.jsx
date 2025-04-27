@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Users, BookOpen, Plus, Search, Beaker, Edit, Trash, Globe, Lock, X } from "lucide-react";
 import CreateLaboratory from "./create-lab";
 import "./custom-room.css";
-// import Navbar from '../components/Navbar';
+import Navbar from '../components/NavBar';
 import Sidebar from '../components/Sidebar';
 
 export default function CustomRoomView() {
