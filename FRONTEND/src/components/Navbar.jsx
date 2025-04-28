@@ -1,10 +1,12 @@
 import React, { useState } from "react";
 import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Avatar } from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useNavigate } from "react-router-dom"; // ✨ Added for navigation
 
 const Navbar = ({ open }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
+  const navigate = useNavigate(); // ✨ For redirecting
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -12,6 +14,11 @@ const Navbar = ({ open }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("user"); // 🧹 Clear session
+    navigate("/login"); // 🔀 Redirect to login page
   };
 
   return (
@@ -57,7 +64,7 @@ const Navbar = ({ open }) => {
         >
           <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
           <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-          <MenuItem onClick={() => alert("Logged Out")}>Logout</MenuItem>
+          <MenuItem onClick={handleLogout}>Logout</MenuItem> {/* ✨ Updated logout */}
         </Menu>
       </Toolbar>
     </AppBar>

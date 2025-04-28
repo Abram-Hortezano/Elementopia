@@ -11,6 +11,7 @@ import StudentGameRoomPage from "./STUDENT/StudentGameRoomPage";
 import StudentSandboxPage from "./STUDENT/StudentSandboxPage";
 import PageLayout from "./TEACHER/PageLayout";
 import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
+import ProtectedRoute from "./components/ProtectedRoute"; 
 
 export default function App() {
   return (
@@ -24,7 +25,14 @@ export default function App() {
         <Route path="/sign-up" element={<RegisterCard />} />
 
         {/* Student Route */}
-        <Route path="/student-home-page" element={<StudentHomePage />} />
+        <Route
+          path="/student-home-page"
+          element={
+            <ProtectedRoute>
+              <StudentHomePage />
+            </ProtectedRoute>
+          }
+        />
         <Route path="/student-home-page/room" element={<StudentRoomPage />} />
         <Route path="/student-home-page/student-career-page" element={<StudentCareerPage />} />
         <Route path="/student-home-page/discovery" element={<StudentDiscoveryPage />} />
