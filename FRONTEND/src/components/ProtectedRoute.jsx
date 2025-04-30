@@ -1,11 +1,20 @@
+import React from "react";
 import { Navigate } from "react-router-dom";
+import { getUserRole } from "../services/UserService";
+import AccessDenied from "./AccessDenied";
 
-export default function ProtectedRoute({ children }) {
-  const user = JSON.parse(sessionStorage.getItem("user"));
+const ProtectedRoute = ({ element, allowedRoles }) => {
+  const role = getUserRole();
 
-  if (!user) {
-    return <Navigate to="/login" replace />;
+  if (!role) {
+    return <Navigate to="/login" />;
   }
 
-  return children;
-}
+  if (!allowedRoles.includes(role)) {
+    return <AccessDenied />;
+  }
+
+  return element;
+};
+
+export default ProtectedRoute;

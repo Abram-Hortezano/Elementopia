@@ -11,7 +11,8 @@ import StudentGameRoomPage from "./STUDENT/StudentGameRoomPage";
 import StudentSandboxPage from "./STUDENT/StudentSandboxPage";
 import PageLayout from "./TEACHER/PageLayout";
 import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
-import ProtectedRoute from "./components/ProtectedRoute"; 
+import ChallengePage from "./components/Student Components/ChallengePage";
+import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
 
 export default function App() {
   return (
@@ -25,23 +26,18 @@ export default function App() {
         <Route path="/sign-up" element={<RegisterCard />} />
 
         {/* Student Route */}
-        <Route
-          path="/student-home-page"
-          element={
-            <ProtectedRoute>
-              <StudentHomePage />
-            </ProtectedRoute>
-          }
-        />
-        <Route path="/student-home-page/room" element={<StudentRoomPage />} />
-        <Route path="/student-home-page/student-career-page" element={<StudentCareerPage />} />
-        <Route path="/student-home-page/discovery" element={<StudentDiscoveryPage />} />
-        <Route path="/student-home-page/game-room" element={<StudentGameRoomPage />} />
-        <Route path="/student-home-page/sandbox" element={<StudentSandboxPage />} />
+        <Route path="/student-home-page" element={<StudentHomePage />} />
+        <Route path="/student/room" element={<StudentRoomPage />} />
+        <Route path="/student/student-career-page" element={<StudentCareerPage />} />
+        <Route path="/student/discovery" element={<StudentDiscoveryPage />} />
+        <Route path="/student/game-room" element={<StudentGameRoomPage />} />
+        <Route path="/student/sandbox" element={<StudentSandboxPage />} />
+        <Route path="/student/daily-challenge" element={<ChallengePage />} />
 
         {/* Teacher Route */}
         <Route path="/teacher-home-page" element={<PageLayout />} />
-        <Route path="/teacher-home-page/analytics" element={<TeacherAnalyticsPage />} />
+        <Route path="/teacher/analytics" element={<TeacherAnalyticsPage />} />
+        <Route path="/teacher/career-page" element={<TeacherCareerPage />} />
       </Routes>
     </Router>
   );

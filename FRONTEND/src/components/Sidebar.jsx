@@ -45,11 +45,11 @@ const Drawer = styled(MuiDrawer)(({ theme, open }) => ({
 
 const menuItems = [
   { text: "Home", icon: home, path: "/student-home-page" },
-  { text: "Room", icon: room, path: "/student-home-page/room" },
-  { text: "Career", icon: career, path: "/student-home-page/student-career-page" },
-  { text: "Discovery", icon: discovery, path: "/student-home-page/discovery" },
-  { text: "Sandbox", icon: sandBox, path: "/student-home-page/sandbox" },
-  { text: "Game Room", icon: gameRoom, path: "/student-home-page/game-room" },
+  { text: "Room", icon: room, path: "/student/room" },
+  { text: "Career", icon: career, path: "/student/student-career-page" },
+  { text: "Discovery", icon: discovery, path: "/student/discovery" },
+  { text: "Sandbox", icon: sandBox, path: "/student/sandbox" },
+  { text: "Game Room", icon: gameRoom, path: "/student/game-room" },
 ];
 
 const Sidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {
