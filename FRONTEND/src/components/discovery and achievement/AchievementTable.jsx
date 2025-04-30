@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import { Card, CardContent, Grid, Typography, Box, Tooltip, Button, CircularProgress } from "@mui/material";
 import { Lock, EmojiEvents, Refresh } from "@mui/icons-material";
 import AchievementService from '../../services/AchievementService';
+import UserService from "../../services/UserService";
+
+
 
 const AchievementsTable = () => {
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);

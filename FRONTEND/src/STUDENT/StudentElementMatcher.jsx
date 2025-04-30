@@ -4,6 +4,7 @@ import { styled } from '@mui/material/styles';
 import Navbar from '../components/NavBar';
 import Sidebar from '../components/Sidebar';
 import AchievementService from '../services/AchievementService';
+import UserService from "../services/UserService";
 import './StudentElementMatcher.css';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
@@ -131,6 +132,12 @@ const StudentElementMatcher = () => {
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
 
+  const achievementData = {
+    dateAchieved : dateAchieved,
+    title : title,
+    description : description
+  }
+
   const shuffleCards = (difficultyLevel = difficulty) => {
     const elementPairs = elementSets[difficultyLevel];
     const cardPairs = [...elementPairs].flatMap(element => ([ 
@@ -208,7 +215,7 @@ const StudentElementMatcher = () => {
           
           // Check for Quick Matchmaker achievement
           if (turns <= 20) {
-            unlockAchievement("QUICK_MATCHMAKER");
+            AchievementService.createAchievement(achievementData, userId)
           }
         } else if (difficulty === "medium") {
           unlockAchievement("MEMORY_INTERMEDIATE");
