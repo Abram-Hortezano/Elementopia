@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import Navbar from '../components/NavBar';
-import Sidebar from '../components/Sidebar';
-import './StudentElementMatcher.css'; // Import the CSS file
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Button } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
+import "./StudentElementMatcher.css"; // Import the CSS file
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
@@ -31,20 +31,24 @@ const StudentElementMatcher = () => {
   const [score, setScore] = useState(0);
   const [gameOver, setGameOver] = useState(false);
   const [feedback, setFeedback] = useState("");
-  
 
   // Shuffle cards
   const shuffleCards = () => {
     // Create card pairs - one for symbol, one for name
-    const cardPairs = [...elementPairs].flatMap(element => ([
-      { id: element.id, type: 'symbol', content: element.symbol, matched: false },
-      { id: element.id, type: 'name', content: element.name, matched: false }
-    ]));
-    
+    const cardPairs = [...elementPairs].flatMap((element) => [
+      {
+        id: element.id,
+        type: "symbol",
+        content: element.symbol,
+        matched: false,
+      },
+      { id: element.id, type: "name", content: element.name, matched: false },
+    ]);
+
     // Shuffle the cards
     const shuffled = [...cardPairs]
       .sort(() => Math.random() - 0.5)
-      .map(card => ({ ...card, cardId: Math.random() }));
+      .map((card) => ({ ...card, cardId: Math.random() }));
 
     setCards(shuffled);
     setTurns(0);
@@ -58,7 +62,7 @@ const StudentElementMatcher = () => {
   // Handle card choice
   const handleChoice = (card) => {
     if (disabled) return;
-    
+
     firstChoice ? setSecondChoice(card) : setFirstChoice(card);
   };
 
@@ -71,11 +75,14 @@ const StudentElementMatcher = () => {
   useEffect(() => {
     if (firstChoice && secondChoice) {
       setDisabled(true);
-      
-      if (firstChoice.id === secondChoice.id && firstChoice.type !== secondChoice.type) {
+
+      if (
+        firstChoice.id === secondChoice.id &&
+        firstChoice.type !== secondChoice.type
+      ) {
         // Found a match!
-        setCards(prevCards => {
-          return prevCards.map(card => {
+        setCards((prevCards) => {
+          return prevCards.map((card) => {
             if (card.id === firstChoice.id) {
               return { ...card, matched: true };
             } else {
@@ -83,7 +90,7 @@ const StudentElementMatcher = () => {
             }
           });
         });
-        setScore(prevScore => prevScore + 100);
+        setScore((prevScore) => prevScore + 100);
         setFeedback("✅ Match found!");
         resetTurn();
       } else {
@@ -96,7 +103,7 @@ const StudentElementMatcher = () => {
 
   // Check if game is over (all matches found)
   useEffect(() => {
-    if (cards.length > 0 && cards.every(card => card.matched)) {
+    if (cards.length > 0 && cards.every((card) => card.matched)) {
       setGameOver(true);
       setFeedback("🎉 You completed the game!");
     }
@@ -106,9 +113,9 @@ const StudentElementMatcher = () => {
   const resetTurn = () => {
     setFirstChoice(null);
     setSecondChoice(null);
-    setTurns(prevTurns => prevTurns + 1);
+    setTurns((prevTurns) => prevTurns + 1);
     setDisabled(false);
-    
+
     // Clear feedback after a short delay
     setTimeout(() => {
       setFeedback("");
@@ -116,17 +123,21 @@ const StudentElementMatcher = () => {
   };
 
   return (
-    <Box sx={{
+    <Box
+      sx={{
         display: "flex",
         justifyContent: "space-between",
         alignItems: "flex-start",
         backgroundColor: "#0a0a0f",
         height: "100vh",
         width: "100%",
-      }}>
-      <Box 
+      }}
+    >
+      <Box
         component="main"
-        className={`main-container ${open ? 'main-container-open' : 'main-container-closed'}`}
+        className={`main-container ${
+          open ? "main-container-open" : "main-container-closed"
+        }`}
       >
         <Box className="game-container">
           <Box className="header-section">
@@ -146,7 +157,8 @@ const StudentElementMatcher = () => {
           {/* Game instructions */}
           <Box className="instruction-panel">
             <Typography variant="body1">
-              Match element symbols with their names. Click on cards to flip them and find matching pairs!
+              Match element symbols with their names. Click on cards to flip
+              them and find matching pairs!
             </Typography>
           </Box>
 
@@ -159,14 +171,22 @@ const StudentElementMatcher = () => {
 
           {/* Card grid */}
           <Box className="card-grid">
-            {cards.map(card => (
+            {cards.map((card) => (
               <Box
                 key={card.cardId}
                 className={`memory-card ${
-                  card.matched ? 'matched' :
-                  card === firstChoice || card === secondChoice ? 'flipped' : ''
+                  card.matched
+                    ? "matched"
+                    : card === firstChoice || card === secondChoice
+                    ? "flipped"
+                    : ""
                 }`}
-                onClick={() => !card.matched && card !== firstChoice && card !== secondChoice && handleChoice(card)}
+                onClick={() =>
+                  !card.matched &&
+                  card !== firstChoice &&
+                  card !== secondChoice &&
+                  handleChoice(card)
+                }
               >
                 <Box className="card-inner">
                   <Box className="card-front">
@@ -179,7 +199,7 @@ const StudentElementMatcher = () => {
                       {card.content}
                     </Typography>
                     <Typography variant="caption" className="card-type">
-                      {card.type === 'symbol' ? 'Symbol' : 'Name'}
+                      {card.type === "symbol" ? "Symbol" : "Name"}
                     </Typography>
                   </Box>
                 </Box>
@@ -188,9 +208,9 @@ const StudentElementMatcher = () => {
           </Box>
 
           {/* New game button */}
-          <Button 
-            variant="contained" 
-            onClick={shuffleCards} 
+          <Button
+            variant="contained"
+            onClick={shuffleCards}
             className="new-game-btn"
             disabled={disabled && !gameOver}
           >
