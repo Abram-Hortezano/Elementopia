@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/score")
 public class ScoreController {
@@ -23,6 +25,11 @@ public class ScoreController {
     @GetMapping("/{userId}")
     public ResponseEntity<ScoreEntity> getScore(@PathVariable Long userId) {
         return ResponseEntity.ok(scoreService.getByUserId(userId));
+    }
+
+    @GetMapping("/all")
+    public ResponseEntity<List<ScoreEntity>> getAllScores() {
+        return ResponseEntity.ok(scoreService.getAllScores());
     }
 
     // Update: overwrite careerScore

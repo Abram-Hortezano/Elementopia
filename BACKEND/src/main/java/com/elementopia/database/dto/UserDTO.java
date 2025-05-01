@@ -17,5 +17,5 @@ public class UserDTO {
     private TeacherDTO teacher;
     private List<DiscoveryDTO> discoveries;
     private List<AchievementDTO> achievements;
-
+    private List<ScoreDTO> careerScore;
 }
