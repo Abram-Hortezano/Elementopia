@@ -30,6 +30,15 @@ public class UserEntity {
     @Column(name = "last_name")
     private String lastName;
 
+    @Column(name = "school")
+    private String school;
+
+    @Column(name = "bio")
+    private String bio;
+
+    @Column(name = "grade_level")
+    private String gradeLevel;
+
     @Column(name = "role", nullable = false)
     private String role;  // Role: "STUDENT" or "TEACHER"
 

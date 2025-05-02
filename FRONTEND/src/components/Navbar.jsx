@@ -1,5 +1,13 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Avatar } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  Avatar,
+} from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom"; // ✨ Added for navigation
 
@@ -38,7 +46,8 @@ const Navbar = ({ open }) => {
           noWrap
           component="div"
           sx={{
-            backgroundImage: "linear-gradient(to right, #714dff, #9c83ff, #e151ff, #fff759)",
+            backgroundImage:
+              "linear-gradient(to right, #714dff, #9c83ff, #e151ff, #fff759)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             fontWeight: "bold",
@@ -62,9 +71,10 @@ const Navbar = ({ open }) => {
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
         >
-          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+          <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
           <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-          <MenuItem onClick={handleLogout}>Logout</MenuItem> {/* ✨ Updated logout */}
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>{" "}
+          {/* ✨ Updated logout */}
         </Menu>
       </Toolbar>
     </AppBar>

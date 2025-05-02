@@ -41,7 +41,9 @@ public class UserService {
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setRole(user.getRole());
-
+        dto.setBio(user.getBio());
+        dto.setSchool(user.getSchool());
+        dto.setGradeLevel(user.getGradeLevel());
         // Map Student
         if (user.getStudent() != null) {
             StudentDTO studentDTO = new StudentDTO();
@@ -166,6 +168,15 @@ public class UserService {
         }
         if (newUserDetails.getEmail() != null) {
             user.setEmail(newUserDetails.getEmail());
+        }
+        if (newUserDetails.getBio() != null) {
+            user.setBio(newUserDetails.getBio());
+        }
+        if (newUserDetails.getGradeLevel() != null) {
+            user.setGradeLevel(newUserDetails.getGradeLevel());
+        }
+        if (newUserDetails.getSchool() != null) {
+            user.setSchool(newUserDetails.getSchool());
         }
         return uRepo.save(user);
     }

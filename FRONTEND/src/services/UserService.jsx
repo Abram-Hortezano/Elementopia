@@ -1,11 +1,16 @@
 import axios from "axios";
 
-const API_URL = "https://elementopia.onrender.com/api/user"; // Adjust if needed
+const API_URL = "https://elementopia.onrender.com/api/user";
 
 // Get token from localStorage
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token
+    ? {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      }
+    : {};
 };
 
 const UserService = {
@@ -70,7 +75,7 @@ const UserService = {
   updateUser: async (id, userData) => {
     try {
       const response = await axios.put(
-        `${API_URL}/updateUser?id=${id}`,
+        `${API_URL}/updateUser/${id}`,
         userData,
         {
           headers: {
@@ -105,6 +110,18 @@ const UserService = {
   // Logout by removing token
   logout: () => {
     localStorage.removeItem("token");
+  },
+
+  deleteUser: async (id) => {
+    try {
+      const response = await axios.delete(`${API_URL}/deleteUser/${id}`, {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("deletion failed:", error.response?.data || error.message);
+      throw error;
+    }
   },
 };
 
