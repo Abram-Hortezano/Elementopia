@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import ChemistryCurriculum from "../components/Student Components/Lesson1Chemistry";
+import CurriculumOverview from "../components/Curriculum Components/CurriculumOverview";
 
 const StudentCareerPage = () => {
   const [open, setOpen] = useState(false);
@@ -36,7 +36,7 @@ const StudentCareerPage = () => {
           marginTop: "50px",
         }}
       >
-        <ChemistryCurriculum />
+        <CurriculumOverview />
       </Box>
     </Box>
   );
