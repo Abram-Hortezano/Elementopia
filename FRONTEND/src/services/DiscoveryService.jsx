@@ -60,7 +60,6 @@ const DiscoveryService = {
 
   // Create a new discovery (user-generated compound)
   createDiscovery: async (userId, discoveryData) => {
-    console.log("Creating discovery for user:", userId); 
     try {
       const response = await axios.post(`${API_URL}/create/${userId}`, discoveryData, {
         headers: {
