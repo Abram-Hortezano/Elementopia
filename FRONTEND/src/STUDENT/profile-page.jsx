@@ -1,5 +1,5 @@
 import { useState } from "react"
-// import { useRouter } from "next/navigation"
+// import { Router } from "next/navigation"
 import Sidebar from "../components/Sidebar"
 import Navbar from "../components/NavBar"
 import {
@@ -82,7 +82,7 @@ export default function ProfilePage() {
 
   const handleLogout = () => {
     // handle logout logic here
-    router.push("/")
+    // router.push("/")
   }
 
   return (

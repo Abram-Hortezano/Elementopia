@@ -13,11 +13,7 @@ import {
   Paper,
   Rating,
   Button,
-<<<<<<< HEAD
 } from "@mui/material";
-=======
-} from '@mui/material'
->>>>>>> e0b83494df3a2e0d8f8d69de11ee92b32337ad28
 import {
   LineChart,
   Line,

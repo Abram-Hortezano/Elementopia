@@ -15,27 +15,33 @@ export default function Login({ onLoginSuccess }) {
 
   const handleLogin = async () => {
     setMessage("");
-
+  
     if (!username.trim() || !password.trim()) {
       setMessage("Username and password are required!");
       return;
     }
-
+  
     try {
       const response = await UserService.loginUser(username.toLowerCase(), password);
-
-      if (response && response.token) {
-        // Assuming `response.token` contains a JWT or session token
+  
+      if (response && response.token && response.role) {
         setMessage("Login successful! Redirecting...");
-
-        // Save user session (Spring Security requirement)
-        sessionStorage.setItem("user", JSON.stringify(response));
-
+        sessionStorage.setItem("user", JSON.stringify({
+          token: response.token,
+          role: response.role,
+        }));
+  
         setTimeout(() => {
           if (onLoginSuccess) onLoginSuccess();
-          navigate("/student-home-page"); // Redirect to the actual dashboard page
-          onLoginSuccess && onLoginSuccess();
-          navigate("/student-home-page");
+  
+          // Role-based redirect
+          if (response.role === "STUDENT") {
+            navigate("/student-home-page");
+          } else if (response.role === "TEACHER") {
+            navigate("/teacher-home-page");
+          } else {
+            setMessage("Unknown role. Cannot redirect.");
+          }
         }, 1500);
       } else {
         setMessage(response.message || "Invalid username or password.");
