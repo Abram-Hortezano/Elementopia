@@ -16,15 +16,14 @@ const Discovery = () => {
         try {
           const response = await DiscoveryService.getCurrentUserDiscoveries(currentUser.userId);
 
-          console.log("Raw discoveries from DB:", response);
+    
 
-          const discoveryArray = response?.data || []; // 👈 Ensure it's an array
+          const discoveryArray = response?.data || []; 
 
           const validNames = discoveryArray
             .filter(item => item.name && typeof item.name === "string")
             .map(item => item.name.trim());
 
-          console.log("Filtered discovered names:", validNames);
 
           setDiscovered(validNames);
         } catch (error) {

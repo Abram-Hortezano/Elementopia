@@ -5,6 +5,7 @@ import {
   Typography,
   Button,
   ToggleButton,
+  CircularProgress,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ElementTable from "./ElementTable";
@@ -30,6 +31,8 @@ const getElementColor = (element) => {
   return colors[element] || "#ccc";
 };
 
+const definitionCache = {};
+
 const ChemistrySimulation = () => {
   const [atoms, setAtoms] = useState(initialAtoms);
   const [selectedElement, setSelectedElement] = useState("H");
@@ -38,28 +41,51 @@ const ChemistrySimulation = () => {
   const [showChallengeModal, setShowChallengeModal] = useState(false);
   const [dailyChallengeCompound, setDailyChallengeCompound] = useState(null);
   const [completedSymbols, setCompletedSymbols] = useState([]);
+  const [loadingDefinition, setLoadingDefinition] = useState(false);
 
   const navigate = useNavigate();
 
   useEffect(() => {
     const challengeFromStorage = JSON.parse(localStorage.getItem("dailyChallengeCompound"));
-  
     if (challengeFromStorage) {
       setDailyChallengeCompound(challengeFromStorage);
     } else {
       setDailyChallengeCompound(compoundElements[0]);
     }
-  
+
     const stored = JSON.parse(localStorage.getItem("completedSymbols")) || [];
     setCompletedSymbols(stored);
   }, []);
-  
 
   useEffect(() => {
     checkMolecule();
   }, [atoms]);
 
-  const checkMolecule = () => {
+  const fetchDefinition = async (word) => {
+    if (definitionCache[word]) return definitionCache[word];
+
+    const apiKey = "76814e25-29c5-44de-983b-b978ece36d95";
+    const url = `https://www.dictionaryapi.com/api/v3/references/medical/json/${word}?key=${apiKey}`;
+    try {
+      setLoadingDefinition(true);
+      const response = await fetch(url);
+      const data = await response.json();
+      setLoadingDefinition(false);
+
+      if (Array.isArray(data) && data.length > 0 && data[0].shortdef) {
+        const definition = data[0].shortdef.slice(0, 2).join("; ");
+        definitionCache[word] = definition;
+        return definition;
+      }
+      return null;
+    } catch (error) {
+      console.error("Error fetching definition:", error);
+      setLoadingDefinition(false);
+      return null;
+    }
+  };
+
+  const checkMolecule = async () => {
     const currentElements = atoms.map((atom) => atom.element);
     const foundCompound = compoundElements.find((compound) => {
       const compoundElementsSorted = [...compound.Elements].sort();
@@ -68,10 +94,17 @@ const ChemistrySimulation = () => {
     });
 
     if (foundCompound) {
+      let description = foundCompound.Description;
+
+      const fetchedDefinition = await fetchDefinition(foundCompound.NAME);
+      if (fetchedDefinition) {
+        description = fetchedDefinition;
+      }
+
       setMoleculeOutput(
         `NAME: ${foundCompound.NAME}\n` +
         `Symbol: ${foundCompound.Symbol}\n` +
-        `Description: ${foundCompound.Description}\n` +
+        `Description: ${description}\n` +
         `Elements: ${foundCompound.Elements.join(", ")}\n` +
         `Uses: ${foundCompound.Uses.join(", ")}`
       );
@@ -89,7 +122,6 @@ const ChemistrySimulation = () => {
         localStorage.removeItem("dailyChallengeCompound");
         setShowChallengeModal(true);
       }
-      
     } else {
       setMoleculeOutput("No known molecule formed.");
     }
@@ -97,35 +129,24 @@ const ChemistrySimulation = () => {
 
   const saveDiscovery = async (compound) => {
     const user = await UserService.getCurrentUser();
-    if (!user || !user.userId) {
+    if (!user?.userId) {
       alert("User is not logged in. Please log in first.");
       return;
     }
-  
+
     const userId = user.userId;
-  
-    // Get the current date and format it as YYYY-MM-DD
-    const currentDate = new Date();
-    const formattedDate = currentDate.toISOString().split('T')[0]; // Get only the date part (YYYY-MM-DD)
-  
-    const discoveryData = {
-      name: compound.NAME,
-      dateDiscovered: formattedDate,
-    };
-   
-  
+    const formattedDate = new Date().toISOString().split("T")[0];
+
     try {
-      const discoveryResponse = await DiscoveryService.createDiscovery(userId, discoveryData);
-      if (discoveryResponse) {
-        console.log(discoveryData); // Log the discovery data to the console
-      }
+      await DiscoveryService.createDiscovery(userId, {
+        name: compound.NAME,
+        dateDiscovered: formattedDate,
+      });
     } catch (error) {
       console.error("Error saving discovery:", error);
       alert("An error occurred while saving your discovery.");
     }
   };
-  
-  
 
   const handleStageClick = (e) => {
     if (!eraseMode) {
@@ -185,7 +206,6 @@ const ChemistrySimulation = () => {
       sx={{
         display: "flex",
         justifyContent: "space-between",
-        alignItems: "flex-start",
         backgroundColor: "#0a0a0f",
         height: "100%",
         width: "100%",
@@ -194,7 +214,7 @@ const ChemistrySimulation = () => {
         flexWrap: "wrap",
       }}
     >
-      {/* Simulation Section */}
+      {/* Left: Simulation */}
       <Box sx={{ flex: 1, marginRight: "20px" }}>
         <Typography
           variant="h4"
@@ -266,12 +286,8 @@ const ChemistrySimulation = () => {
             sx={{
               backgroundColor: eraseMode ? "red" : "#444",
               color: "white !important",
-              "&.Mui-selected": {
-                backgroundColor: "red",
-              },
-              "&:hover": {
-                backgroundColor: eraseMode ? "#ff3333" : "#666",
-              },
+              "&.Mui-selected": { backgroundColor: "red" },
+              "&:hover": { backgroundColor: eraseMode ? "#ff3333" : "#666" },
             }}
           >
             Erase
@@ -282,9 +298,7 @@ const ChemistrySimulation = () => {
             onClick={handleClear}
             sx={{
               backgroundColor: "#ff3333",
-              "&:hover": {
-                backgroundColor: "#cc2929",
-              },
+              "&:hover": { backgroundColor: "#cc0000" },
             }}
           >
             Clear
@@ -292,30 +306,100 @@ const ChemistrySimulation = () => {
         </Box>
       </Box>
 
-      {/* Right Side - Output */}
-      <Box sx={{ width: "350px", mt: 2 }}>
+    {/* Right Sidebar */}
+<Box
+  sx={{
+    width: "300px",
+    display: "flex",
+    flexDirection: "column",
+    gap: 2,
+    mt: 8,
+    fontFamily: "'Orbitron', 'Share Tech Mono', monospace",
+  }}
+>
+  {/* Molecule Output */}
+  <Box
+    sx={{
+      padding: 2,
+      background: "linear-gradient(145deg, #1c1c2c, #222244)",
+      borderRadius: "12px",
+      color: "#e0e0e0",
+      whiteSpace: "pre-line",
+      border: "1px solid #ffcc00",
+      overflowY: "auto",
+      maxHeight: "320px",
+      fontSize: "14px",
+      lineHeight: 1.6,
+      boxShadow: "0 0 10px #ffcc00aa",
+      transition: "all 0.3s ease-in-out",
+      scrollbarColor: "#ffcc00 #1c1c2e",
+      scrollbarWidth: "thin",
+    }}
+  >
+    <Typography
+      variant="h6"
+      sx={{
+        color: "#ffcc00",
+        marginBottom: 1,
+        fontWeight: "bold",
+        fontSize: "16px",
+        textShadow: "0 0 5px #ffcc00",
+      }}
+    >
+      🧪 Molecule Info
+    </Typography>
+    {loadingDefinition ? (
+      <CircularProgress size={24} sx={{ color: "#ffcc00" }} />
+    ) : (
+      <Typography
+        component="div"
+        sx={{
+          fontFamily: "'Share Tech Mono', monospace",
+          fontSize: "13.5px",
+          color: "#d0d0ff",
+          lineHeight: 1.7,
+        }}
+      >
+        {moleculeOutput}
+      </Typography>
+    )}
+  </Box>
+</Box>
+
+
+      {/* Completion Modal */}
+      {showChallengeModal && (
         <Box
           sx={{
-            mt: 2,
-            p: 2,
-            backgroundColor: "#1a1a1d",
-            borderRadius: "10px",
-            boxShadow: "0px 0px 10px rgba(255, 204, 0, 0.6)",
+            position: "fixed",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            backgroundColor: "#222",
+            padding: 4,
+            borderRadius: 4,
+            border: "2px solid #ffcc00",
+            zIndex: 9999,
+            color: "white",
           }}
         >
-          <Typography
-            variant="body1"
-            sx={{
-              color: moleculeOutput.startsWith("NAME") ? "#ffcc00" : "red",
-              whiteSpace: "pre-line",
-              fontFamily: "monospace",
-              fontSize: "14px",
-            }}
-          >
-            {moleculeOutput}
+          <Typography variant="h6" sx={{ color: "#ffcc00", marginBottom: 2 }}>
+            🎉 Challenge Completed!
           </Typography>
+          <Typography>
+            You've successfully discovered the daily challenge compound!
+          </Typography>
+          <Box sx={{ marginTop: 2, display: "flex", justifyContent: "center" }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={() => setShowChallengeModal(false)}
+            >
+              Close
+            </Button>
+          </Box>
         </Box>
-      </Box>
+      )}
     </Box>
   );
 };

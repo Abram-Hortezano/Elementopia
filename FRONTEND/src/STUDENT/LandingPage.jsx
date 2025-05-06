@@ -22,6 +22,7 @@ function LandingPage() {
   // };
 
   return (
+  <div className="root">
     <div className="landingpage-container">
       <Navigation />
       <div id="header-container">
@@ -49,6 +50,7 @@ function LandingPage() {
       <Carousel />
       <Footer />
     </div>
+  </div>
   );
 }
 

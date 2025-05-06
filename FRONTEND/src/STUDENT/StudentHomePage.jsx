@@ -24,6 +24,7 @@ const StudentHomePage = () => {
       }}
     >
       <Navbar open={open} />
+<<<<<<< HEAD
       <Sidebar
         open={open}
         handleDrawerOpen={() => setOpen(true)}
@@ -40,6 +41,10 @@ const StudentHomePage = () => {
           marginTop: "80px",
         }}
       >
+=======
+      <Sidebar open={open} handleDrawerOpen={() => setOpen(true)} handleDrawerClose={() => setOpen(false)} />
+      <Box component="main" sx={{ flexGrow: 1, p: 3, marginLeft: open ? "180px" : "60px", width: "100%", marginTop: "80px" }}>
+>>>>>>> e0b83494df3a2e0d8f8d69de11ee92b32337ad28
         {location.pathname === "/student-home-page" && (
           <Grid container spacing={2}>
             <Grid item xs={12} md={8}>

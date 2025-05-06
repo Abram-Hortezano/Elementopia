@@ -9,7 +9,6 @@ const DailyChallengeCard = () => {
 
   const handleStartChallenge = async () => {
     const user = await UserService.getCurrentUser();
-    console.log("User from UserService:", user);
 
     if (!user || !user.userId) {
       alert("User is not logged in. Please log in first.");
@@ -20,8 +19,9 @@ const DailyChallengeCard = () => {
 
 
     const nextCompound = compoundList.find(
-      (compound) => !discoveredCompounds.includes(compound.Symbol)
+      (compound) => !discoveredCompounds.some(sym => sym.toLowerCase() === compound.Symbol.toLowerCase())
     );
+    
 
     if (!nextCompound) {
       alert("You've completed all daily challenges!");

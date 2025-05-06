@@ -20,10 +20,13 @@ body {
 }
 
 /* Ensures content stays centered */
-#root {
-  margin: 0 auto;
-  padding-bottom: 0;
-  max-width: 1600px;
+.root {
+  display: flex;
+  /* border: 1px solid red; */
+  /* padding-bottom: 0; */
+  /* width: 100vw; */
+  max-width: 100vw;
+  /* max-height: 100vh; */
 }
 
 /* ========== Landing Page ========== */
