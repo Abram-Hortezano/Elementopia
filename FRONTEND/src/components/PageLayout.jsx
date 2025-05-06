@@ -1,8 +1,8 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Navbar from "./NavBar";
-import Sidebar from "./Sidebar";
+import Navbar from "../NavBar";
+import Sidebar from "../Sidebar";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,

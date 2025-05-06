@@ -1,10 +1,20 @@
 import React, { useState } from "react";
-import { AppBar, Toolbar, Typography, IconButton, Menu, MenuItem, Avatar } from "@mui/material";
+import {
+  AppBar,
+  Toolbar,
+  Typography,
+  IconButton,
+  Menu,
+  MenuItem,
+  Avatar,
+} from "@mui/material";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
+import { useNavigate } from "react-router-dom"; // ✨ Added for navigation
 
 const Navbar = ({ open }) => {
   const [anchorEl, setAnchorEl] = useState(null);
   const openMenu = Boolean(anchorEl);
+  const navigate = useNavigate(); // ✨ For redirecting
 
   const handleMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -12,6 +22,11 @@ const Navbar = ({ open }) => {
 
   const handleMenuClose = () => {
     setAnchorEl(null);
+  };
+
+  const handleLogout = () => {
+    sessionStorage.removeItem("user"); // 🧹 Clear session
+    navigate("/login"); // 🔀 Redirect to login page
   };
 
   return (
@@ -31,7 +46,8 @@ const Navbar = ({ open }) => {
           noWrap
           component="div"
           sx={{
-            backgroundImage: "linear-gradient(to right, #714dff, #9c83ff, #e151ff, #fff759)",
+            backgroundImage:
+              "linear-gradient(to right, #714dff, #9c83ff, #e151ff, #fff759)",
             WebkitBackgroundClip: "text",
             WebkitTextFillColor: "transparent",
             fontWeight: "bold",
@@ -55,9 +71,10 @@ const Navbar = ({ open }) => {
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
         >
-          <MenuItem onClick={handleMenuClose}>Profile</MenuItem>
+          <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
           <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-          <MenuItem onClick={() => alert("Logged Out")}>Logout</MenuItem>
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>{" "}
+          {/* ✨ Updated logout */}
         </Menu>
       </Toolbar>
     </AppBar>

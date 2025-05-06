@@ -17,7 +17,6 @@ const StudentHomePage = () => {
     <Box sx={{ display: "flex", bgcolor: "#121212", color: "white", minHeight: "100vh", width: "100vw" }}>
       <Navbar open={open} />
       <Sidebar open={open} handleDrawerOpen={() => setOpen(true)} handleDrawerClose={() => setOpen(false)} />
-
       <Box component="main" sx={{ flexGrow: 1, p: 3, marginLeft: open ? "180px" : "60px", width: "100%", marginTop: "80px" }}>
         {location.pathname === "/student-home-page" && (
           <Grid container spacing={2}>
