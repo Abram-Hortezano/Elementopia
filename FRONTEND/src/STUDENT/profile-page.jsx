@@ -37,6 +37,19 @@ export default function ProfilePage() {
     joinDate: "January 2023",
     profileImage: "/placeholder.svg?height=200&width=200",
   })
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0]
+    if (file) {
+      const reader = new FileReader()
+      reader.onloadend = () => {
+        setUserData({
+          ...userData,
+          profileImage: reader.result,
+        })
+      }
+      reader.readAsDataURL(file)
+    }
+  }  
 
   // Mock achievements data pending backend integration
   const achievements = [
@@ -104,9 +117,15 @@ export default function ProfilePage() {
             <div className="profile-image-container">
               <img src={userData.profileImage || "/placeholder.svg"} alt="Profile" className="profile-image" />
               {editMode && (
-                <button className="change-photo-button">
+                <label className="change-photo-button">
                   <Camera className="camera-icon" />
-                </button>
+                  <input
+                    type="file"
+                    accept="image/*"
+                    style={{ display: "none" }}
+                    onChange={handleImageUpload}
+                  />
+                </label>
               )}
             </div>
             <div className="profile-info">
