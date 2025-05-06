@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Grid } from "@mui/material";
 import { Outlet, useLocation } from "react-router-dom";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import DailyChallengeCard from "../components/Student Components/DailyChallengeCard";
 import LessonCards from "../components/Student Components/LessonCards";
