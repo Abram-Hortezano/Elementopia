@@ -13,9 +13,7 @@ import PageLayout from "./TEACHER/PageLayout";
 import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
 import ChallengePage from "./components/Student Components/ChallengePage";
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
-import StudentElementMatcher from "./STUDENT/StudentElementMatcher";
 import StudentStateChanges from "./STUDENT/StudentStateChanges";
-import StudentCardMinigame from "./STUDENT/StudentCardMinigame";
 
 export default function App() {
   return (
@@ -36,9 +34,7 @@ export default function App() {
         <Route path="/student/game-room" element={<StudentGameRoomPage />} />
         <Route path="/student/sandbox" element={<StudentSandboxPage />} />
         <Route path="/student/daily-challenge" element={<ChallengePage />} />
-        <Route path="/student/game1" element={<StudentElementMatcher/>} />
-        <Route path="/student/game2" element={<StudentStateChanges/>} />
-        <Route path="/student/game3" element={<StudentCardMinigame/>} />
+        <Route path="/student/game2" element={< StudentStateChanges/>} />
 
         {/* Teacher Route */}
         <Route path="/teacher-home-page" element={<PageLayout />} />

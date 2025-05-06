@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Navbar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
-import StudentElementMatcher from "./StudentElementMatcher";
+import StudentElementMatcher from "./ElementMatcher";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
