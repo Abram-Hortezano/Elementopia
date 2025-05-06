@@ -1,12 +1,11 @@
 import React, { useState } from "react";
-// import Confetti from 'react-confetti';
-// import { useWindowSize } from 'react-use';
 import { Box, Grid, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import ElementMatchGame from "../components/MiniGames/ElementMatchGame"; // Import your mini-game here
+import ElementMatchGame from "../components/MiniGames/ElementMatchGame";
 import Assistant from "../components/Student Components/Assistant";
+
 // Assets
 import card1 from "../assets/img/card1.jpg";
 import card2 from "../assets/img/card2.jpg";
@@ -32,24 +31,28 @@ const gameCards = [
 
 const StudentGameRoomPage = () => {
   const [open, setOpen] = useState(false);
-<<<<<<< HEAD
   const [selectedGame, setSelectedGame] = useState(null);
   const studentName = "Mark";
-=======
->>>>>>> 879aeda83d1096b1647f0fe8117b12d5078a0a54
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
 
   return (
-<<<<<<< HEAD
-    <Box sx={{ bgcolor: "#121212", color: "white", minHeight: "100vh", width: "100vw" }}>
+    <Box sx={{ display: "flex", bgcolor: "#121212", color: "white", minHeight: "100vh", width: "100vw" }}>
       <Navbar open={open} />
       <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
-      <Box component="main" sx={{ flexGrow: 1, p: 3, marginLeft: open ? "20px" : "10px", width: "100%" }}>
+
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          marginLeft: open ? "20px" : "10px",
+          width: "100%",
+        }}
+      >
         <DrawerHeader />
 
-        {/* Show Back button and selected game if any */}
         {selectedGame ? (
           <>
             <Button
@@ -87,40 +90,14 @@ const StudentGameRoomPage = () => {
           </Grid>
         )}
 
-        {/* Optional game or interaction area */}
-=======
-    <Box
-      sx={{
-        display: "flex",
-        bgcolor: "#121212",
-        color: "white",
-        minHeight: "100vh",
-        width: "100vw",
-      }}
-    >
-      <Navbar open={open} />
-      <Sidebar
-        open={open}
-        handleDrawerOpen={handleDrawerOpen}
-        handleDrawerClose={handleDrawerClose}
-      />
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          marginLeft: open ? "20px" : "10px",
-          width: "100%",
-        }}
-      >
->>>>>>> 879aeda83d1096b1647f0fe8117b12d5078a0a54
+        {/* Always show the Element Matcher game */}
         <StudentElementMatcher />
-      </Box>
 
-      {/* Assistant component */}
-      <div className="game-room">
-        <Assistant studentName={studentName} />
-      </div>
+        {/* Assistant component */}
+        <div className="game-room">
+          <Assistant studentName={studentName} />
+        </div>
+      </Box>
     </Box>
   );
 };

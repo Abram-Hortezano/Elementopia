@@ -24,12 +24,9 @@
     "react-confetti": "^6.4.0",
     "react-dom": "^19.0.0",
     "react-konva": "^19.0.3",
-<<<<<<< HEAD
     "react-router-dom": "^7.3.0",
     "react-simple-typewriter": "^5.0.1",
-=======
     "react-router-dom": "^7.5.3",
->>>>>>> 879aeda83d1096b1647f0fe8117b12d5078a0a54
     "react-slick": "^0.30.3",
     "react-speech-kit": "^3.0.1",
     "react-tsparticles": "^2.12.2",

@@ -13,13 +13,11 @@ import PageLayout from "./TEACHER/PageLayout";
 import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
 import ChallengePage from "./components/Student Components/ChallengePage";
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
-<<<<<<< HEAD
 import StudentElementMatcher from "./STUDENT/StudentElementMatcher";
 import StudentStateChanges from "./STUDENT/StudentStateChanges";
 import StudentCardMinigame from "./STUDENT/StudentCardMinigame";
-=======
 import ProfilePage from "./pages/profile-page";
->>>>>>> 879aeda83d1096b1647f0fe8117b12d5078a0a54
+
 
 export default function App() {
   return (
