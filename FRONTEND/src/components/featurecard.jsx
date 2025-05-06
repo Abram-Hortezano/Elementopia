@@ -11,7 +11,7 @@ const FeatureCard = ({ title, description, icon, className, gradient = "purple",
       <div className="feature-card-header">
         <div className="feature-card-icon">{icon && <div>{icon}</div>}</div>
         <h3 className={`feature-card-title ${gradient}`}>{title}</h3>
-        <img src={logo} alt="Login & Sign Up Logo" className="Logo" />;
+        <img src={logo} alt="Login & Sign Up Logo" className="Logo" />
       </div>
 
       <div className="feature-card-content">

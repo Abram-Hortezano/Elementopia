@@ -11,6 +11,7 @@ import StudentGameRoomPage from "./STUDENT/StudentGameRoomPage";
 import StudentSandboxPage from "./STUDENT/StudentSandboxPage";
 import PageLayout from "./TEACHER/PageLayout";
 import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
+import ProfilePage from "./STUDENT/profile-page";
 import ChallengePage from "./components/Student Components/ChallengePage";
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
 
@@ -27,6 +28,7 @@ export default function App() {
 
         {/* Student Route */}
         <Route path="/student-home-page" element={<StudentHomePage />} />
+        <Route path="/student/profile" element={<ProfilePage />} />
         <Route path="/student/room" element={<StudentRoomPage />} />
         <Route path="/student/student-career-page" element={<StudentCareerPage />} />
         <Route path="/student/discovery" element={<StudentDiscoveryPage />} />
