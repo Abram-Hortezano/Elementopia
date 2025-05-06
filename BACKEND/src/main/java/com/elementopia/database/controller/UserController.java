@@ -1,9 +1,6 @@
 package com.elementopia.database.controller;
 
-import com.elementopia.database.dto.JwtResponse;
-import com.elementopia.database.dto.LoginRequest;
-import com.elementopia.database.dto.LoginResponse;
-import com.elementopia.database.dto.UserDTO;
+import com.elementopia.database.dto.*;
 import com.elementopia.database.entity.UserEntity;
 import com.elementopia.database.service.UserService;
 <<<<<<< HEAD
@@ -71,7 +68,11 @@ public class UserController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
-
+    @GetMapping("/getAllUserScore")
+    public ResponseEntity<List<UserSummaryDto>> getAllStudentsWithCareerScores() {
+        List<UserSummaryDto> students = uServ.getAllStudentsWithCareerScores();
+        return ResponseEntity.ok(students);
+    }
     // Get User By ID (returns DTO)
     @GetMapping("/getUser/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id) {

@@ -13,9 +13,13 @@ import PageLayout from "./TEACHER/PageLayout";
 import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
 import ChallengePage from "./components/Student Components/ChallengePage";
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
+<<<<<<< HEAD
 import StudentElementMatcher from "./STUDENT/StudentElementMatcher";
 import StudentStateChanges from "./STUDENT/StudentStateChanges";
 import StudentCardMinigame from "./STUDENT/StudentCardMinigame";
+=======
+import ProfilePage from "./pages/profile-page";
+>>>>>>> 879aeda83d1096b1647f0fe8117b12d5078a0a54
 
 export default function App() {
   return (
@@ -24,14 +28,21 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/career" element={<div>Career Page (Coming Soon)</div>} />
-        <Route path="/contact-us" element={<div>Contact Us Page (Coming Soon)</div>} />
+        <Route
+          path="/contact-us"
+          element={<div>Contact Us Page (Coming Soon)</div>}
+        />
         <Route path="/login" element={<LoginCard />} />
         <Route path="/sign-up" element={<RegisterCard />} />
+        <Route path="/profile" element={<ProfilePage />} />
 
         {/* Student Route */}
         <Route path="/student-home-page" element={<StudentHomePage />} />
         <Route path="/student/room" element={<StudentRoomPage />} />
-        <Route path="/student/student-career-page" element={<StudentCareerPage />} />
+        <Route
+          path="/student/student-career-page"
+          element={<StudentCareerPage />}
+        />
         <Route path="/student/discovery" element={<StudentDiscoveryPage />} />
         <Route path="/student/game-room" element={<StudentGameRoomPage />} />
         <Route path="/student/sandbox" element={<StudentSandboxPage />} />

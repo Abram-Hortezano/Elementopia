@@ -3,7 +3,7 @@ import React, { useState } from "react";
 // import { useWindowSize } from 'react-use';
 import { Box, Grid, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import ElementMatchGame from "../components/MiniGames/ElementMatchGame"; // Import your mini-game here
 import Assistant from "../components/Student Components/Assistant";
@@ -32,13 +32,17 @@ const gameCards = [
 
 const StudentGameRoomPage = () => {
   const [open, setOpen] = useState(false);
+<<<<<<< HEAD
   const [selectedGame, setSelectedGame] = useState(null);
   const studentName = "Mark";
+=======
+>>>>>>> 879aeda83d1096b1647f0fe8117b12d5078a0a54
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
 
   return (
+<<<<<<< HEAD
     <Box sx={{ bgcolor: "#121212", color: "white", minHeight: "100vh", width: "100vw" }}>
       <Navbar open={open} />
       <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
@@ -84,6 +88,32 @@ const StudentGameRoomPage = () => {
         )}
 
         {/* Optional game or interaction area */}
+=======
+    <Box
+      sx={{
+        display: "flex",
+        bgcolor: "#121212",
+        color: "white",
+        minHeight: "100vh",
+        width: "100vw",
+      }}
+    >
+      <Navbar open={open} />
+      <Sidebar
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
+      />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          marginLeft: open ? "20px" : "10px",
+          width: "100%",
+        }}
+      >
+>>>>>>> 879aeda83d1096b1647f0fe8117b12d5078a0a54
         <StudentElementMatcher />
       </Box>
 

@@ -1,11 +1,16 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/user"; // Adjust if needed
+const API_URL = "https://elementopia.onrender.com/api/user";
 
 // Get token from localStorage
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  return token
+    ? {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+      }
+    : {};
 };
 
 const UserService = {
@@ -36,7 +41,10 @@ const UserService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch current user:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch current user:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -44,14 +52,21 @@ const UserService = {
   // Update profile info
   updateProfile: async (id, profileData) => {
     try {
-      const response = await axios.put(`${API_URL}/updateProfile?id=${id}`, profileData, {
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
+      const response = await axios.put(
+        `${API_URL}/updateProfile?id=${id}`,
+        profileData,
+        {
+          headers: {
+            ...getAuthHeader(),
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.error("Failed to update profile:", error.response?.data || error.message);
+      console.error(
+        "Failed to update profile:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -59,14 +74,21 @@ const UserService = {
   // Update entire user record (with optional password)
   updateUser: async (id, userData) => {
     try {
-      const response = await axios.put(`${API_URL}/updateUser?id=${id}`, userData, {
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
+      const response = await axios.put(
+        `${API_URL}/updateUser/${id}`,
+        userData,
+        {
+          headers: {
+            ...getAuthHeader(),
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.error("Failed to update user:", error.response?.data || error.message);
+      console.error(
+        "Failed to update user:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -77,7 +99,10 @@ const UserService = {
       const response = await axios.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (error) {
-      console.error("Registration failed:", error.response?.data || error.message);
+      console.error(
+        "Registration failed:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -85,6 +110,18 @@ const UserService = {
   // Logout by removing token
   logout: () => {
     localStorage.removeItem("token");
+  },
+
+  deleteUser: async (id) => {
+    try {
+      const response = await axios.delete(`${API_URL}/deleteUser/${id}`, {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("deletion failed:", error.response?.data || error.message);
+      throw error;
+    }
   },
 };
 

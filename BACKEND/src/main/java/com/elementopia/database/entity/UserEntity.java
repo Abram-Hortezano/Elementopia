@@ -41,6 +41,15 @@ public class UserEntity {
 >>>>>>> c86b59f5a44db58bcd910fc19b0c61ceb1cdb006
     private String lastName;
 
+    @Column(name = "school")
+    private String school;
+
+    @Column(name = "bio")
+    private String bio;
+
+    @Column(name = "grade_level")
+    private String gradeLevel;
+
     @Column(name = "role", nullable = false)
     private String role;  // Role: "STUDENT" or "TEACHER"
 
@@ -67,4 +76,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<AchievementEntity> achievements;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private ScoreEntity score;
+
 }
