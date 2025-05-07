@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Box, Typography, Slider, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Navbar from '../components/NavBar';
@@ -71,6 +71,10 @@ const StateChangesChallenge = () => {
   const [cycleProgress, setCycleProgress] = useState(0); // 0=none, 1=solid, 2=liquid, 3=gas
   const [lastAchievedState, setLastAchievedState] = useState(null);
   
+  // Add refs to track if we're in the middle of setup to prevent unwanted state updates
+  const isSettingUp = useRef(false);
+  const challengeSetupComplete = useRef(false);
+  
   // Handle drawer
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
@@ -87,12 +91,16 @@ const StateChangesChallenge = () => {
 
   // Handle temperature change
   const handleTemperatureChange = (event, newValue) => {
+    if (isSettingUp.current) return; // Skip user updates during setup
+    
     setTemperature(newValue);
     updateState(selectedSubstance, newValue, pressure);
   };
 
   // Handle pressure change
   const handlePressureChange = (event, newValue) => {
+    if (isSettingUp.current) return; // Skip user updates during setup
+    
     setPressure(newValue);
     updateState(selectedSubstance, temperature, newValue);
   };
@@ -124,8 +132,14 @@ const StateChangesChallenge = () => {
       setCompletedChallengesForSubstance(0);
       setLastAchievedState(null);
       setScore(0); // Reset score when starting challenge mode
-      setupTargetChallenge(substanceToUse);
+      
+      // Important: Set challengeActive BEFORE setting up the target challenge
       setChallengeActive(true);
+      
+      // Use a timeout to ensure the challengeActive state is updated before proceeding
+      setTimeout(() => {
+        setupTargetChallenge(substanceToUse);
+      }, 50);
     }
   };
 
@@ -159,29 +173,30 @@ const StateChangesChallenge = () => {
     // Generate particles based on state
     generateParticles(newState, temp);
     
-    // Check if challenge goal is met if a challenge is active
-    if (challengeActive) {
+    // Check if challenge goal is met if a challenge is active and setup is complete
+    if (challengeActive && challengeSetupComplete.current) {
       checkChallengeProgress(newState, substance);
     }
   };
 
   // Set up initial conditions based on the target state we want to achieve
   const setupInitialConditions = (substance, targetStateToAchieve) => {
+    isSettingUp.current = true;
+    challengeSetupComplete.current = false;
+    
     // Set initial conditions that are NOT in the target state
-    let initialTemp = 25; // default room temp
+    let initialTemp = 0; // Default starting temperature
     let initialPressure = 1; // default 1 atm
     
     // For CO2, special handling
     if (substance.id === 'co2') {
       if (targetStateToAchieve === 'solid') {
-        // For solid CO2 target, start with warm CO2
-        initialTemp = 0; // Not cold enough for solid, but not too warm
+        initialTemp = -50; // Not cold enough for solid CO2 at normal pressure
+        initialPressure = 1;
       } else if (targetStateToAchieve === 'liquid') {
-        // For liquid CO2 target, start with low pressure gas
         initialTemp = -70; // Cold but not solid
         initialPressure = 1; // Low pressure (won't be liquid)
       } else if (targetStateToAchieve === 'gas') {
-        // For gas target, start with solid
         initialTemp = -100; // Cold enough for solid CO2
         initialPressure = 1;
       }
@@ -199,45 +214,56 @@ const StateChangesChallenge = () => {
       }
     }
     
-    // Set temperature and pressure to initial values
+    // Directly set state values to avoid triggering re-renders too early
     setTemperature(initialTemp);
     setPressure(initialPressure);
     
-    // Update the state to match these conditions
-    updateState(substance, initialTemp, initialPressure);
+    // Ensure the UI reflects these changes before we finish setup
+    setTimeout(() => {
+      // Update the state to match these conditions
+      updateState(substance, initialTemp, initialPressure);
+      
+      // Mark setup as complete after a small delay to ensure state updates
+      setTimeout(() => {
+        isSettingUp.current = false;
+        challengeSetupComplete.current = true;
+      }, 300);
+    }, 100);
   };
 
   // Set up a target state challenge
   const setupTargetChallenge = (substance = selectedSubstance) => {
     const states = ['solid', 'liquid', 'gas'];
-    
+  
     // Ensure we don't get the same state twice in a row
     let randomState;
     do {
       randomState = states[Math.floor(Math.random() * states.length)];
     } while (randomState === lastAchievedState);
+  
+    // Reset the target achieved state
+    setTargetAchieved(false);
     
-    // Special case for CO2 - if trying for liquid CO2 cycle, ensure it's achievable
-    if (substance.id === 'co2' && randomState === 'liquid' && challengeType !== 'cycle') {
-      // Make sure we're not setting up an impossible challenge for standalone CO2 liquid
-      // CO2 can only be liquid under high pressure
-      setFeedback("Hint: CO₂ can only be liquid under high pressure and specific temperatures!");
-    }
-    
+    // Set the target state FIRST
     setTargetState(randomState);
-    setTargetAchieved(false); // Reset target achievement tracker
     
-    // Set up initial conditions that aren't already in the target state
+    // Special case for CO2 - if trying for liquid CO2, ensure it's achievable
+    if (substance.id === 'co2' && randomState === 'liquid' && challengeType !== 'cycle') {
+      setFeedback("Hint: CO₂ can only be liquid under high pressure and specific temperatures!");
+    } else {
+      // Updated feedback message format
+      setFeedback(`Target: Achieve the state: ${randomState}!`);
+    }
+  
+    // THEN call setupInitialConditions AFTER setting the target
     setupInitialConditions(substance, randomState);
-    
-    const challengeNumber = completedChallengesForSubstance + 1;
-    setFeedback(`Challenge ${challengeNumber}/3: Make ${substance.name} a ${substance.states[randomState].name}!`);
   };
 
   // Set up cycle challenge
   const setupCycleChallenge = (substance = selectedSubstance) => {
+    // Reset cycle progress
+    setCycleProgress(0);
     setTargetState('solid'); // Start with solid
-    setCycleProgress(0); // Reset cycle progress
     
     // Set up initial conditions for first phase (solid)
     setupInitialConditions(substance, 'solid');
@@ -247,6 +273,13 @@ const StateChangesChallenge = () => {
 
   // Move to next challenge or substance
   const moveToNextChallenge = () => {
+    isSettingUp.current = true; // Block state changes during transition
+    
+    // Store last achieved state for comparison in next challenge
+    if (targetState) {
+      setLastAchievedState(targetState);
+    }
+    
     const nextChallengeCount = completedChallengesForSubstance + 1;
     
     // Check if we've done all 3 challenges for this substance
@@ -267,12 +300,18 @@ const StateChangesChallenge = () => {
           setChallengeType('cycle');
           setupCycleChallenge();
         }
+        // Release the setup lock after a delay
+        setTimeout(() => {
+          isSettingUp.current = false;
+        }, 500);
       }, 500); // Small delay to ensure state updates
     }
   };
 
   // Move to next substance challenge
   const moveToNextSubstance = () => {
+    isSettingUp.current = true; // Block state changes during transition
+    
     // Add current substance to completed list
     setCompletedSubstances(prev => [...prev, selectedSubstance.id]);
     
@@ -296,6 +335,9 @@ const StateChangesChallenge = () => {
       setScore(0); // Reset score when finishing all challenges
       setFeedback('Congratulations! You\'ve completed challenges for all substances! Returning to explore mode.');
       setTimeout(() => setFeedback(''), 4000);
+      setTimeout(() => {
+        isSettingUp.current = false; // Release the setup lock
+      }, 500);
       return;
     }
     
@@ -317,20 +359,22 @@ const StateChangesChallenge = () => {
       setFeedback(`Next substance: ${nextSubstance.name}!`);
       setTimeout(() => {
         setupTargetChallenge(nextSubstance);
+        setTimeout(() => {
+          isSettingUp.current = false; // Release the setup lock
+        }, 500);
       }, 1500);
     }, 1000);
   };
 
   // Check if challenge goal is met
   const checkChallengeProgress = (newState, substance = selectedSubstance) => {
-    if (!challengeActive) {
-      return; // No challenge to check in explore mode
+    if (!challengeActive || isSettingUp.current) {
+      return; // No challenge to check in explore mode or during setup
     }
     
     if (challengeType === 'target' && newState === targetState && !targetAchieved) {
       // Mark target as achieved to prevent multiple score increments
       setTargetAchieved(true);
-      setLastAchievedState(newState);
       
       // Award points and provide feedback
       setFeedback(`✅ Success! You've changed ${substance.name} to ${substance.states[newState].name}! +10 points`);
@@ -349,20 +393,17 @@ const StateChangesChallenge = () => {
         setFeedback(`✅ ${substance.states.solid.name} created! Now make it a ${substance.states.liquid.name}!`);
         setTargetState('liquid');
         setScore(prevScore => prevScore + 10);
-        setLastAchievedState('solid');
       } 
       else if (newState === 'liquid' && cycleProgress === 1) {
         setCycleProgress(2);
         setFeedback(`✅ ${substance.states.liquid.name} created! Now make it a ${substance.states.gas.name}!`);
         setTargetState('gas');
         setScore(prevScore => prevScore + 10);
-        setLastAchievedState('liquid');
       } 
       else if (newState === 'gas' && cycleProgress === 2) {
         setCycleProgress(3);
         setFeedback(`✅ ${substance.states.gas.name} created! Full cycle completed! +50 points!`);
         setScore(prevScore => prevScore + 50);
-        setLastAchievedState('gas');
         
         // Move to next substance after completing cycle
         setTimeout(() => {
@@ -521,6 +562,7 @@ const StateChangesChallenge = () => {
                 value={temperature}
                 onChange={handleTemperatureChange}
                 className="temperature-slider"
+                disabled={isSettingUp.current} // Disable during setup
               />
             </Box>
             
@@ -536,6 +578,7 @@ const StateChangesChallenge = () => {
                 value={pressure}
                 onChange={handlePressureChange}
                 className="pressure-slider"
+                disabled={isSettingUp.current} // Disable during setup
               />
             </Box>
           </Box>
