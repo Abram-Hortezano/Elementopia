@@ -14,6 +14,7 @@ import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
 import ProfilePage from "./STUDENT/profile-page";
 import ChallengePage from "./components/Student Components/ChallengePage";
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
+import StudentElementMatcher from "./STUDENT/ElementMatcher";
 import StudentStateChanges from "./STUDENT/StudentStateChanges";
 import StudentCardMinigame from "./STUDENT/StudentCardMinigame";
 import ProfilePageMain from "./pages/profile-page";
