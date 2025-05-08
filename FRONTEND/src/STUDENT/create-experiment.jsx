@@ -77,15 +77,6 @@ console.log("It is loaded");
                 />
               </DemoContainer>
             </LocalizationProvider>
-              {/* <button
-                onClick={() => {
-                  const today = new Date()
-                  setDeadline(today)
-                }}
-              >
-                <CalendarIcon size={16} />
-                {deadline ? format(deadline, "PPP") : "Select a date"}
-              </button> */}
             </div>
           </div>
 

@@ -11,6 +11,8 @@ import StudentHomePage from "./STUDENT/StudentHomePage";
 import TeacherRoomPage from "./TEACHER/TeacherRoomPage";
 import Laboratory from "./STUDENT/laboratory";
 import CreateExperimentModal from "./STUDENT/create-experiment";
+import AddStudentModal from "./STUDENT/add-student-modal";
+import StudentProgressModal from "./STUDENT/student-progress-modal";
 
 
 createRoot(document.getElementById("root")).render(
@@ -20,8 +22,10 @@ createRoot(document.getElementById("root")).render(
     {/* <StudentRoomPage /> */}
     {/* <TeacherRoomPage /> */}
     {/* <Laboratory /> */}
+    <StudentProgressModal />
+    {/* <AddStudentModal /> */}
      {/* <StudentHomePage /> */}
-     <CreateExperimentModal />
+     {/* <CreateExperimentModal /> */}
     </BrowserRouter>
     {/* <Buttons /> */}
     {/* <FeatureCard /> */}
