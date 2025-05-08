@@ -7,12 +7,16 @@ import FeatureCard from "./components/featurecard";
 import Login from "./STUDENT/login-card";
 import StudentRoomPage from "./STUDENT/StudentRoomPage";
 import { BrowserRouter } from "react-router-dom";
+import StudentHomePage from "./STUDENT/StudentHomePage";
+import TeacherRoomPage from "./TEACHER/TeacherRoomPage";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     {/* <App /> */}
     <BrowserRouter>
-    <StudentRoomPage />
+    {/* <StudentRoomPage /> */}
+    <TeacherRoomPage />
+     {/* <StudentHomePage /> */}
     </BrowserRouter>
     {/* <Buttons /> */}
     {/* <FeatureCard /> */}

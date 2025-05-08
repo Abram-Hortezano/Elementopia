@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Users, BookOpen, Plus, Search, Beaker, Edit, Trash, Globe, Lock, X } from "lucide-react";
-import CreateLaboratory from "./create-lab";
-import "../assets/css/studentroompage.css";
+import CreateLaboratory from "../STUDENT/create-lab";
+import "../assets/css/teacherroompage.css";
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
 
