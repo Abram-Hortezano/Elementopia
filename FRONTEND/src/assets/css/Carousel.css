@@ -1,4 +1,5 @@
 @import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Orbitron:wght@700&display=swap");
 
 .carousel-container {
   width: 90%;
@@ -9,7 +10,6 @@
   border-bottom: 2px solid rgba(255, 255, 255, 0.3);
   text-align: center;
 }
-
 .carousel-label {
   font-family: "Orbitron", sans-serif;
   color: #00ffcc;
@@ -28,7 +28,6 @@
 .slick-dots li.slick-active button:before {
   color: #ffcc00 !important;
 }
-
 .carousel-slide {
   padding: 10px;
   transition: transform 0.5s ease-in-out;
@@ -37,7 +36,6 @@
 .carousel-slide:hover {
   transform: scale(1.05);
 }
-
 .carousel-slide img {
   width: 100%;
   height: 250px;

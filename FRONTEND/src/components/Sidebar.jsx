@@ -15,12 +15,12 @@ import {
 import { Link, useLocation } from "react-router-dom"; // ✅ Import useLocation
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import home from "../assets/home.png";
-import room from "../assets/room.png";
-import career from "../assets/career.png";
-import discovery from "../assets/discovery.png";
-import sandBox from "../assets/sandBox.png";
-import gameRoom from "../assets/gameRoom.png";
+import home from "../assets/img/home.png";
+import room from "../assets/img/room.png";
+import career from "../assets/img/career.png";
+import discovery from "../assets/img/discovery.png";
+import sandBox from "../assets/img/sandBox.png";
+import gameRoom from "../assets/img/gameRoom.png";
 
 const drawerWidth = 180;
 const closedWidth = 60;

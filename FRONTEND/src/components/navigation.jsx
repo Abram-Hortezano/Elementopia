@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Menu } from "lucide-react";
-import "./navigation.css";
+import "../assets/css/navigation.css";
 import LoginCard from "../STUDENT/login-card";
 import SignupCard from "../STUDENT/register-card";
 

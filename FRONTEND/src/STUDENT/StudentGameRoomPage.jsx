@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { Box, Typography, Button, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import StudentElementMatcher from "./ElementMatcher";
 import StudentStateChanges from "./StudentStateChanges";
 import StudentCardMatching from "./StudentCardMinigame";
+import Assistant from "../components/Student Components/Assistant";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,

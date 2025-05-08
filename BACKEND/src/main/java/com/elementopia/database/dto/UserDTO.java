@@ -12,10 +12,13 @@ public class UserDTO {
     private String firstName;
     private String lastName;
     private String role;
+    private String school;
+    private String bio;
+    private String gradeLevel;
 
     private StudentDTO student;
     private TeacherDTO teacher;
     private List<DiscoveryDTO> discoveries;
     private List<AchievementDTO> achievements;
-
+    private List<ScoreDTO> careerScore;
 }

@@ -2,7 +2,7 @@ import React from "react";
 import "../assets/css/landing-page.css";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
-import animationGif from "../assets/animation-loop.gif";
+import animationGif from "../assets/img/animation-loop.gif";
 import MissionSection from "./MissionSection";
 import Carousel from "./Carousel";
 import Footer from "../components/footer";

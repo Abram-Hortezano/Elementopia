@@ -1,6 +1,6 @@
 import React from "react";
-import "./featurecard.css";
-import logo from "../assets/Logo.svg";
+import "../assets/css/featurecard.css";
+import logo from "../assets/img/Logo.svg";
 
 const FeatureCard = ({ title, description, icon, className, gradient = "purple", children }) => {
   return (
