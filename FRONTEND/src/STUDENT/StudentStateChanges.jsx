@@ -3,7 +3,7 @@ import { Box, Typography, Slider, Button, Select, MenuItem, FormControl, InputLa
 import { styled } from '@mui/material/styles';
 import Navbar from '../components/NavBar';
 import Sidebar from '../components/Sidebar';
-import './StudentStateChanges.css';
+import '../assets/css/StudentStateChanges.css';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
