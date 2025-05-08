@@ -22,12 +22,12 @@ const StudentHomePage = () => {
           <Grid container spacing={2}>
             <Grid item xs={12} md={8}>
               <DailyChallengeCard />
-              <LessonCards />
+              <DiscoveriesCard />
+              <AchievementsCard />
             </Grid>
             <Grid item xs={12} md={4}>
               <UserCard/>
-              <DiscoveriesCard />
-              <AchievementsCard />
+              
             </Grid>
           </Grid>
         )}
