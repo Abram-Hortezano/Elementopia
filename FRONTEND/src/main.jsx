@@ -9,14 +9,19 @@ import StudentRoomPage from "./STUDENT/StudentRoomPage";
 import { BrowserRouter } from "react-router-dom";
 import StudentHomePage from "./STUDENT/StudentHomePage";
 import TeacherRoomPage from "./TEACHER/TeacherRoomPage";
+import Laboratory from "./STUDENT/laboratory";
+import CreateExperimentModal from "./STUDENT/create-experiment";
+
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     {/* <App /> */}
     <BrowserRouter>
     {/* <StudentRoomPage /> */}
-    <TeacherRoomPage />
+    {/* <TeacherRoomPage /> */}
+    {/* <Laboratory /> */}
      {/* <StudentHomePage /> */}
+     <CreateExperimentModal />
     </BrowserRouter>
     {/* <Buttons /> */}
     {/* <FeatureCard /> */}

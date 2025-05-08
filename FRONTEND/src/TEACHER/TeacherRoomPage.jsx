@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Users, BookOpen, Plus, Search, Beaker, Edit, Trash, Globe, Lock, X } from "lucide-react";
+import { Users, BookOpen, Plus, Search, Beaker, Edit, Trash, Globe, Lock, X, Download } from "lucide-react";
 import CreateLaboratory from "../STUDENT/create-lab";
 import "../assets/css/teacherroompage.css";
 import Navbar from '../components/Navbar';
@@ -84,6 +84,28 @@ export default function StudentRoomPage() {
     // Join the laboratory
     // router.push(`/dashboard/laboratory/${labId}`); // Uncomment if using routing
   };
+  //change this into data from backend
+  const mockData = [
+    ["Laboratory", "Student Name", "Email", "Experiments Completed", "Average Score"],
+    ["Chemistry 101 Lab", "John Doe", "john.doe@example.com", "5", "92%"],
+    ["Chemistry 101 Lab", "Jane Smith", "jane.smith@example.com", "4", "88%"],
+    ["Chemistry Club", "Bob Johnson", "bob.johnson@example.com", "3", "76%"],
+    ["My Chemistry Class", "Alice Williams", "alice.williams@example.com", "6", "95%"],
+  ];
+
+    const handleExportStudentData = () => {
+        const csvContent = mockData.map(row => row.join(",")).join("\n");
+        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+        const url = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = url;
+        link.setAttribute("download", "student_data.csv");
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+    };
 
   return (
     <div className="custom-room-container">
@@ -111,6 +133,9 @@ export default function StudentRoomPage() {
           <button onClick={() => setMyLabsModalOpen(true)} className="my-labs-button">
             My Laboratories
           </button>
+            <button onClick={handleExportStudentData} className="export-button">
+                <Download className="button-icon" /> Export Scores
+            </button>
         </div>
       </div>
 
