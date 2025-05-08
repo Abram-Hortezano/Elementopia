@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import CurriculumOverview from "../components/Curriculum Components/CurriculumOverview";
+import BackButton from "../components/BackButton";
 
 const StudentCareerPage = () => {
   const [open, setOpen] = useState(false);
@@ -36,6 +37,10 @@ const StudentCareerPage = () => {
           marginTop: "50px",
         }}
       >
+        {/* <Box sx={{ mb: 2 }}>
+          <BackButton />
+        </Box> */}
+
         <CurriculumOverview />
       </Box>
     </Box>
