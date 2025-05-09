@@ -1,18 +1,18 @@
 import React, { useState, useEffect } from "react";
 import { Card, Typography, Button } from "@mui/material";
-import compoundElements from "../Student Components/compound-elements.json"; 
-import ChemistrySimulation from "../Student Components/ChemistrySimulation"; 
+import compoundElements from "../Student Components/compound-elements.json";
+import ChemistrySimulation from "../Student Components/ChemistrySimulation";
+import { useNavigate } from "react-router-dom";
 
 const ChallengePage = ({ atoms, setAtoms, setMoleculeOutput }) => {
   const [challengeCompound, setChallengeCompound] = useState(null);
   const [isChallengeCompleted, setIsChallengeCompleted] = useState(false);
-
+  const navigate = useNavigate();
 
   const getRandomCompound = () => {
     const randomIndex = Math.floor(Math.random() * compoundElements.length);
     return compoundElements[randomIndex];
   };
-
 
   const checkChallengeCompletion = () => {
     if (!challengeCompound) return;
@@ -21,15 +21,17 @@ const ChallengePage = ({ atoms, setAtoms, setMoleculeOutput }) => {
     const compoundElementsSorted = [...challengeCompound.Elements].sort();
     const currentElementsSorted = [...currentElements].sort();
 
-
-    if (JSON.stringify(compoundElementsSorted) === JSON.stringify(currentElementsSorted)) {
+    if (
+      JSON.stringify(compoundElementsSorted) ===
+      JSON.stringify(currentElementsSorted)
+    ) {
       setIsChallengeCompleted(true);
       setMoleculeOutput(
         `Well done! You’ve created ${challengeCompound.NAME}.\n` +
-        `Symbol: ${challengeCompound.Symbol}\n` +
-        `Description: ${challengeCompound.Description}\n` +
-        `Elements: ${challengeCompound.Elements.join(", ")}\n` +
-        `Uses: ${challengeCompound.Uses.join(", ")}`
+          `Symbol: ${challengeCompound.Symbol}\n` +
+          `Description: ${challengeCompound.Description}\n` +
+          `Elements: ${challengeCompound.Elements.join(", ")}\n` +
+          `Uses: ${challengeCompound.Uses.join(", ")}`
       );
     } else {
       setIsChallengeCompleted(false);
@@ -37,17 +39,15 @@ const ChallengePage = ({ atoms, setAtoms, setMoleculeOutput }) => {
     }
   };
 
-
   useEffect(() => {
     const selectedCompound = getRandomCompound();
     setChallengeCompound(selectedCompound);
   }, []);
 
-
   const handleStartChallenge = () => {
     setIsChallengeCompleted(false);
-    setAtoms([]); 
-    setMoleculeOutput(""); 
+    setAtoms([]);
+    setMoleculeOutput("");
   };
 
   return (
@@ -78,6 +78,26 @@ const ChallengePage = ({ atoms, setAtoms, setMoleculeOutput }) => {
       >
         Daily Challenge
       </Typography>
+      <Button
+        variant="outlined"
+        sx={{
+          mt: 2,
+          borderColor: "#ff9800",
+          color: "#ff9800",
+          fontWeight: "bold",
+          fontSize: "1rem",
+          borderRadius: "5px",
+          textTransform: "uppercase",
+          transition: "all 0.3s",
+          "&:hover": {
+            backgroundColor: "#ff9800",
+            color: "#1e1e1e",
+          },
+        }}
+        onClick={() => navigate("/student-home-page")}
+      >
+        Go to Student Home
+      </Button>
 
       {challengeCompound && !isChallengeCompleted ? (
         <>
@@ -90,7 +110,7 @@ const ChallengePage = ({ atoms, setAtoms, setMoleculeOutput }) => {
             atoms={atoms}
             setAtoms={setAtoms}
             setMoleculeOutput={setMoleculeOutput}
-          /> 
+          />
         </>
       ) : isChallengeCompleted ? (
         <>

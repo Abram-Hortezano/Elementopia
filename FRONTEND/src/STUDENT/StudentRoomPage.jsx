@@ -3,6 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
+import CustomRoom from "./custom-room";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
@@ -15,7 +16,15 @@ const StudentRoomPage = () => {
   const handleDrawerClose = () => setOpen(false);
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box
+      sx={{
+        display: "flex",
+        bgcolor: "#121212",
+        color: "white",
+        minHeight: "100vh",
+        width: "100vw",
+      }}
+    >
       <Navbar open={open} />
       <Sidebar
         open={open}
@@ -27,13 +36,12 @@ const StudentRoomPage = () => {
         sx={{
           flexGrow: 1,
           p: 3,
-          transition: "margin 0.3s ease",
-          marginLeft: open ? "180px" : "60px",
-          maxWidth: "100%;",
+          marginLeft: open ? "20px" : "10px",
+          width: "100%",
+          marginTop: "50px",
         }}
       >
-        <DrawerHeader />
-        <Typography sx={{ marginBottom: 2 }}>This is the Room Page</Typography>
+        <CustomRoom />
       </Box>
     </Box>
   );
