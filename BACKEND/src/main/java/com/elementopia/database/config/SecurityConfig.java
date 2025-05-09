@@ -54,7 +54,7 @@ public class SecurityConfig {
                 )
                 // Permit public endpoints for registration and login only
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/user/register", "/api/user/login").permitAll()
+                        .requestMatchers("/", "/api/user/login", "/api/user/register", "/oauth2/**", "/login/oauth2/**").permitAll()
 //                        .requestMatchers("/api/lessons/**").permitAll()
                         .anyRequest().authenticated()
                 )
