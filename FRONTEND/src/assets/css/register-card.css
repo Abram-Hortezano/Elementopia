@@ -17,6 +17,25 @@ input {
   height: 3rem;
   border-radius: 10px;
 }
+option{
+  /* background-color: red; */
+  font-weight: bold;
+}
+.password-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.toggle-password-btn {
+  position: absolute;
+  right: 1rem; 
+  cursor: pointer;
+  color: #6b7280;
+  background: none;
+  border: none;
+  padding: 0;
+}
 select {
   height: 3rem;
   border-radius: 10px;

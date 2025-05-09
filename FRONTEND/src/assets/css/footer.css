@@ -1,0 +1,111 @@
+.footer-container {
+  width: 100%;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.9);
+  color: white;
+  position: absolute;
+  top: 100vw;
+  /* border: 1px solid white; */
+  left: 0;
+  height: 10%;
+}
+
+.footer {
+  position: relative;
+  bottom: 0;
+  width: 100%;
+  color: white;
+  text-align: center;
+  padding: 20px;
+  /* border: 1px solid red; */
+  display: flex;
+  justify-content: space-between;
+  position: relative; 
+  bottom: 0;
+  left: 0;
+  height: auto;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 130px;
+}
+
+
+.footer {
+  width: 100%;
+  max-width: 1200px; 
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  text-align: center;
+  padding: 15px 20px;
+  flex-wrap: wrap;
+}
+
+.footer-logo {
+  background: linear-gradient(to right, #714dff, #9c83ff, #e151ff, #fff759);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-size: 25px;
+  font-weight: 700;
+  display: inline-block;
+  /* padding-left: 10px;  */
+}
+.copyright-text {
+  display: inline-block;
+  font-size: 15px;
+  color: #767676;
+  margin-left: 100px;
+}
+.footer-links {
+  display: flex;
+  gap: 1rem; /* Space between links */
+}
+
+.footer-links a {
+  color: #767676;
+  font-size: 15px;
+  text-decoration: none;
+}
+
+.footer-links a:hover {
+  color: white; /* Optional: Change color on hover */
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+
+.copyright-text {
+  font-size: 0.9rem;
+  color: #bbb;
+  text-align: center;
+}
+
+
+.footer-links {
+  display: flex;
+  gap: 1rem; 
+}
+
+.footer-links a {
+  color: #bbb;
+  font-size: 0.9rem;
+  text-decoration: none;
+  transition: color 0.3s ease-in-out;
+}
+
+.footer-links a:hover {
+  color: white; 
+}
+
+@media (max-width: 768px) {
+  .footer {
+      flex-direction: column;
+      text-align: center;
+  }
+
+  .footer-links {
+      margin-top: 10px;
+  }
+}

@@ -1,5 +1,5 @@
 import React from 'react';
-import './buttons.css'; 
+import '../assets/css/buttons.css'; 
 
 export default function buttons() {
   console.log("buttons component rendered!");

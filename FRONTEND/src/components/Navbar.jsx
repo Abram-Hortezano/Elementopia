@@ -25,8 +25,8 @@ const Navbar = ({ open }) => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("user"); // 🧹 Clear session
-    navigate("/login"); // 🔀 Redirect to login page
+    sessionStorage.removeItem("user"); 
+    navigate("/"); 
   };
 
   return (
@@ -71,10 +71,9 @@ const Navbar = ({ open }) => {
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
         >
-          <MenuItem onClick={() => navigate("/profile")}>Profile</MenuItem>
+          <MenuItem onClick={() => navigate("/student/profile")}>Profile</MenuItem>
           <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
-          <MenuItem onClick={handleLogout}>Logout</MenuItem>{" "}
-          {/* ✨ Updated logout */}
+          <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </Toolbar>
     </AppBar>

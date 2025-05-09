@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import "../assets/css/MissionSection.css"; 
 import "../assets/css/MissionSection.css";
 
 const MissionSection = () => {

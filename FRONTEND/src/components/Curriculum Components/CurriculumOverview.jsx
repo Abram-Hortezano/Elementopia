@@ -248,6 +248,7 @@ export default function CurriculumOverview() {
       {/* Progress bar at the top */}
       <Card
   sx={{
+    color: "#f4f4f4",
     bgcolor: "#1e1e2e",
     borderRadius: 3,
     padding: 2,

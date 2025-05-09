@@ -1,9 +1,12 @@
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
+import { Box, Typography, Button, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import StudentElementMatcher from "./StudentElementMatcher";
+import StudentElementMatcher from "./ElementMatcher";
+import StudentStateChanges from "./StudentStateChanges";
+import StudentCardMatching from "./StudentCardMinigame";
+import Assistant from "../components/Student Components/Assistant";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
@@ -11,9 +14,23 @@ const DrawerHeader = styled("div")(({ theme }) => ({
 
 const StudentGameRoomPage = () => {
   const [open, setOpen] = useState(false);
+  const [selectedGame, setSelectedGame] = useState("game1");
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
+
+  const renderGame = () => {
+    switch (selectedGame) {
+      case "game1":
+        return <StudentElementMatcher />;
+      case "game2":
+        return <StudentStateChanges />;
+      case "game3":
+        return <StudentCardMatching />;
+      default:
+        return null;
+    }
+  };
 
   return (
     <Box
@@ -40,7 +57,36 @@ const StudentGameRoomPage = () => {
           width: "100%",
         }}
       >
-        <StudentElementMatcher />
+        {/* Fix: Push content below navbar */}
+        <DrawerHeader />
+
+        {/* Fix: Buttons for switching games */}
+        <Stack direction="row" spacing={2} mb={2}>
+          <Button
+            variant={selectedGame === "game1" ? "contained" : "outlined"}
+            color="primary"
+            onClick={() => setSelectedGame("game1")}
+          >
+            Element Matcher
+          </Button>
+          <Button
+            variant={selectedGame === "game2" ? "contained" : "outlined"}
+            color="secondary"
+            onClick={() => setSelectedGame("game2")}
+          >
+            State Changes
+          </Button>
+          <Button
+            variant={selectedGame === "game3" ? "contained" : "outlined"}
+            color="success"
+            onClick={() => setSelectedGame("game3")}
+          >
+            Card Matching
+          </Button>
+        </Stack>
+
+        {/* Show selected game */}
+        {renderGame()}
       </Box>
     </Box>
   );
