@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Plus, User, Copy, Check } from "lucide-react";
-import '../assets/css/create-Lab.css';  // Import the CSS file
+import "../assets/css/create-lab.css"; // Import the CSS file
 
 export default function CreateLaboratory({ onClose }) {
   const [laboratoryName, setLaboratoryName] = useState("");
@@ -19,13 +19,19 @@ export default function CreateLaboratory({ onClose }) {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let result = "";
     for (let i = 0; i < 6; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
     }
     setCode(result);
   };
 
   const addStudent = () => {
-    if (studentEmail && !students.includes(studentEmail) && validateEmail(studentEmail)) {
+    if (
+      studentEmail &&
+      !students.includes(studentEmail) &&
+      validateEmail(studentEmail)
+    ) {
       setStudents([...students, studentEmail]);
       setStudentEmail("");
       setEmailError(""); // Reset email error
@@ -89,7 +95,8 @@ export default function CreateLaboratory({ onClose }) {
             setLabNameError(""); // Reset error when the user starts typing
           }}
         />
-        {labNameError && <p className="error-message">{labNameError}</p>} {/* Display lab name error */}
+        {labNameError && <p className="error-message">{labNameError}</p>}{" "}
+        {/* Display lab name error */}
       </div>
 
       <div className="input-group">
@@ -117,7 +124,8 @@ export default function CreateLaboratory({ onClose }) {
             <Plus size={15} /> Add
           </button>
         </div>
-        {emailError && <p className="error-message">{emailError}</p>} {/* Display email error */}
+        {emailError && <p className="error-message">{emailError}</p>}{" "}
+        {/* Display email error */}
       </div>
 
       {students.length > 0 && (
