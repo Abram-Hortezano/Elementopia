@@ -26,7 +26,6 @@ export default function Login({ onLoginSuccess }) {
         username.toLowerCase(),
         password
       );
-      console.log("data: ", response);
       if (response && response.token && response.role) {
         setMessage("Login successful! Redirecting...");
         sessionStorage.setItem(
