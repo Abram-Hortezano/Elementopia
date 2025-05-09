@@ -28,84 +28,129 @@ export default function App() {
         <Route path="/" element={<LandingPage />} />
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/career" element={<div>Career Page (Coming Soon)</div>} />
-        <Route path="/contact-us" element={<div>Contact Us Page (Coming Soon)</div>} />
+        <Route
+          path="/contact-us"
+          element={<div>Contact Us Page (Coming Soon)</div>}
+        />
         <Route path="/login" element={<LoginCard />} />
         <Route path="/sign-up" element={<RegisterCard />} />
         <Route path="/profile" element={<ProfilePageMain />} />
 
         {/* Student Routes - Protected */}
-        <Route path="/student-home-page" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <StudentHomePage />
-          </PrivateRoute>
-        } />
-        <Route path="/student/profile" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <ProfilePage />
-          </PrivateRoute>
-        } />
-        <Route path="/student/room" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <StudentRoomPage />
-          </PrivateRoute>
-        } />
-        <Route path="/student/student-career-page" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <StudentCareerPage />
-          </PrivateRoute>
-        } />
-        <Route path="/student/discovery" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <StudentDiscoveryPage />
-          </PrivateRoute>
-        } />
-        <Route path="/student/game-room" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <StudentGameRoomPage />
-          </PrivateRoute>
-        } />
-        <Route path="/student/sandbox" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <StudentSandboxPage />
-          </PrivateRoute>
-        } />
-        <Route path="/student/daily-challenge" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <ChallengePage />
-          </PrivateRoute>
-        } />
-        <Route path="/student/game1" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <StudentElementMatcher />
-          </PrivateRoute>
-        } />
-        <Route path="/student/game2" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <StudentStateChanges />
-          </PrivateRoute>
-        } />
-        <Route path="/student/game3" element={
-          <PrivateRoute allowedRoles={["STUDENT"]}>
-            <StudentCardMinigame />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/student-home-page"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <StudentHomePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student/profile"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <ProfilePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student/room"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <StudentRoomPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student/student-career-page"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <StudentCareerPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student/discovery"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <StudentDiscoveryPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student/game-room"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <StudentGameRoomPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student/sandbox"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <StudentSandboxPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student/daily-challenge"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <ChallengePage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student/game1"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <StudentElementMatcher />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student/game2"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <StudentStateChanges />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/student/game3"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <StudentCardMinigame />
+            </PrivateRoute>
+          }
+        />
 
         {/* Teacher Routes - Protected */}
-        <Route path="/teacher-home-page" element={
-          <PrivateRoute allowedRoles={["TEACHER"]}>
-            <PageLayout />
-          </PrivateRoute>
-        } />
-        <Route path="/teacher/analytics" element={
-          <PrivateRoute allowedRoles={["TEACHER"]}>
-            <TeacherAnalyticsPage />
-          </PrivateRoute>
-        } />
-        <Route path="/teacher/career-page" element={
-          <PrivateRoute allowedRoles={["TEACHER"]}>
-            <TeacherCareerPage />
-          </PrivateRoute>
-        } />
+        <Route
+          path="/teacher-home-page"
+          element={
+            <PrivateRoute allowedRoles={["TEACHER"]}>
+              <PageLayout />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/teacher/analytics"
+          element={
+            <PrivateRoute allowedRoles={["TEACHER"]}>
+              <TeacherAnalyticsPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/teacher/career-page"
+          element={
+            <PrivateRoute allowedRoles={["TEACHER"]}>
+              <TeacherCareerPage />
+            </PrivateRoute>
+          }
+        />
       </Routes>
     </Router>
   );

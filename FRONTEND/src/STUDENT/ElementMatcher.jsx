@@ -1,12 +1,20 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Modal, Paper, Stack, Chip } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import Navbar from '../components/NavBar';
-import Sidebar from '../components/Sidebar';
-import AchievementService from '../services/AchievementService';
-import './ElementMatcher.css';
+import React, { useState, useEffect } from "react";
+import {
+  Box,
+  Typography,
+  Button,
+  Modal,
+  Paper,
+  Stack,
+  Chip,
+} from "@mui/material";
+import { styled } from "@mui/material/styles";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
+import AchievementService from "../services/AchievementService";
+import "./ElementMatcher.css";
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
@@ -47,53 +55,51 @@ const elementSets = {
     { id: 28, symbol: "Cm", name: "Curium", matched: false },
     { id: 29, symbol: "Mn", name: "Manganese", matched: false },
     { id: 30, symbol: "Mg", name: "Magnesium", matched: false },
-  ]
+  ],
 };
 
 const difficultyLabels = {
   easy: { label: "Easy", color: "#4CAF50" },
   medium: { label: "Medium", color: "#FF9800" },
-  hard: { label: "Hard", color: "#F44336" }
+  hard: { label: "Hard", color: "#F44336" },
 };
 
 // unlockAchievement function using AchievementService
-  const unlockAchievement = async (codeName) => {
-    try {
-      const user = JSON.parse(sessionStorage.getItem("user"));
-      if (!user || !user.id) {
-        console.error('User not found or missing ID');
-        return;
-      }
-
-      await AchievementService.unlockAchievementByCode(user.id, codeName);
-      console.log(`🏆 Achievement unlocked: ${codeName}`);
-
-      // Set achievement details in state
-      setAchievementName(getAchievementTitle(codeName));
-      setAchievementUnlocked(true);
-
-      // Hide notification after 5 seconds
-      setTimeout(() => {
-        setAchievementUnlocked(false);
-      }, 5000);
-
-    } catch (error) {
-      console.error('Error unlocking achievement:', error);
+const unlockAchievement = async (codeName) => {
+  try {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    if (!user || !user.id) {
+      console.error("User not found or missing ID");
+      return;
     }
-  };
 
+    await AchievementService.unlockAchievementByCode(user.id, codeName);
+    console.log(`🏆 Achievement unlocked: ${codeName}`);
+
+    // Set achievement details in state
+    setAchievementName(getAchievementTitle(codeName));
+    setAchievementUnlocked(true);
+
+    // Hide notification after 5 seconds
+    setTimeout(() => {
+      setAchievementUnlocked(false);
+    }, 5000);
+  } catch (error) {
+    console.error("Error unlocking achievement:", error);
+  }
+};
 
 // Helper function to get achievement title from code name
 const getAchievementTitle = (codeName) => {
   const achievementMap = {
-    'MEMORY_NOVICE': 'Memory Novice',
-    'MEMORY_INTERMEDIATE': 'Memory Intermediate',
-    'MEMORY_MASTER': 'Memory Master',
-    'QUICK_MATCHMAKER': 'Quick Matchmaker',
-    'SCORE_HUNTER': 'Score Hunter',
-    'MASTER_MATCHER': 'Master Matcher'
+    MEMORY_NOVICE: "Memory Novice",
+    MEMORY_INTERMEDIATE: "Memory Intermediate",
+    MEMORY_MASTER: "Memory Master",
+    QUICK_MATCHMAKER: "Quick Matchmaker",
+    SCORE_HUNTER: "Score Hunter",
+    MASTER_MATCHER: "Master Matcher",
   };
-  
+
   return achievementMap[codeName] || codeName;
 };
 
@@ -117,7 +123,7 @@ const StudentElementMatcher = () => {
   const [completedDifficulties, setCompletedDifficulties] = useState({
     easy: false,
     medium: false,
-    hard: false
+    hard: false,
   });
 
   // Get user ID on component mount
@@ -133,13 +139,18 @@ const StudentElementMatcher = () => {
 
   const shuffleCards = (difficultyLevel = difficulty) => {
     const elementPairs = elementSets[difficultyLevel];
-    const cardPairs = [...elementPairs].flatMap(element => ([ 
-      { id: element.id, type: 'symbol', content: element.symbol, matched: false }, 
-      { id: element.id, type: 'name', content: element.name, matched: false }
-    ]));
+    const cardPairs = [...elementPairs].flatMap((element) => [
+      {
+        id: element.id,
+        type: "symbol",
+        content: element.symbol,
+        matched: false,
+      },
+      { id: element.id, type: "name", content: element.name, matched: false },
+    ]);
     const shuffled = [...cardPairs]
       .sort(() => Math.random() - 0.5)
-      .map(card => ({ ...card, cardId: Math.random() }));
+      .map((card) => ({ ...card, cardId: Math.random() }));
 
     setCards(shuffled);
     setTurns(0);
@@ -164,9 +175,12 @@ const StudentElementMatcher = () => {
     if (firstChoice && secondChoice) {
       setDisabled(true);
 
-      if (firstChoice.id === secondChoice.id && firstChoice.type !== secondChoice.type) {
-        setCards(prevCards => {
-          return prevCards.map(card => {
+      if (
+        firstChoice.id === secondChoice.id &&
+        firstChoice.type !== secondChoice.type
+      ) {
+        setCards((prevCards) => {
+          return prevCards.map((card) => {
             if (card.id === firstChoice.id) {
               return { ...card, matched: true };
             } else {
@@ -174,7 +188,7 @@ const StudentElementMatcher = () => {
             }
           });
         });
-        setScore(prevScore => prevScore + 1);
+        setScore((prevScore) => prevScore + 1);
         setFeedback("✅ Match found!");
         resetTurn();
       } else {
@@ -186,18 +200,19 @@ const StudentElementMatcher = () => {
 
   // In the useEffect that checks for game completion
   useEffect(() => {
-    if (gameOver) return; 
+    if (gameOver) return;
 
-    if (cards.length > 0 && cards.every(card => card.matched)) {
-      const levelScore = score * (difficulty === "easy" ? 1 : difficulty === "medium" ? 2 : 3);
+    if (cards.length > 0 && cards.every((card) => card.matched)) {
+      const levelScore =
+        score * (difficulty === "easy" ? 1 : difficulty === "medium" ? 2 : 3);
       const newTotalScore = totalScore + levelScore;
       setTotalScore(newTotalScore);
       setGameOver(true);
-      
+
       // Mark current difficulty as completed
-      setCompletedDifficulties(prev => ({
+      setCompletedDifficulties((prev) => ({
         ...prev,
-        [difficulty]: true
+        [difficulty]: true,
       }));
 
       // Only unlock achievements if we have a valid userId
@@ -205,7 +220,7 @@ const StudentElementMatcher = () => {
         // Game-specific achievements based on difficulty level completed
         if (difficulty === "easy") {
           unlockAchievement("MEMORY_NOVICE");
-          
+
           // Check for Quick Matchmaker achievement
           if (turns <= 20) {
             unlockAchievement("QUICK_MATCHMAKER");
@@ -214,13 +229,13 @@ const StudentElementMatcher = () => {
           unlockAchievement("MEMORY_INTERMEDIATE");
         } else if (difficulty === "hard") {
           unlockAchievement("MEMORY_MASTER");
-          
+
           // Check for Master Matcher achievement (completed all three levels)
           if (completedDifficulties.easy && completedDifficulties.medium) {
             unlockAchievement("MASTER_MATCHER");
           }
         }
-        
+
         // Check for Score Hunter achievement
         if (newTotalScore >= 100) {
           unlockAchievement("SCORE_HUNTER");
@@ -235,12 +250,21 @@ const StudentElementMatcher = () => {
         setTimeout(() => setModalOpen(true), 1000);
       }
     }
-  }, [cards, difficulty, score, userId, turns, totalScore, completedDifficulties, gameOver]);
+  }, [
+    cards,
+    difficulty,
+    score,
+    userId,
+    turns,
+    totalScore,
+    completedDifficulties,
+    gameOver,
+  ]);
 
   const resetTurn = () => {
     setFirstChoice(null);
     setSecondChoice(null);
-    setTurns(prevTurns => prevTurns + 1);
+    setTurns((prevTurns) => prevTurns + 1);
     setDisabled(false);
     setTimeout(() => {
       setFeedback("");
@@ -267,16 +291,25 @@ const StudentElementMatcher = () => {
     setCompletedDifficulties({
       easy: false,
       medium: false,
-      hard: false
+      hard: false,
     });
     shuffleCards("easy");
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <Navbar open={open} />
-      <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
-      <Box component="main" className={`main-container ${open ? 'main-container-open' : 'main-container-closed'}`}>
+      <Sidebar
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
+      />
+      <Box
+        component="main"
+        className={`main-container ${
+          open ? "main-container-open" : "main-container-closed"
+        }`}
+      >
         <DrawerHeader />
 
         {/* Achievement Notification */}
@@ -289,7 +322,7 @@ const StudentElementMatcher = () => {
             </div>
           </div>
         )}
-        
+
         <Box className="game-container">
           <Box className="header-section">
             <Box>
@@ -300,9 +333,9 @@ const StudentElementMatcher = () => {
                 label={difficultyLabels[difficulty].label}
                 sx={{
                   backgroundColor: difficultyLabels[difficulty].color,
-                  color: 'white',
-                  fontWeight: 'bold',
-                  mt: 1
+                  color: "white",
+                  fontWeight: "bold",
+                  mt: 1,
                 }}
               />
             </Box>
@@ -321,9 +354,12 @@ const StudentElementMatcher = () => {
 
           <Box className="instruction-panel">
             <Typography variant="body1">
-              Match element symbols with their names. Click on cards to flip them and find matching pairs!
-              {difficulty === "medium" && " This level has more elements to match."}
-              {difficulty === "hard" && " Warning: This level contains elements with similar symbols and names!"}
+              Match element symbols with their names. Click on cards to flip
+              them and find matching pairs!
+              {difficulty === "medium" &&
+                " This level has more elements to match."}
+              {difficulty === "hard" &&
+                " Warning: This level contains elements with similar symbols and names!"}
             </Typography>
           </Box>
 
@@ -333,15 +369,27 @@ const StudentElementMatcher = () => {
             </Typography>
           )}
 
-          <Box className={`card-grid ${difficulty === "hard" ? "card-grid-hard" : ""}`}>
-            {cards.map(card => (
+          <Box
+            className={`card-grid ${
+              difficulty === "hard" ? "card-grid-hard" : ""
+            }`}
+          >
+            {cards.map((card) => (
               <Box
                 key={card.cardId}
                 className={`memory-card ${
-                  card.matched ? 'matched' :
-                  card === firstChoice || card === secondChoice ? 'flipped' : ''
+                  card.matched
+                    ? "matched"
+                    : card === firstChoice || card === secondChoice
+                    ? "flipped"
+                    : ""
                 }`}
-                onClick={() => !card.matched && card !== firstChoice && card !== secondChoice && handleChoice(card)}
+                onClick={() =>
+                  !card.matched &&
+                  card !== firstChoice &&
+                  card !== secondChoice &&
+                  handleChoice(card)
+                }
               >
                 <Box className="card-inner">
                   <Box className="card-front">
@@ -354,7 +402,7 @@ const StudentElementMatcher = () => {
                       {card.content}
                     </Typography>
                     <Typography variant="caption" className="card-type">
-                      {card.type === 'symbol' ? 'Symbol' : 'Name'}
+                      {card.type === "symbol" ? "Symbol" : "Name"}
                     </Typography>
                   </Box>
                 </Box>
@@ -362,13 +410,27 @@ const StudentElementMatcher = () => {
             ))}
           </Box>
 
-          <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 2 }}>
-            <Button variant="contained" onClick={() => shuffleCards(difficulty)} className="new-game-btn" disabled={disabled && !gameOver}>
+          <Stack
+            direction="row"
+            spacing={2}
+            justifyContent="center"
+            sx={{ mt: 2 }}
+          >
+            <Button
+              variant="contained"
+              onClick={() => shuffleCards(difficulty)}
+              className="new-game-btn"
+              disabled={disabled && !gameOver}
+            >
               Restart Level
             </Button>
 
             {gameComplete && (
-              <Button variant="contained" onClick={resetGame} className="new-game-btn">
+              <Button
+                variant="contained"
+                onClick={resetGame}
+                className="new-game-btn"
+              >
                 Play Again
               </Button>
             )}
@@ -378,25 +440,38 @@ const StudentElementMatcher = () => {
 
       <Modal open={modalOpen} aria-labelledby="level-complete-modal">
         <Paper className="level-modal">
-          <Typography variant="h5" sx={{ mb: 2, color: "#8a4bff", fontWeight: "bold" }}>
+          <Typography
+            variant="h5"
+            sx={{ mb: 2, color: "#8a4bff", fontWeight: "bold" }}
+          >
             Level Complete!
           </Typography>
           <Typography variant="body1" sx={{ mb: 3 }}>
-            Congratulations! You've completed the {difficultyLabels[difficulty].label} level with {score} matches in {turns} turns.
+            Congratulations! You've completed the{" "}
+            {difficultyLabels[difficulty].label} level with {score} matches in{" "}
+            {turns} turns.
           </Typography>
           <Typography variant="body1" sx={{ mb: 3, fontWeight: "bold" }}>
             Your current score: {totalScore} points
           </Typography>
           <Typography variant="body1" sx={{ mb: 3 }}>
-            Would you like to proceed to the next level or save your current score?
+            Would you like to proceed to the next level or save your current
+            score?
           </Typography>
           <Stack direction="row" spacing={2} justifyContent="center">
             <Button
               variant="contained"
               onClick={handleNextLevel}
               sx={{
-                backgroundColor: difficultyLabels[difficulty === "easy" ? "medium" : "hard"].color,
-                '&:hover': { backgroundColor: difficultyLabels[difficulty === "easy" ? "medium" : "hard"].color, opacity: 0.9 }
+                backgroundColor:
+                  difficultyLabels[difficulty === "easy" ? "medium" : "hard"]
+                    .color,
+                "&:hover": {
+                  backgroundColor:
+                    difficultyLabels[difficulty === "easy" ? "medium" : "hard"]
+                      .color,
+                  opacity: 0.9,
+                },
               }}
             >
               Next Level
