@@ -3,8 +3,8 @@ import "../assets/css/login-card.css";
 import FeatureCard from "../components/featurecard";
 import UserService from "../services/UserService";
 import { useNavigate } from "react-router-dom";
-import googleLogo from '../assets/google_Logo.png';
-import { Eye, EyeOff } from "lucide-react"
+import googleLogo from "../assets/google_Logo.png";
+import { Eye, EyeOff } from "lucide-react";
 
 export default function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
@@ -15,25 +15,31 @@ export default function Login({ onLoginSuccess }) {
 
   const handleLogin = async () => {
     setMessage("");
-  
+
     if (!username.trim() || !password.trim()) {
       setMessage("Username and password are required!");
       return;
     }
-  
+
     try {
-      const response = await UserService.loginUser(username.toLowerCase(), password);
-  
+      const response = await UserService.loginUser(
+        username.toLowerCase(),
+        password
+      );
+      console.log("data: ", response);
       if (response && response.token && response.role) {
         setMessage("Login successful! Redirecting...");
-        sessionStorage.setItem("user", JSON.stringify({
-          token: response.token,
-          role: response.role,
-        }));
-  
+        sessionStorage.setItem(
+          "user",
+          JSON.stringify({
+            token: response.token,
+            role: response.role,
+          })
+        );
+
         setTimeout(() => {
           if (onLoginSuccess) onLoginSuccess();
-  
+
           // Role-based redirect
           if (response.role === "STUDENT") {
             navigate("/student-home-page");
@@ -56,7 +62,7 @@ export default function Login({ onLoginSuccess }) {
     <div className="login-container">
       <FeatureCard className="login" description="Sign In" gradient="mixed">
         <input
-          type= "text"
+          type="text"
           placeholder="Username"
           className="input-field username"
           value={username}
@@ -70,12 +76,12 @@ export default function Login({ onLoginSuccess }) {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-            <span
-              onClick={() => setShowPassword(!showPassword)}
-              className="password-toggle"
-            >
-              {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-            </span>
+          <span
+            onClick={() => setShowPassword(!showPassword)}
+            className="password-toggle"
+          >
+            {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
+          </span>
         </div>
 
         <button className="input-field login-button" onClick={handleLogin}>
@@ -83,7 +89,8 @@ export default function Login({ onLoginSuccess }) {
         </button>
         <button className="google-login">
           <img className="logo-img" src={googleLogo} alt="My Image" />
-            Login with Google</button>
+          Login with Google
+        </button>
         {message && <p className="status-message">{message}</p>}
         <p className="signup-msg">
           Don’t have an account?{" "}
