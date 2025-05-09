@@ -1,4 +1,0 @@
-[build]
-  base = "FRONTEND"
-  publish = "dist"
-  command = "npm install --legacy-peer-deps && npm run build"
