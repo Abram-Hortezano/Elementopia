@@ -36,11 +36,11 @@ export default function App() {
             </ProtectedRoute>
           }
         />
-        <Route path="/student-home-page/room" element={<StudentRoomPage />} />
-        <Route path="/student-home-page/student-career-page" element={<StudentCareerPage />} />
-        <Route path="/student-home-page/discovery" element={<StudentDiscoveryPage />} />
-        <Route path="/student-home-page/game-room" element={<StudentGameRoomPage />} />
-        <Route path="/student-home-page/sandbox" element={<StudentSandboxPage />} />
+        <Route path="/student/room" element={<StudentRoomPage />} />
+        <Route path="/student/student-career-page" element={<StudentCareerPage />} />
+        <Route path="/student/discovery" element={<StudentDiscoveryPage />} />
+        <Route path="/student/game-room" element={<StudentGameRoomPage />} />
+        <Route path="/student/sandbox" element={<StudentSandboxPage />} />
 
         {/* Teacher Route */}
         <Route path="/teacher-home-page" element={<PageLayout />} />
