@@ -14,6 +14,7 @@ import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
 import ProfilePage from "./STUDENT/profile-page";
 import ChallengePage from "./components/Student Components/ChallengePage";
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
+import ProtectedRoute from "./components/ProtectedRoute"; 
 
 export default function App() {
   return (
@@ -27,14 +28,19 @@ export default function App() {
         <Route path="/sign-up" element={<RegisterCard />} />
 
         {/* Student Route */}
-        <Route path="/student-home-page" element={<StudentHomePage />} />
-        <Route path="/student/profile" element={<ProfilePage />} />
-        <Route path="/student/room" element={<StudentRoomPage />} />
-        <Route path="/student/student-career-page" element={<StudentCareerPage />} />
-        <Route path="/student/discovery" element={<StudentDiscoveryPage />} />
-        <Route path="/student/game-room" element={<StudentGameRoomPage />} />
-        <Route path="/student/sandbox" element={<StudentSandboxPage />} />
-        <Route path="/student/daily-challenge" element={<ChallengePage />} />
+        <Route
+          path="/student-home-page"
+          element={
+            <ProtectedRoute>
+              <StudentHomePage />
+            </ProtectedRoute>
+          }
+        />
+        <Route path="/student-home-page/room" element={<StudentRoomPage />} />
+        <Route path="/student-home-page/student-career-page" element={<StudentCareerPage />} />
+        <Route path="/student-home-page/discovery" element={<StudentDiscoveryPage />} />
+        <Route path="/student-home-page/game-room" element={<StudentGameRoomPage />} />
+        <Route path="/student-home-page/sandbox" element={<StudentSandboxPage />} />
 
         {/* Teacher Route */}
         <Route path="/teacher-home-page" element={<PageLayout />} />
