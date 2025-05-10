@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import CurriculumBuilder from "../components/Teacher Component/CurriculumBuilder";
 
@@ -21,13 +21,24 @@ const TeacherCareerPage = () => {
       <Navbar open={open} />
 
       {/* Sidebar with control props */}
-      <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
+      <Sidebar
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
+      />
 
       {/* Main Content Area */}
-       <Box component="main" sx={{ flexGrow: 1, p: 3, marginLeft: open ? "20px" : "10px", width: "100%", marginTop: "50px" }}>
-       
-        <CurriculumBuilder/>
-       
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          marginLeft: open ? "20px" : "10px",
+          width: "100%",
+          marginTop: "50px",
+        }}
+      >
+        <CurriculumBuilder />
       </Box>
     </Box>
   );

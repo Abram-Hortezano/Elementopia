@@ -15,33 +15,40 @@ export default function Login({ onLoginSuccess }) {
 
   const handleLogin = async () => {
     setMessage("");
-
+  
     if (!username.trim() || !password.trim()) {
       setMessage("Username and password are required!");
       return;
     }
-
+  
     try {
-      const response = await UserService.loginUser(
-        username.toLowerCase(),
-        password
-      );
-
-      if (response) {
+      const response = await UserService.loginUser(username.toLowerCase(), password);
+  
+      if (response && response.token && response.role) {
         setMessage("Login successful! Redirecting...");
-
-        // Save user session (tungod sa Spring Security :3)
-        sessionStorage.setItem("user", JSON.stringify(response));
-
+        sessionStorage.setItem("user", JSON.stringify({
+          token: response.token,
+          role: response.role,
+        }));
+  
         setTimeout(() => {
-          onLoginSuccess && onLoginSuccess();
-          navigate("/student-home-page");
+          if (onLoginSuccess) onLoginSuccess();
+  
+          // Role-based redirect
+          if (response.role === "STUDENT") {
+            navigate("/student-home-page");
+          } else if (response.role === "TEACHER") {
+            navigate("/teacher-home-page");
+          } else {
+            setMessage("Unknown role. Cannot redirect.");
+          }
         }, 1500);
       } else {
-        setMessage("Invalid username or password.");
+        setMessage(response.message || "Invalid username or password.");
       }
     } catch (error) {
-      setMessage("Login failed: " + (error.response?.data || error.message));
+      console.error("Login error:", error);
+      setMessage("Login failed. Please try again.");
     }
   };
 

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import FeatureCard from "../components/featurecard";
-import "../components/buttons.css";
+import "../assets/css/buttons.css";
+import "../assets/css/buttons.css";
 import "../assets/css/register-card.css";
 import UserService from "../services/UserService";
 import { useNavigate } from "react-router-dom";
@@ -43,7 +44,7 @@ const RegisterCard = ({ onRegisterSuccess }) => {
       return;
     }
 
-    // Password validation: At least 8 chars, 1 uppercase, 1 number, 1 special char beri nays
+    // Password validation: At least 8 chars, 1 uppercase, 1 number, 1 special char
     const passwordRegex =
       /^(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
     if (!passwordRegex.test(password)) {
@@ -54,8 +55,8 @@ const RegisterCard = ({ onRegisterSuccess }) => {
     }
 
     const userData = {
-      firstName: firstname.trim().toLowerCase(),
-      lastName: lastname.trim().toLowerCase(),
+      firstName: firstname.trim(),
+      lastName: lastname.trim(),
       email: email.trim(),
       username: username.trim().toLowerCase(),
       password,

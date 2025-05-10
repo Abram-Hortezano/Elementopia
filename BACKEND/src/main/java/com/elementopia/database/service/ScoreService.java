@@ -6,6 +6,7 @@ import com.elementopia.database.repository.ScoreRepository;
 import com.elementopia.database.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 import java.util.NoSuchElementException;
 
@@ -35,6 +36,10 @@ public class ScoreService {
     public ScoreEntity getByUserId(Long userId) {
         return scoreRepo.findByUser_UserId(userId)
                 .orElseThrow(() -> new NoSuchElementException("Score not found"));
+    }
+
+    public List<ScoreEntity> getAllScores() {
+        return scoreRepo.findAll();
     }
 
     /** Replace a user's career score. */

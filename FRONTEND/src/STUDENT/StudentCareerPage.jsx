@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { Box } from "@mui/material";
-import Navbar from "../components/NavBar";
+import { Box, Typography } from "@mui/material";
+import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import CurriculumOverview from "../components/Curriculum Components/CurriculumOverview";
 
@@ -21,7 +21,11 @@ const StudentCareerPage = () => {
       }}
     >
       <Navbar open={open} />
-      <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
+      <Sidebar
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
+      />
       <Box
         component="main"
         sx={{

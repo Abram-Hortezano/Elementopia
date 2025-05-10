@@ -1,9 +1,6 @@
 package com.elementopia.database.controller;
 
-import com.elementopia.database.dto.JwtResponse;
-import com.elementopia.database.dto.LoginRequest;
-import com.elementopia.database.dto.LoginResponse;
-import com.elementopia.database.dto.UserDTO;
+import com.elementopia.database.dto.*;
 import com.elementopia.database.entity.UserEntity;
 import com.elementopia.database.service.UserService;
 import com.elementopia.database.util.JwtUtil;
@@ -14,6 +11,7 @@ import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -56,7 +54,11 @@ public class UserController {
                 .collect(Collectors.toList());
         return ResponseEntity.ok(users);
     }
-
+    @GetMapping("/getAllUserScore")
+    public ResponseEntity<List<UserSummaryDto>> getAllStudentsWithCareerScores() {
+        List<UserSummaryDto> students = uServ.getAllStudentsWithCareerScores();
+        return ResponseEntity.ok(students);
+    }
     // Get User By ID (returns DTO)
     @GetMapping("/getUser/{id}")
     public ResponseEntity<?> getUser(@PathVariable Long id) {
@@ -107,25 +109,29 @@ public class UserController {
     public ResponseEntity<?> loginUser(@RequestBody LoginRequest loginRequest) {
         try {
             Authentication authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(
-                            loginRequest.username(),
-                            loginRequest.password()
-                    )
+                new UsernamePasswordAuthenticationToken(
+                    loginRequest.username(),
+                    loginRequest.password()
+                )
             );
 
             UserDetails userDetails = (UserDetails) authentication.getPrincipal();
             String jwt = jwtUtil.generateToken(userDetails);
 
-            // Return token and message only (no user DTO)
-            return ResponseEntity.ok(
-                    new LoginResponse("Login successful!", jwt)
-            );
+            // Assuming your UserDetails has a method to get the role
+            String role = userDetails.getAuthorities().stream()
+                .findFirst()
+                .map(GrantedAuthority::getAuthority)
+                .orElse("ROLE_USER");
+
+            return ResponseEntity.ok(new LoginResponse("Login successful!", jwt, role));
         } catch (Exception e) {
             return ResponseEntity
-                    .status(HttpStatus.UNAUTHORIZED)
-                    .body("Invalid username or password!");
+                .status(HttpStatus.UNAUTHORIZED)
+                .body("Invalid username or password!");
         }
     }
+
 
 
     // Get Current User (JWT-based; returns DTO)
