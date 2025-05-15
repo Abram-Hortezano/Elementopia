@@ -45,4 +45,10 @@ public class LessonService {
         topic.getSubtopics().add(subtopic);
         return lessonRepo.save(lesson);
     }
+
+    public LessonEntity updateDescription(Long lessonId, String newDescription) {
+        LessonEntity lesson = getLesson(lessonId);
+        lesson.setDescription(newDescription);
+        return lessonRepo.save(lesson);
+    }
 }
