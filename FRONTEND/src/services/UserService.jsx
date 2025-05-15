@@ -122,6 +122,11 @@ const UserService = {
       throw error;
     }
   },
+
+  getUserRole: () => {
+    return localStorage.getItem("role");
+  },
 };
+
 
 export default UserService;
