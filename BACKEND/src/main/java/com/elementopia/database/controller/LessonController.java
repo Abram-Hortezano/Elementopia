@@ -1,9 +1,12 @@
 package com.elementopia.database.controller;
 
+import com.elementopia.database.dto.LessonDTO;
 import com.elementopia.database.entity.LessonEntity;
 import com.elementopia.database.entity.TopicEntity;
 import com.elementopia.database.entity.SubtopicEntity;
 import com.elementopia.database.repository.LessonRepository;
+import com.elementopia.database.service.LessonService;
+import com.elementopia.database.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -15,6 +18,9 @@ public class LessonController {
 
     @Autowired
     private LessonRepository lessonRepo;
+
+    @Autowired
+    private LessonService lessonService;
 
     // Create a new Lesson
     @PostMapping("/create")
@@ -122,5 +128,16 @@ public class LessonController {
         topic.getSubtopics().remove(subtopic);
         lessonRepo.save(lesson);
         return ResponseEntity.ok("Subtopic deleted successfully.");
+    }
+    @DeleteMapping("/deleteLesson/{id}")
+    public ResponseEntity<String> deleteLesson(@PathVariable Long id) {
+        String result = lessonService.deleteLesson(id);
+        return ResponseEntity.ok(result);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<LessonEntity> updateLesson(@PathVariable Long id, @RequestBody LessonDTO lessonDTO) {
+        LessonEntity updatedLesson = lessonService.updateLesson(id, lessonDTO);
+        return ResponseEntity.ok(updatedLesson);
     }
 }
