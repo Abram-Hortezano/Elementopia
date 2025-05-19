@@ -5,11 +5,13 @@ const API_URL = "http://localhost:8080/api/lessons";
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
   if (!token) {
-    console.error("No token found in localStorage!");
+    console.warn("No token found!");
     throw new Error("Authorization token is missing.");
   }
+  console.log("Using token:", token);
   return { Authorization: `Bearer ${token}` };
 };
+
 
 const LessonService = {
   // Fetch all Lessons
@@ -67,9 +69,7 @@ const LessonService = {
   // Add Subtopic to Topic in a Lesson
   addSubtopic: async (lessonId, topicId, subtopicData) => {
     try {
-      const response = await axios.post(
-        `${API_URL}/${lessonId}/topic/${topicId}/add-subtopic`,
-        subtopicData,
+      const response = await axios.post(`${API_URL}/${lessonId}/topic/${topicId}/add-subtopic`,subtopicData,
         {
           headers: getAuthHeader(),
         }

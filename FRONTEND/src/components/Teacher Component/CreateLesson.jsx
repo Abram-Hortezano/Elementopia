@@ -28,90 +28,170 @@ export default function CreateLesson() {
     setTopics(newTopics);
   };
 
-const handleSubmit = async () => {
-  try {
-    const createdLesson = await LessonService.createLesson({
-      title: lessonTitle,
-      description: lessonDescription,
-    });
-
-    console.log("Created Lesson:", createdLesson);
-
-    for (const topic of topics) {
-      const createdTopic = await LessonService.addTopic(createdLesson.id, {
-        title: topic.title,
+  const handleSubmit = async () => {
+    try {
+      const createdLesson = await LessonService.createLesson({
+        title: lessonTitle,
+        description: lessonDescription,
       });
 
-      console.log("Created Topic:", createdTopic);
-
-      for (const subtopic of topic.subtopics) {
-        const result = await LessonService.addSubtopic(createdLesson.id, createdTopic.id, {
-          title: subtopic.title,
-          content: subtopic.content,
+      for (const topic of topics) {
+        const updatedLesson = await LessonService.addTopic(createdLesson.id, {
+          title: topic.title,
         });
-        console.log("Created Subtopic:", result);
+
+        const createdTopic = updatedLesson.topics[updatedLesson.topics.length - 1];
+
+        for (const subtopic of topic.subtopics) {
+          await LessonService.addSubtopic(createdLesson.id, createdTopic.id, {
+            title: subtopic.title,
+            content: subtopic.content,
+          });
+        }
       }
+
+      alert("🎉 Lesson created successfully!");
+      setLessonTitle("");
+      setLessonDescription("");
+      setTopics([]);
+    } catch (error) {
+      console.error("Failed to create lesson:", error);
+      alert("❌ Failed to create lesson. " + error.message);
     }
+  };
 
-    alert("Lesson created successfully!");
-    setLessonTitle("");
-    setLessonDescription("");
-    setTopics([]);
-  } catch (error) {
-    console.error("Failed to create lesson:", error);
-    alert("Failed to create lesson. " + error.message);
-  }
-};
-
+  const styles = {
+    container: {
+      fontFamily: "Orbitron, sans-serif",
+      backgroundColor: "#0f0f0f",
+      color: "#00ffcc",
+      padding: 30,
+      borderRadius: 10,
+      maxWidth: "90vw",
+      margin: "auto",
+      boxShadow: "0 0 20px #00ffcc",
+      margin: "5px"
+    },
+    input: {
+      width: "100%",
+      padding: 10,
+      marginBottom: 10,
+      backgroundColor: "#1a1a1a",
+      border: "1px solid #00ffcc",
+      borderRadius: 5,
+      color: "#fff",
+    },
+    textarea: {
+      width: "100%",
+      padding: 10,
+      marginBottom: 10,
+      backgroundColor: "#1a1a1a",
+      border: "1px solid #00ffcc",
+      borderRadius: 5,
+      color: "#fff",
+      resize: "vertical",
+    },
+    button: {
+      backgroundColor: "#00ffcc",
+      color: "#000",
+      border: "none",
+      padding: "10px 20px",
+      margin: "10px 5px 20px 0",
+      borderRadius: 5,
+      cursor: "pointer",
+      fontWeight: "bold",
+      transition: "0.3s",
+    },
+    subtopicContainer: {
+      marginLeft: 30,
+      marginTop: 10,
+      paddingLeft: 15,
+      borderLeft: "2px solid #00ffcc",
+    },
+    topicBlock: {
+      marginBottom: 30,
+      paddingBottom: 10,
+      borderBottom: "1px solid #00ffcc",
+    },
+  };
 
   return (
-    <div style={{ padding: 20 }}>
-      <h2>Create Lesson</h2>
-      <div>
-        <input
-          type="text"
-          placeholder="Lesson Title"
-          value={lessonTitle}
-          onChange={(e) => setLessonTitle(e.target.value)}
-        />
-      </div>
-      <div>
-        <textarea
-          placeholder="Lesson Description"
-          value={lessonDescription}
-          onChange={(e) => setLessonDescription(e.target.value)}
-        />
-      </div>
-      <hr />
+    <div style={styles.container}>
+      <h2 style={{ textAlign: "center", textShadow: "0 0 5px #00ffcc" }}>
+        🎮 Create Lesson
+      </h2>
+
+      <input
+        type="text"
+        style={styles.input}
+        placeholder="🎯 Lesson Title"
+        value={lessonTitle}
+        onChange={(e) => setLessonTitle(e.target.value)}
+      />
+
+      <textarea
+        placeholder="📝 Lesson Description"
+        style={styles.textarea}
+        value={lessonDescription}
+        onChange={(e) => setLessonDescription(e.target.value)}
+      />
+
+      <hr style={{ borderColor: "#00ffcc" }} />
+
       {topics.map((topic, topicIndex) => (
-        <div key={topicIndex} style={{ marginBottom: 20 }}>
+        <div key={topicIndex} style={styles.topicBlock}>
           <input
             type="text"
-            placeholder="Topic Title"
+            style={styles.input}
+            placeholder={`🧠 Topic #${topicIndex + 1} Title`}
             value={topic.title}
             onChange={(e) => handleTopicChange(topicIndex, e.target.value)}
           />
-          <button onClick={() => handleAddSubtopic(topicIndex)}>+ Add Subtopic</button>
+          <button
+            style={styles.button}
+            onClick={() => handleAddSubtopic(topicIndex)}
+          >
+            ➕ Add Subtopic
+          </button>
+
           {topic.subtopics.map((sub, subIndex) => (
-            <div key={subIndex} style={{ marginLeft: 20 }}>
+            <div key={subIndex} style={styles.subtopicContainer}>
               <input
                 type="text"
-                placeholder="Subtopic Title"
+                style={styles.input}
+                placeholder={`📌 Subtopic #${subIndex + 1} Title`}
                 value={sub.title}
-                onChange={(e) => handleSubtopicChange(topicIndex, subIndex, "title", e.target.value)}
+                onChange={(e) =>
+                  handleSubtopicChange(topicIndex, subIndex, "title", e.target.value)
+                }
               />
               <textarea
-                placeholder="Subtopic Content"
+                placeholder="🧾 Subtopic Content"
+                style={styles.textarea}
                 value={sub.content}
-                onChange={(e) => handleSubtopicChange(topicIndex, subIndex, "content", e.target.value)}
+                onChange={(e) =>
+                  handleSubtopicChange(topicIndex, subIndex, "content", e.target.value)
+                }
               />
             </div>
           ))}
         </div>
       ))}
-      <button onClick={handleAddTopic}>+ Add Topic</button>
-      <br />
-      <button onClick={handleSubmit}>Create Lesson</button>
+
+      <button style={styles.button} onClick={handleAddTopic}>
+        ➕ Add Topic
+      </button>
+
+      <button
+        style={{
+          ...styles.button,
+          backgroundColor: "#ff00ff",
+          color: "#fff",
+        }}
+        onClick={handleSubmit}
+      >
+        🚀 Create Lesson
+      </button>
     </div>
   );
 }
