@@ -216,7 +216,7 @@ const StudentElementMatcher = () => {
           unlockAchievement("MEMORY_MASTER");
           
           // Check for Master Matcher achievement (completed all three levels)
-          if (completedDifficulties.easy && completedDifficulties.medium) {
+          if (completedDifficulties.easy && completedDifficulties.medium && completedDifficulties.hard) {
             unlockAchievement("MASTER_MATCHER");
           }
         }
