@@ -11,9 +11,8 @@ import java.util.Optional;
 public interface AchievementRepository extends JpaRepository<AchievementEntity, Long> {
     List<AchievementEntity> findByUser_UserId(Long userId);
     
-    // Find achievement by title instead of code name
-    Optional<AchievementEntity> findByTitle(String title);
+    Optional<AchievementEntity> findByCodeName(String codeName);
     
-    // Check if a user has already unlocked an achievement
-    boolean existsByUser_UserIdAndTitle(Long userId, String title);
+    boolean existsByUser_UserIdAndCodeName(Long userId, String codeName);
+
 }

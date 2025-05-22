@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Modal, Paper, Stack, Chip } from '@mui/material';
+import { Box, Typography, Button, Modal, Paper, Stack, Chip, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import Navbar from '../components/NavBar';
 import Sidebar from '../components/Sidebar';
 import AchievementService from '../services/AchievementService';
+import achievements from '../components/Student Components/achievements.json';
+import UserService from '../services/UserService';
 import './ElementMatcher.css';
 
 const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
-// Element data
 const elementSets = {
   easy: [
     { id: 1, symbol: "H", name: "Hydrogen", matched: false },
@@ -56,49 +57,17 @@ const difficultyLabels = {
   hard: { label: "Hard", color: "#F44336" }
 };
 
-// unlockAchievement function using AchievementService
-  const unlockAchievement = async (codeName) => {
-    try {
-      const user = JSON.parse(sessionStorage.getItem("user"));
-      if (!user || !user.id) {
-        console.error('User not found or missing ID');
-        return;
-      }
-
-      await AchievementService.unlockAchievementByCode(user.id, codeName);
-      console.log(`🏆 Achievement unlocked: ${codeName}`);
-
-      // Set achievement details in state
-      setAchievementName(getAchievementTitle(codeName));
-      setAchievementUnlocked(true);
-
-      // Hide notification after 5 seconds
-      setTimeout(() => {
-        setAchievementUnlocked(false);
-      }, 5000);
-
-    } catch (error) {
-      console.error('Error unlocking achievement:', error);
-    }
-  };
-
-
-// Helper function to get achievement title from code name
-const getAchievementTitle = (codeName) => {
-  const achievementMap = {
-    'MEMORY_NOVICE': 'Memory Novice',
-    'MEMORY_INTERMEDIATE': 'Memory Intermediate',
-    'MEMORY_MASTER': 'Memory Master',
-    'QUICK_MATCHMAKER': 'Quick Matchmaker',
-    'SCORE_HUNTER': 'Score Hunter',
-    'MASTER_MATCHER': 'Master Matcher'
-  };
-  
-  return achievementMap[codeName] || codeName;
-};
-
 const StudentElementMatcher = () => {
+  // Enhanced user state management
+  const [user, setUser] = useState(null);
+  const [loadingUser, setLoadingUser] = useState(true);
+  const [errorUser, setErrorUser] = useState(null);
+  const [userId, setUserId] = useState(null);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+
+  // Original UI and game state
   const [open, setOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [cards, setCards] = useState([]);
   const [turns, setTurns] = useState(0);
   const [firstChoice, setFirstChoice] = useState(null);
@@ -111,7 +80,7 @@ const StudentElementMatcher = () => {
   const [difficulty, setDifficulty] = useState("easy");
   const [modalOpen, setModalOpen] = useState(false);
   const [gameComplete, setGameComplete] = useState(false);
-  const [userId, setUserId] = useState(null);
+  const [unlockedAchievements, setUnlockedAchievements] = useState([]);
   const [achievementUnlocked, setAchievementUnlocked] = useState(false);
   const [achievementName, setAchievementName] = useState("");
   const [completedDifficulties, setCompletedDifficulties] = useState({
@@ -120,18 +89,80 @@ const StudentElementMatcher = () => {
     hard: false
   });
 
-  // Get user ID on component mount
+  const getAchievementTitle = (codeName) => {
+    const match = achievements.find(ach => ach.codeName === codeName);
+    return match ? match.title : codeName;
+  };
+
+  // Enhanced user fetching with achievements
   useEffect(() => {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    if (user && user.id) {
-      setUserId(user.id);
-    }
+    const fetchUserAndAchievements = async () => {
+      try {
+        const currentUser = await UserService.getCurrentUser();
+        if (!currentUser) {
+          setErrorUser('No user logged in');
+          setLoadingUser(false);
+          return;
+        }
+        
+        // Handle both id and userId properties
+        const userIdValue = currentUser.id || currentUser.userId;
+        if (!userIdValue) {
+          setErrorUser('No valid user ID found');
+          setLoadingUser(false);
+          return;
+        }
+
+        setUser(currentUser);
+        setUserId(userIdValue);
+        setIsLoggedIn(true);
+        setLoadingUser(false);
+
+        // Fetch user achievements
+        const userAchievements = await AchievementService.getAchievementsByUser(userIdValue);
+        setUnlockedAchievements(userAchievements.map(a => a.codeName));
+      } catch (error) {
+        console.error('Error fetching user or achievements:', error);
+        setErrorUser(error.message || 'Failed to load user');
+        setLoadingUser(false);
+      }
+    };
+  
+    fetchUserAndAchievements();
   }, []);
 
-  const handleDrawerOpen = () => setOpen(true);
-  const handleDrawerClose = () => setOpen(false);
+  // Initialize game only after user is loaded
+  useEffect(() => {
+    if (userId) {
+      shuffleCards("easy");
+    }
+  }, [userId]);
+
+  // Enhanced unlockAchievement function
+  const unlockAchievement = (codeName) => {
+    if (!user || unlockedAchievements.includes(codeName)) return;
+
+    const achievementPayload = {
+      codeName: codeName,
+      user: { id: userId },
+    };
+
+    AchievementService.unlockAchievement(achievementPayload)
+      .then(() => {
+        setUnlockedAchievements(prev => [...prev, codeName]);
+        const title = getAchievementTitle(codeName);
+        setAchievementName(title);
+        setAchievementUnlocked(true);
+        setTimeout(() => setAchievementUnlocked(false), 3000);
+      })
+      .catch(err => {
+        console.error('Error unlocking achievement:', err);
+      });
+  };
 
   const shuffleCards = (difficultyLevel = difficulty) => {
+    if (!userId) return; // Don't shuffle if no user is loaded
+    
     const elementPairs = elementSets[difficultyLevel];
     const cardPairs = [...elementPairs].flatMap(element => ([ 
       { id: element.id, type: 'symbol', content: element.symbol, matched: false }, 
@@ -151,14 +182,18 @@ const StudentElementMatcher = () => {
     setDifficulty(difficultyLevel);
   };
 
+  const handleDrawerOpen = () => {
+    setDrawerOpen(true);
+  };
+  
+  const handleDrawerClose = () => {
+    setDrawerOpen(false);
+  };
+
   const handleChoice = (card) => {
     if (disabled) return;
     firstChoice ? setSecondChoice(card) : setFirstChoice(card);
   };
-
-  useEffect(() => {
-    shuffleCards("easy");
-  }, []);
 
   useEffect(() => {
     if (firstChoice && secondChoice) {
@@ -184,29 +219,23 @@ const StudentElementMatcher = () => {
     }
   }, [firstChoice, secondChoice]);
 
-  // In the useEffect that checks for game completion
   useEffect(() => {
-    if (gameOver) return; 
+    if (gameOver) return;
 
     if (cards.length > 0 && cards.every(card => card.matched)) {
       const levelScore = score * (difficulty === "easy" ? 1 : difficulty === "medium" ? 2 : 3);
       const newTotalScore = totalScore + levelScore;
       setTotalScore(newTotalScore);
       setGameOver(true);
-      
-      // Mark current difficulty as completed
+
       setCompletedDifficulties(prev => ({
         ...prev,
         [difficulty]: true
       }));
 
-      // Only unlock achievements if we have a valid userId
       if (userId) {
-        // Game-specific achievements based on difficulty level completed
         if (difficulty === "easy") {
           unlockAchievement("MEMORY_NOVICE");
-          
-          // Check for Quick Matchmaker achievement
           if (turns <= 20) {
             unlockAchievement("QUICK_MATCHMAKER");
           }
@@ -214,14 +243,11 @@ const StudentElementMatcher = () => {
           unlockAchievement("MEMORY_INTERMEDIATE");
         } else if (difficulty === "hard") {
           unlockAchievement("MEMORY_MASTER");
-          
-          // Check for Master Matcher achievement (completed all three levels)
           if (completedDifficulties.easy && completedDifficulties.medium && completedDifficulties.hard) {
             unlockAchievement("MASTER_MATCHER");
           }
         }
-        
-        // Check for Score Hunter achievement
+
         if (newTotalScore >= 100) {
           unlockAchievement("SCORE_HUNTER");
         }
@@ -240,11 +266,9 @@ const StudentElementMatcher = () => {
   const resetTurn = () => {
     setFirstChoice(null);
     setSecondChoice(null);
-    setTurns(prevTurns => prevTurns + 1);
+    setTurns(prev => prev + 1);
     setDisabled(false);
-    setTimeout(() => {
-      setFeedback("");
-    }, 1000);
+    setTimeout(() => setFeedback(""), 1000);
   };
 
   const handleNextLevel = () => {
@@ -271,6 +295,47 @@ const StudentElementMatcher = () => {
     });
     shuffleCards("easy");
   };
+
+  // Loading state within your original layout
+  if (loadingUser) {
+    return (
+      <Box sx={{ display: 'flex' }}>
+        <Navbar open={open} />
+        <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
+        <Box component="main" className={`main-container ${open ? 'main-container-open' : 'main-container-closed'}`}>
+          <DrawerHeader />
+          <Box className="game-container" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
+            <CircularProgress sx={{ color: '#8a4bff', mb: 2 }} />
+            <Typography variant="h6" sx={{ color: 'white' }}>Loading user...</Typography>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
+
+  // Error state within your original layout
+  if (errorUser || !user) {
+    return (
+      <Box sx={{ display: 'flex' }}>
+        <Navbar open={open} />
+        <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
+        <Box component="main" className={`main-container ${open ? 'main-container-open' : 'main-container-closed'}`}>
+          <DrawerHeader />
+          <Box className="game-container" sx={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: '400px' }}>
+            <Typography 
+              variant="h6" 
+              sx={{ color: '#F44336', fontWeight: 'bold', textAlign: 'center' }}
+            >
+              {errorUser ? `Error: ${errorUser}` : 'User not logged in'}
+            </Typography>
+            <Typography variant="body1" sx={{ color: 'white', mt: 2, textAlign: 'center' }}>
+              Please log in to play the game.
+            </Typography>
+          </Box>
+        </Box>
+      </Box>
+    );
+  }
 
   return (
     <Box sx={{ display: 'flex' }}>
@@ -363,7 +428,12 @@ const StudentElementMatcher = () => {
           </Box>
 
           <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 2 }}>
-            <Button variant="contained" onClick={() => shuffleCards(difficulty)} className="new-game-btn" disabled={disabled && !gameOver}>
+            <Button 
+              variant="contained" 
+              onClick={() => shuffleCards(difficulty)} 
+              className="new-game-btn" 
+              disabled={disabled && !gameOver}
+            >
               Restart Level
             </Button>
 
