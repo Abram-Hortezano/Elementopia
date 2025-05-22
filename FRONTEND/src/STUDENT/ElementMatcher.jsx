@@ -142,6 +142,7 @@ const StudentElementMatcher = () => {
   }, [userId]);
 
   // Updated createAchievement function
+   const formattedDate = new Date().toISOString().split("T")[0];
   const createAchievement = async (codeName) => {
     if (!user || !userId || unlockedAchievements.includes(codeName)) {
       return;
@@ -157,9 +158,9 @@ const StudentElementMatcher = () => {
 
       // Create the achievement data object
       const achievementData = {
-        name: codeName, // Use codeName as the name field
-        title: achievementDetails.title,
+        title: codeName,
         description: achievementDetails.description,
+        dateAchieved: formattedDate,
         // Add any other fields your backend expects
       };
 

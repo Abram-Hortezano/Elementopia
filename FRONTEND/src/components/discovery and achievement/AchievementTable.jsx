@@ -34,13 +34,12 @@ const AchievementTable = () => {
         const achievementArray = await AchievementService.getAchievementsByUser(userIdValue);
         console.log("Achievements from backend:", achievementArray);
 
-        // Extract the achievement names (which should be the codeNames)
-        const validNames = achievementArray
-          .filter(item => item.name && typeof item.name === "string")
-          .map(item => item.name.trim());
-        
-        console.log("Extracted achievement code names:", validNames);
-        setUnlockedAchievements(validNames);
+        // Make sure you're using `codeName` from backend
+        const validCodeNames = achievementArray
+          .filter(item => item.title && typeof item.title === "string")
+          .map(item => item.title.trim());
+
+        setUnlockedAchievements(validCodeNames);
         setError(null);
 
       } catch (error) {
