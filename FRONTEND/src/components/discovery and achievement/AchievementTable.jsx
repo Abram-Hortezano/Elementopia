@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Grid, Card, CardContent, Typography } from "@mui/material";
 import { Lock } from "@mui/icons-material";
-import achievements from "../Student Components/achievements.json"; // Your achievements JSON file
+import achievements from "../Student Components/achievements.json";
 import AchievementService from "../../services/AchievementService";
 import UserService from "../../services/UserService";
 
@@ -15,15 +15,14 @@ const AchievementTable = () => {
       try {
         setLoading(true);
         const currentUser = await UserService.getCurrentUser();
-        
+
         if (!currentUser) {
           setError("No user logged in");
           return;
         }
 
-        // Handle both id and userId properties
         const userIdValue = currentUser.id || currentUser.userId;
-        
+
         if (!userIdValue) {
           setError("No valid user ID found");
           return;
@@ -34,7 +33,6 @@ const AchievementTable = () => {
         const achievementArray = await AchievementService.getAchievementsByUser(userIdValue);
         console.log("Achievements from backend:", achievementArray);
 
-        // Make sure you're using `codeName` from backend
         const validCodeNames = achievementArray
           .filter(item => item.title && typeof item.title === "string")
           .map(item => item.title.trim());
@@ -80,9 +78,8 @@ const AchievementTable = () => {
   return (
     <Grid container spacing={2} sx={{ padding: 2, marginTop: "15px" }}>
       {achievements.map((achievement, index) => {
-        // Use codeName as the key identifier for consistency
         const achievementCodeName = achievement?.codeName?.trim();
-        
+
         if (!achievementCodeName) {
           console.warn(`Achievement at index ${index} is missing codeName:`, achievement);
           return null;
@@ -99,10 +96,12 @@ const AchievementTable = () => {
                 textAlign: "center",
                 padding: 2,
                 borderRadius: "12px",
-                boxShadow: isUnlocked 
-                  ? "0px 0px 10px rgba(255, 152, 0, 0.5)" 
+                minHeight: isUnlocked ? 180 : 160,
+                boxShadow: isUnlocked
+                  ? "0px 0px 10px rgba(255, 152, 0, 0.5)"
                   : "0px 0px 5px rgba(128, 128, 128, 0.3)",
-                transition: "transform 0.2s, boxShadow 0.3s",
+                transition: "transform 0.2s, box-shadow 0.3s, height 0.3s",
+                overflow: "visible",
                 "&:hover": isUnlocked
                   ? {
                       transform: "scale(1.05)",
@@ -114,7 +113,7 @@ const AchievementTable = () => {
                     },
               }}
             >
-              <CardContent>
+              <CardContent sx={{ overflow: "visible", padding: "8px" }}>
                 {isUnlocked ? (
                   <>
                     <Typography
@@ -123,6 +122,16 @@ const AchievementTable = () => {
                         fontWeight: "bold",
                         textShadow: "0px 0px 5px rgba(255, 152, 0, 0.8)",
                         marginBottom: 1,
+                        whiteSpace: "nowrap",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        maxWidth: "100%",
+                        transition: "all 0.3s ease",
+                        "&:hover": {
+                          whiteSpace: "normal",
+                          overflow: "visible",
+                          textOverflow: "unset",
+                        },
                       }}
                     >
                       {achievement.title || achievementCodeName}
@@ -130,10 +139,10 @@ const AchievementTable = () => {
                     <Typography variant="body2" sx={{ marginTop: 1 }}>
                       {achievement.description || "No description available"}
                     </Typography>
-                    <Typography 
-                      variant="caption" 
-                      sx={{ 
-                        marginTop: 1, 
+                    <Typography
+                      variant="caption"
+                      sx={{
+                        marginTop: 1,
                         display: 'block',
                         fontStyle: 'italic',
                         opacity: 0.8
