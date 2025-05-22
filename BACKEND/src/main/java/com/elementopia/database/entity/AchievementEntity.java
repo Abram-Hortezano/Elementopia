@@ -22,8 +22,11 @@ public class AchievementEntity {
     @Column(name = "date_achieved", nullable = false)
     private LocalDate dateAchieved;
     
-    @Column(name = "code_name", unique = true)
+    @Column(name = "code_name")
     private String codeName;
+
+    //@Column(name = "is_template")
+    //private boolean isTemplate = false;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

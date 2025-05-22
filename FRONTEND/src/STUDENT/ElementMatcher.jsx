@@ -118,9 +118,12 @@ const StudentElementMatcher = () => {
         setIsLoggedIn(true);
         setLoadingUser(false);
 
-        // Fetch user achievements
+        // Fetch user achievements and extract codeNames
         const userAchievements = await AchievementService.getAchievementsByUser(userIdValue);
-        setUnlockedAchievements(userAchievements.map(a => a.codeName));
+        const achievementCodeNames = userAchievements
+          .filter(achievement => achievement.name && typeof achievement.name === 'string')
+          .map(achievement => achievement.name.trim());
+        setUnlockedAchievements(achievementCodeNames);
       } catch (error) {
         console.error('Error fetching user or achievements:', error);
         setErrorUser(error.message || 'Failed to load user');
@@ -138,26 +141,49 @@ const StudentElementMatcher = () => {
     }
   }, [userId]);
 
-  // Enhanced unlockAchievement function
-  const unlockAchievement = (codeName) => {
-    if (!user || unlockedAchievements.includes(codeName)) return;
+  // Updated createAchievement function
+  const createAchievement = async (codeName) => {
+    if (!user || !userId || unlockedAchievements.includes(codeName)) {
+      return;
+    }
 
-    const achievementPayload = {
-      codeName: codeName,
-      user: { id: userId },
-    };
+    try {
+      // Find the achievement details from the JSON file
+      const achievementDetails = achievements.find(ach => ach.codeName === codeName);
+      if (!achievementDetails) {
+        console.error(`Achievement with codeName ${codeName} not found in JSON file`);
+        return;
+      }
 
-    AchievementService.unlockAchievement(achievementPayload)
-      .then(() => {
+      // Create the achievement data object
+      const achievementData = {
+        name: codeName, // Use codeName as the name field
+        title: achievementDetails.title,
+        description: achievementDetails.description,
+        // Add any other fields your backend expects
+      };
+
+      console.log('Creating achievement:', achievementData, 'for user:', userId);
+
+      // Call the createAchievement service method
+      const createdAchievement = await AchievementService.createAchievement(userId, achievementData);
+      
+      console.log('Achievement created successfully:', createdAchievement);
+
+      // Update the local state
+      setUnlockedAchievements(prev => [...prev, codeName]);
+      setAchievementName(achievementDetails.title);
+      setAchievementUnlocked(true);
+      setTimeout(() => setAchievementUnlocked(false), 3000);
+
+    } catch (error) {
+      console.error('Error creating achievement:', error);
+      // Check if the error is because the achievement already exists
+      if (error.response?.status === 409 || error.message?.includes('already exists')) {
+        console.log('Achievement already exists, updating local state');
         setUnlockedAchievements(prev => [...prev, codeName]);
-        const title = getAchievementTitle(codeName);
-        setAchievementName(title);
-        setAchievementUnlocked(true);
-        setTimeout(() => setAchievementUnlocked(false), 3000);
-      })
-      .catch(err => {
-        console.error('Error unlocking achievement:', err);
-      });
+      }
+    }
   };
 
   const shuffleCards = (difficultyLevel = difficulty) => {
@@ -187,7 +213,7 @@ const StudentElementMatcher = () => {
   };
   
   const handleDrawerClose = () => {
-    setDrawerOpen(false);
+    setDrawerClose(false);
   };
 
   const handleChoice = (card) => {
@@ -228,28 +254,33 @@ const StudentElementMatcher = () => {
       setTotalScore(newTotalScore);
       setGameOver(true);
 
-      setCompletedDifficulties(prev => ({
-        ...prev,
+      // Update completed difficulties
+      const newCompletedDifficulties = {
+        ...completedDifficulties,
         [difficulty]: true
-      }));
+      };
+      setCompletedDifficulties(newCompletedDifficulties);
 
       if (userId) {
+        // Create achievements based on game completion
         if (difficulty === "easy") {
-          unlockAchievement("MEMORY_NOVICE");
+          createAchievement("MEMORY_NOVICE");
           if (turns <= 20) {
-            unlockAchievement("QUICK_MATCHMAKER");
+            createAchievement("QUICK_MATCHMAKER");
           }
         } else if (difficulty === "medium") {
-          unlockAchievement("MEMORY_INTERMEDIATE");
+          createAchievement("MEMORY_INTERMEDIATE");
         } else if (difficulty === "hard") {
-          unlockAchievement("MEMORY_MASTER");
-          if (completedDifficulties.easy && completedDifficulties.medium && completedDifficulties.hard) {
-            unlockAchievement("MASTER_MATCHER");
+          createAchievement("MEMORY_MASTER");
+          // Check if all difficulties are completed for Master Matcher
+          if (newCompletedDifficulties.easy && newCompletedDifficulties.medium && newCompletedDifficulties.hard) {
+            createAchievement("MASTER_MATCHER");
           }
         }
 
+        // Check for score-based achievement
         if (newTotalScore >= 100) {
-          unlockAchievement("SCORE_HUNTER");
+          createAchievement("SCORE_HUNTER");
         }
       }
 

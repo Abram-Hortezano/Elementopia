@@ -7,39 +7,92 @@ import UserService from "../../services/UserService";
 
 const AchievementTable = () => {
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchUserAchievements = async () => {
-      const currentUser = await UserService.getCurrentUser();
-      if (currentUser?.userId) {
-        try {
-          const achievementArray = await AchievementService.getAchievementsByUser(currentUser.userId);
-          console.log("Achievements from backend:", achievementArray);
-
-          // achievementArray is assumed to be an array of achievement objects
-          const validNames = achievementArray
-            .filter(item => item.name && typeof item.name === "string")
-            .map(item => item.name.trim());
-          setUnlockedAchievements(validNames);
-        } catch (error) {
-          console.error("Error fetching achievements:", error);
+      try {
+        setLoading(true);
+        const currentUser = await UserService.getCurrentUser();
+        
+        if (!currentUser) {
+          setError("No user logged in");
+          return;
         }
-      } else {
-        console.error("No valid user ID found.");
+
+        // Handle both id and userId properties
+        const userIdValue = currentUser.id || currentUser.userId;
+        
+        if (!userIdValue) {
+          setError("No valid user ID found");
+          return;
+        }
+
+        console.log("Fetching achievements for user ID:", userIdValue);
+
+        const achievementArray = await AchievementService.getAchievementsByUser(userIdValue);
+        console.log("Achievements from backend:", achievementArray);
+
+        // Extract the achievement names (which should be the codeNames)
+        const validNames = achievementArray
+          .filter(item => item.name && typeof item.name === "string")
+          .map(item => item.name.trim());
+        
+        console.log("Extracted achievement code names:", validNames);
+        setUnlockedAchievements(validNames);
+        setError(null);
+
+      } catch (error) {
+        console.error("Error fetching achievements:", error);
+        setError(error.message || "Failed to fetch achievements");
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchUserAchievements();
   }, []);
+
+  if (loading) {
+    return (
+      <Grid container spacing={2} sx={{ padding: 2, marginTop: "15px" }}>
+        <Grid item xs={12}>
+          <Typography variant="h6" sx={{ color: 'white', textAlign: 'center' }}>
+            Loading achievements...
+          </Typography>
+        </Grid>
+      </Grid>
+    );
+  }
+
+  if (error) {
+    return (
+      <Grid container spacing={2} sx={{ padding: 2, marginTop: "15px" }}>
+        <Grid item xs={12}>
+          <Typography variant="h6" sx={{ color: '#F44336', textAlign: 'center' }}>
+            Error: {error}
+          </Typography>
+        </Grid>
+      </Grid>
+    );
+  }
 
   return (
     <Grid container spacing={2} sx={{ padding: 2, marginTop: "15px" }}>
       {achievements.map((achievement, index) => {
-        // Use codeName as key identifier for consistency, fallback to index if missing
-        const achievementName = achievement?.codeName?.trim() || `Unnamed Achievement ${index}`;
-        const isUnlocked = unlockedAchievements.includes(achievementName);
+        // Use codeName as the key identifier for consistency
+        const achievementCodeName = achievement?.codeName?.trim();
+        
+        if (!achievementCodeName) {
+          console.warn(`Achievement at index ${index} is missing codeName:`, achievement);
+          return null;
+        }
+
+        const isUnlocked = unlockedAchievements.includes(achievementCodeName);
 
         return (
-          <Grid item xs={12} sm={6} md={4} lg={2} key={achievementName}>
+          <Grid item xs={12} sm={6} md={4} lg={2} key={achievementCodeName}>
             <Card
               sx={{
                 bgcolor: isUnlocked ? "#ff9800" : "#222",
@@ -47,14 +100,19 @@ const AchievementTable = () => {
                 textAlign: "center",
                 padding: 2,
                 borderRadius: "12px",
-                boxShadow: "0px 0px 10px rgba(255, 152, 0, 0.5)",
+                boxShadow: isUnlocked 
+                  ? "0px 0px 10px rgba(255, 152, 0, 0.5)" 
+                  : "0px 0px 5px rgba(128, 128, 128, 0.3)",
                 transition: "transform 0.2s, boxShadow 0.3s",
                 "&:hover": isUnlocked
                   ? {
                       transform: "scale(1.05)",
                       boxShadow: "0px 0px 20px rgba(255, 152, 0, 0.8)",
                     }
-                  : {},
+                  : {
+                      transform: "scale(1.02)",
+                      boxShadow: "0px 0px 8px rgba(128, 128, 128, 0.5)",
+                    },
               }}
             >
               <CardContent>
@@ -65,16 +123,36 @@ const AchievementTable = () => {
                       sx={{
                         fontWeight: "bold",
                         textShadow: "0px 0px 5px rgba(255, 152, 0, 0.8)",
+                        marginBottom: 1,
                       }}
                     >
-                      {achievement.title || achievementName}
+                      {achievement.title || achievementCodeName}
                     </Typography>
                     <Typography variant="body2" sx={{ marginTop: 1 }}>
                       {achievement.description || "No description available"}
                     </Typography>
+                    <Typography 
+                      variant="caption" 
+                      sx={{ 
+                        marginTop: 1, 
+                        display: 'block',
+                        fontStyle: 'italic',
+                        opacity: 0.8
+                      }}
+                    >
+                      ✅ Unlocked
+                    </Typography>
                   </>
                 ) : (
-                  <Lock sx={{ fontSize: 40, color: "gray" }} />
+                  <>
+                    <Lock sx={{ fontSize: 40, color: "gray", marginBottom: 1 }} />
+                    <Typography variant="body2" sx={{ color: "gray" }}>
+                      {achievement.title || achievementCodeName}
+                    </Typography>
+                    <Typography variant="caption" sx={{ color: "gray", marginTop: 1, display: 'block' }}>
+                      🔒 Locked
+                    </Typography>
+                  </>
                 )}
               </CardContent>
             </Card>
