@@ -1,0 +1,32 @@
+[
+    {
+      "codeName": "MEMORY_NOVICE",
+      "title": "MEMORY_NOVICE",
+      "description": "Complete the Easy level in the Element Memory Match game"
+    },
+    {
+      "codeName": "MEMORY_INTERMEDIATE",
+      "title": "Memory Intermediate",
+      "description": "Complete the Medium level in the Element Memory Match game"
+    },
+    {
+      "codeName": "MEMORY_MASTER",
+      "title": "Memory Master",
+      "description": "Complete the Hard level in the Element Memory Match game"
+    },
+    {
+      "codeName": "QUICK_MATCHMAKER",
+      "title": "QUICK_MATCHMAKER",
+      "description": "Complete the Easy level within 20 turns"
+    },
+    {
+      "codeName": "SCORE_HUNTER",
+      "title": "Score Hunter",
+      "description": "Accumulate a total score of 100 points or more"
+    },
+    {
+      "codeName": "MASTER_MATCHER",
+      "title": "Master Matcher",
+      "description": "Complete all three difficulty levels in the Element Memory Match game"
+    }
+  ]

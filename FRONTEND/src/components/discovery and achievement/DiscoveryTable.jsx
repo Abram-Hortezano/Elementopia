@@ -16,8 +16,6 @@ const Discovery = () => {
         try {
           const response = await DiscoveryService.getCurrentUserDiscoveries(currentUser.userId);
 
-    
-
           const discoveryArray = response?.data || []; 
 
           const validNames = discoveryArray

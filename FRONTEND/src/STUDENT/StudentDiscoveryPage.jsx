@@ -7,7 +7,7 @@ import {
   Card,
   CardContent,
 } from "@mui/material";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 import Discovery from "../components/discovery and achievement/DiscoveryTable";
 import Achievements from "../components/discovery and achievement/AchievementTable";
