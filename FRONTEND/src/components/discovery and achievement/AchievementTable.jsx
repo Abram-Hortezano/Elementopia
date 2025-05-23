@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
-import { Grid, Card, CardContent, Typography } from "@mui/material";
-import { Lock } from "@mui/icons-material";
-import achievements from "../Student Components/achievements.json";
+import {
+  Grid, Card, CardContent, Typography, Dialog, DialogTitle, DialogContent, IconButton
+} from "@mui/material";
+import { Lock, EmojiEvents, Close } from "@mui/icons-material";
+import achievements from "../MiniGames/achievements.json";
 import AchievementService from "../../services/AchievementService";
 import UserService from "../../services/UserService";
 
@@ -9,39 +11,25 @@ const AchievementTable = () => {
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [selectedAchievement, setSelectedAchievement] = useState(null);
 
   useEffect(() => {
     const fetchUserAchievements = async () => {
       try {
         setLoading(true);
         const currentUser = await UserService.getCurrentUser();
-
-        if (!currentUser) {
-          setError("No user logged in");
-          return;
-        }
+        if (!currentUser) return setError("No user logged in");
 
         const userIdValue = currentUser.id || currentUser.userId;
-
-        if (!userIdValue) {
-          setError("No valid user ID found");
-          return;
-        }
-
-        console.log("Fetching achievements for user ID:", userIdValue);
+        if (!userIdValue) return setError("No valid user ID found");
 
         const achievementArray = await AchievementService.getAchievementsByUser(userIdValue);
-        console.log("Achievements from backend:", achievementArray);
-
         const validCodeNames = achievementArray
           .filter(item => item.title && typeof item.title === "string")
           .map(item => item.title.trim());
 
         setUnlockedAchievements(validCodeNames);
-        setError(null);
-
       } catch (error) {
-        console.error("Error fetching achievements:", error);
         setError(error.message || "Failed to fetch achievements");
       } finally {
         setLoading(false);
@@ -51,24 +39,20 @@ const AchievementTable = () => {
     fetchUserAchievements();
   }, []);
 
-  if (loading) {
-    return (
-      <Grid container spacing={2} sx={{ padding: 2, marginTop: "15px" }}>
-        <Grid item xs={12}>
-          <Typography variant="h6" sx={{ color: 'white', textAlign: 'center' }}>
-            Loading achievements...
-          </Typography>
-        </Grid>
-      </Grid>
-    );
-  }
+  const handleCardClick = (achievement) => {
+    if (unlockedAchievements.includes(achievement.codeName.trim())) {
+      setSelectedAchievement(achievement);
+    }
+  };
 
-  if (error) {
+  const handleCloseModal = () => setSelectedAchievement(null);
+
+  if (loading || error) {
     return (
       <Grid container spacing={2} sx={{ padding: 2, marginTop: "15px" }}>
         <Grid item xs={12}>
-          <Typography variant="h6" sx={{ color: '#F44336', textAlign: 'center' }}>
-            Error: {error}
+          <Typography variant="h6" sx={{ color: error ? "#F44336" : 'white', textAlign: 'center' }}>
+            {error ? `Error: ${error}` : "Loading achievements..."}
           </Typography>
         </Grid>
       </Grid>
@@ -76,98 +60,139 @@ const AchievementTable = () => {
   }
 
   return (
-    <Grid container spacing={2} sx={{ padding: 2, marginTop: "15px" }}>
-      {achievements.map((achievement, index) => {
-        const achievementCodeName = achievement?.codeName?.trim();
+    <>
+      <Grid container spacing={3} sx={{ padding: 2, marginTop: "15px" }}>
+        {achievements.map((achievement, index) => {
+          const codeName = achievement?.codeName?.trim();
+          if (!codeName) return null;
+          const isUnlocked = unlockedAchievements.includes(codeName);
 
-        if (!achievementCodeName) {
-          console.warn(`Achievement at index ${index} is missing codeName:`, achievement);
-          return null;
-        }
+          return (
+            <Grid item xs={12} sm={6} md={4} lg={2} key={codeName}>
+              <Card
+                onClick={() => handleCardClick(achievement)}
+                sx={{
+                  bgcolor: "#1e1e1e",
+                  color: isUnlocked ? "#fffde7" : "#888",
+                  textAlign: "center",
+                  padding: 2,
+                  borderRadius: "16px",
+                  minHeight: 180,
+                  width: "auto",
+                  cursor: isUnlocked ? "pointer" : "default",
+                  boxShadow: isUnlocked
+                    ? "0 0 15px 3px rgba(255, 193, 7, 0.5)"
+                    : "0 0 10px rgba(128, 128, 128, 0.2)",
+                  transition: "transform 0.3s ease, box-shadow 0.3s ease",
+                  "&:hover": {
+                    transform: isUnlocked ? "scale(1.08)" : "scale(1.02)",
+                    boxShadow: isUnlocked
+                      ? "0 0 25px 5px rgba(255, 214, 0, 0.9)"
+                      : "0 0 15px rgba(100, 100, 100, 0.4)",
+                  },
+                }}
+              >
+                <CardContent>
+                  {isUnlocked ? (
+                    <>
+                      <EmojiEvents sx={{ fontSize: 40, color: "#fff176", mb: 1 }} />
+                      <Typography
+                        variant="h6"
+                        sx={{
+                          fontWeight: "bold",
+                          textShadow: "0 0 5px #ffeb3b",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
+                          textOverflow: "ellipsis",
+                        }}
+                      >
+                        {achievement.title}
+                      </Typography>
+                      <Typography
+                        variant="caption"
+                        sx={{ display: 'block', fontStyle: 'italic', mt: 1, opacity: 0.8 }}
+                      >
+                        ✅ Unlocked
+                      </Typography>
+                    </>
+                  ) : (
+                    <>
+                      <Lock sx={{ fontSize: 40, color: "gray", mb: 1 }} />
+                      <Typography variant="body2">{achievement.title}</Typography>
+                      <Typography variant="caption" sx={{ display: 'block', mt: 1 }}>
+                        🔒 Locked
+                      </Typography>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            </Grid>
+          );
+        })}
+      </Grid>
 
-        const isUnlocked = unlockedAchievements.includes(achievementCodeName);
+      {/* Achievement Modal */}
+      {selectedAchievement && (
+        <Dialog
+          open={!!selectedAchievement}
+          onClose={handleCloseModal}
+          PaperProps={{
+            sx: {
+              background: "rgba(31, 31, 31, 0.9)",
+              border: "2px solid #ffb300",
+              borderRadius: 4,
+              backdropFilter: "blur(10px)",
+              boxShadow: "0 0 30px rgba(255, 193, 7, 0.8)",
+              color: "white",
+              padding: 2,
+              maxWidth: 480,
+              animation: "fadeIn 0.3s ease-in-out",
+              position: "relative"
+            },
+          }}
+        >
+          <DialogTitle
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+              fontWeight: 700,
+              fontSize: "1.75rem",
+              background: "linear-gradient(90deg, #ffc107, #ff9800)",
+              WebkitBackgroundClip: "text",
+              WebkitTextFillColor: "transparent",
+              textShadow: "0 0 6px rgba(255, 193, 7, 0.7)",
+              pb: 1,
+            }}
+          >
+            <span style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+              <EmojiEvents sx={{ fontSize: 32, color: "#ffeb3b" }} />
+              {selectedAchievement.title}
+            </span>
+            <IconButton onClick={handleCloseModal} sx={{ color: "#ffeb3b" }}>
+              <Close />
+            </IconButton>
+          </DialogTitle>
 
-        return (
-          <Grid item xs={12} sm={6} md={4} lg={2} key={achievementCodeName}>
-            <Card
+          <DialogContent sx={{ mt: 1 }}>
+            <Typography
+              variant="body1"
               sx={{
-                bgcolor: isUnlocked ? "#ff9800" : "#222",
-                color: "white",
+                fontSize: "1.1rem",
+                lineHeight: 1.6,
                 textAlign: "center",
-                padding: 2,
-                borderRadius: "12px",
-                minHeight: isUnlocked ? 180 : 160,
-                boxShadow: isUnlocked
-                  ? "0px 0px 10px rgba(255, 152, 0, 0.5)"
-                  : "0px 0px 5px rgba(128, 128, 128, 0.3)",
-                transition: "transform 0.2s, box-shadow 0.3s, height 0.3s",
-                overflow: "visible",
-                "&:hover": isUnlocked
-                  ? {
-                      transform: "scale(1.05)",
-                      boxShadow: "0px 0px 20px rgba(255, 152, 0, 0.8)",
-                    }
-                  : {
-                      transform: "scale(1.02)",
-                      boxShadow: "0px 0px 8px rgba(128, 128, 128, 0.5)",
-                    },
+                color: "#ffe082",
+                textShadow: "0 0 3px #ffcc80",
+                px: 2,
               }}
             >
-              <CardContent sx={{ overflow: "visible", padding: "8px" }}>
-                {isUnlocked ? (
-                  <>
-                    <Typography
-                      variant="h6"
-                      sx={{
-                        fontWeight: "bold",
-                        textShadow: "0px 0px 5px rgba(255, 152, 0, 0.8)",
-                        marginBottom: 1,
-                        whiteSpace: "nowrap",
-                        overflow: "hidden",
-                        textOverflow: "ellipsis",
-                        maxWidth: "100%",
-                        transition: "all 0.3s ease",
-                        "&:hover": {
-                          whiteSpace: "normal",
-                          overflow: "visible",
-                          textOverflow: "unset",
-                        },
-                      }}
-                    >
-                      {achievement.title || achievementCodeName}
-                    </Typography>
-                    <Typography variant="body2" sx={{ marginTop: 1 }}>
-                      {achievement.description || "No description available"}
-                    </Typography>
-                    <Typography
-                      variant="caption"
-                      sx={{
-                        marginTop: 1,
-                        display: 'block',
-                        fontStyle: 'italic',
-                        opacity: 0.8
-                      }}
-                    >
-                      ✅ Unlocked
-                    </Typography>
-                  </>
-                ) : (
-                  <>
-                    <Lock sx={{ fontSize: 40, color: "gray", marginBottom: 1 }} />
-                    <Typography variant="body2" sx={{ color: "gray" }}>
-                      {achievement.title || achievementCodeName}
-                    </Typography>
-                    <Typography variant="caption" sx={{ color: "gray", marginTop: 1, display: 'block' }}>
-                      🔒 Locked
-                    </Typography>
-                  </>
-                )}
-              </CardContent>
-            </Card>
-          </Grid>
-        );
-      })}
-    </Grid>
+              {selectedAchievement.description}
+            </Typography>
+          </DialogContent>
+        </Dialog>
+
+      )}
+    </>
   );
 };
 
