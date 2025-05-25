@@ -1,11 +1,8 @@
 import axios from "axios";
 
-<<<<<<< HEAD
 const API_URL = "http://localhost:8080/api/user";
 // const API_URL = "https://elementopia.onrender.com/api/user"; if not using localhost
-=======
-const API_URL = "https://elementopia.onrender.com/api/user";
->>>>>>> fb3f91e307e879c78e7aa1ab124d44bba70fad0c
+// const API_URL = "https://elementopia.onrender.com/api/user";
 
 // Get token from localStorage
 const getAuthHeader = () => {

@@ -1,12 +1,7 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
-import { Box, Typography, Slider, Button, Select, MenuItem, FormControl, InputLabel } from '@mui/material';
-import { styled } from '@mui/material/styles';
 import Navbar from '../components/NavBar';
 import Sidebar from '../components/Sidebar';
 import '../assets/css/StudentStateChanges.css';
-=======
-import React, { useState, useEffect, useRef } from "react";
 import {
   Box,
   Typography,
@@ -18,10 +13,6 @@ import {
   InputLabel,
 } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import "./StudentStateChanges.css";
->>>>>>> fb3f91e307e879c78e7aa1ab124d44bba70fad0c
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,

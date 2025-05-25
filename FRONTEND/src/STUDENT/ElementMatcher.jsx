@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -13,18 +12,9 @@ import { styled } from "@mui/material/styles";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import AchievementService from "../services/AchievementService";
-import "./ElementMatcher.css";
-=======
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Modal, Paper, Stack, Chip, CircularProgress } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import Navbar from '../components/NavBar';
-import Sidebar from '../components/Sidebar';
-import AchievementService from '../services/AchievementService';
 import achievements from '../components/Student Components/achievements.json';
 import UserService from '../services/UserService';
 import './ElementMatcher.css';
->>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
@@ -74,32 +64,28 @@ const difficultyLabels = {
   medium: { label: "Medium", color: "#FF9800" },
   hard: { label: "Hard", color: "#F44336" },
 };
-
-<<<<<<< HEAD
 // unlockAchievement function using AchievementService
 const unlockAchievement = async (codeName) => {
-  try {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    if (!user || !user.id) {
-      console.error("User not found or missing ID");
-      return;
+    try {
+      const user = JSON.parse(sessionStorage.getItem("user"));
+      if (!user || !user.id) {
+        console.error("User not found or missing ID");
+        return;
+      }
+
+      await AchievementService.unlockAchievementByCode(user.id, codeName);
+      console.log(`🏆 Achievement unlocked: ${codeName}`);
+
+      setAchievementName(getAchievementTitle(codeName));
+      setAchievementUnlocked(true);
+
+      setTimeout(() => {
+        setAchievementUnlocked(false);
+      }, 5000);
+    } catch (error) {
+      console.error("Error unlocking achievement:", error);
     }
-
-    await AchievementService.unlockAchievementByCode(user.id, codeName);
-    console.log(`🏆 Achievement unlocked: ${codeName}`);
-
-    // Set achievement details in state
-    setAchievementName(getAchievementTitle(codeName));
-    setAchievementUnlocked(true);
-
-    // Hide notification after 5 seconds
-    setTimeout(() => {
-      setAchievementUnlocked(false);
-    }, 5000);
-  } catch (error) {
-    console.error("Error unlocking achievement:", error);
-  }
-};
+  };
 
 // Helper function to get achievement title from code name
 const getAchievementTitle = (codeName) => {
@@ -115,8 +101,6 @@ const getAchievementTitle = (codeName) => {
   return achievementMap[codeName] || codeName;
 };
 
-=======
->>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
 const StudentElementMatcher = () => {
   // Enhanced user state management
   const [user, setUser] = useState(null);
@@ -323,15 +307,12 @@ const StudentElementMatcher = () => {
       const newTotalScore = totalScore + levelScore;
       setTotalScore(newTotalScore);
       setGameOver(true);
-<<<<<<< HEAD
 
       // Mark current difficulty as completed
       setCompletedDifficulties((prev) => ({
         ...prev,
         [difficulty]: true,
       }));
-=======
->>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
 
       // Update completed difficulties
       const newCompletedDifficulties = {
@@ -343,20 +324,16 @@ const StudentElementMatcher = () => {
       if (userId) {
         // Create achievements based on game completion
         if (difficulty === "easy") {
-<<<<<<< HEAD
           unlockAchievement("MEMORY_NOVICE");
 
           // Check for Quick Matchmaker achievement
-=======
           createAchievement("MEMORY_NOVICE");
->>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
           if (turns <= 20) {
             createAchievement("QUICK_MATCHMAKER");
           }
         } else if (difficulty === "medium") {
           createAchievement("MEMORY_INTERMEDIATE");
         } else if (difficulty === "hard") {
-<<<<<<< HEAD
           unlockAchievement("MEMORY_MASTER");
 
           // Check for Master Matcher achievement (completed all three levels)
@@ -366,7 +343,6 @@ const StudentElementMatcher = () => {
         }
 
         // Check for Score Hunter achievement
-=======
           createAchievement("MEMORY_MASTER");
           // Check if all difficulties are completed for Master Matcher
           if (newCompletedDifficulties.easy && newCompletedDifficulties.medium && newCompletedDifficulties.hard) {
@@ -375,7 +351,6 @@ const StudentElementMatcher = () => {
         }
 
         // Check for score-based achievement
->>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
         if (newTotalScore >= 100) {
           createAchievement("SCORE_HUNTER");
         }
@@ -388,7 +363,6 @@ const StudentElementMatcher = () => {
         setFeedback("🎉 Level completed!");
         setTimeout(() => setModalOpen(true), 1000);
       }
-    }
   }, [
     cards,
     difficulty,
@@ -403,11 +377,9 @@ const StudentElementMatcher = () => {
   const resetTurn = () => {
     setFirstChoice(null);
     setSecondChoice(null);
-<<<<<<< HEAD
     setTurns((prevTurns) => prevTurns + 1);
-=======
+
     setTurns(prev => prev + 1);
->>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
     setDisabled(false);
     setTimeout(() => setFeedback(""), 1000);
   };
@@ -592,24 +564,11 @@ const StudentElementMatcher = () => {
             ))}
           </Box>
 
-<<<<<<< HEAD
-          <Stack
-            direction="row"
-            spacing={2}
-            justifyContent="center"
-            sx={{ mt: 2 }}
-          >
-            <Button
-              variant="contained"
-              onClick={() => shuffleCards(difficulty)}
-              className="new-game-btn"
-=======
           <Stack direction="row" spacing={2} justifyContent="center" sx={{ mt: 2 }}>
             <Button 
               variant="contained" 
               onClick={() => shuffleCards(difficulty)} 
               className="new-game-btn" 
->>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
               disabled={disabled && !gameOver}
             >
               Restart Level

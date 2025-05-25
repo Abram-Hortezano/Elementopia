@@ -130,7 +130,6 @@ export default function App() {
         />
 
         {/* Teacher Routes - Protected */}
-<<<<<<< HEAD
         <Route
           path="/teacher-home-page"
           element={
@@ -186,7 +185,6 @@ export default function App() {
             <TeacherGameRoomPage />
           </PrivateRoute>
         } />
->>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
       </Routes>
     </Router>
   );
