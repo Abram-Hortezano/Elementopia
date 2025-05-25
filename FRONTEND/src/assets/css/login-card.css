@@ -78,9 +78,9 @@
   border-radius: 0;
 }
 .google-login:hover {
-  color: black;
+  color: #F4F4F4;
   background-color: rgb(207, 207, 207);
-  /* border-image: linear-gradient(90deg, #e151ff, #fde968) 1; */
+  border-image: linear-gradient(90deg, #e151ff, #fde968) 1; 
   transition: ease-in-out 0.2s;
 }
 .logo-img{
@@ -88,7 +88,7 @@
   height: 20px;
 }
 .login-button:hover {
-  color: #f4f4f4;
+  color: black;
   background-color: rgb(207, 207, 207);
   font-weight: bold;
   transition: ease-in-out 0.2s;

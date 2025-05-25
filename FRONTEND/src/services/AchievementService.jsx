@@ -1,11 +1,20 @@
 import axios from "axios";
 
+<<<<<<< HEAD
 const API_URL = "https://elementopia.onrender.com/api/achievement"; // Adjust if needed
+=======
+const API_URL = "http://localhost:8080/api/achievement";
+>>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
 
 const getAuthHeader = () => {
-  const user = JSON.parse(sessionStorage.getItem("user"));
-  const token = user?.token; // Assuming your login response includes a token
-  return token ? { Authorization: `Bearer ${token}` } : {};
+  try {
+    const user = JSON.parse(sessionStorage.getItem("user"));
+    const token = user?.token;
+    return token ? { Authorization: `Bearer ${token}` } : {};
+  } catch (e) {
+    console.error("Error parsing user from sessionStorage", e);
+    return {};
+  }
 };
 
 const AchievementService = {
@@ -64,23 +73,29 @@ const AchievementService = {
   },
 
   // Create Achievement
-  createAchievement: async (userId, achievementData) => {
+  createAchievement: async (userId, data) => {
+    console.log("Creating Achievement for user:", userId);
     try {
       const response = await axios.post(
         `${API_URL}/create/${userId}`,
-        achievementData,
-        {
+        data,
+       {
           headers: {
             ...getAuthHeader(),
           },
         }
       );
+
       return response.data;
     } catch (error) {
+<<<<<<< HEAD
       console.error(
         "Failed to create achievement:",
         error.response?.data || error.message
       );
+=======
+      console.error("Failed to create achievement:", error.response?.data || error.message || error);
+>>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
       throw error;
     }
   },
@@ -88,15 +103,12 @@ const AchievementService = {
   // Update Achievement
   updateAchievement: async (id, achievementData) => {
     try {
-      const response = await axios.put(
-        `${API_URL}/update/${id}`,
-        achievementData,
-        {
-          headers: {
-            ...getAuthHeader(),
-          },
-        }
-      );
+      const response = await axios.put(`${API_URL}/update/${id}`, achievementData, {
+        headers: {
+          ...getAuthHeader(),
+          "Content-Type": "application/json",
+        },
+      });
       return response.data;
     } catch (error) {
       console.error(
@@ -124,6 +136,7 @@ const AchievementService = {
       throw error;
     }
   },
+<<<<<<< HEAD
 
   // Unlock Achievement
   unlockAchievement: async (userId, achievementId) => {
@@ -168,6 +181,8 @@ const AchievementService = {
       throw error;
     }
   },
+=======
+>>>>>>> db29c5f6d10d1eb4b55c392cc2d9ff81209204cc
 };
 
 export default AchievementService;
