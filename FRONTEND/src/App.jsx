@@ -62,12 +62,12 @@ export default function App() {
             <StudentDiscoveryPage />
           </PrivateRoute>
         } />
-        <Route path="/student/game-room" element={
+        <Route path="/student/sandbox" element={
           <PrivateRoute allowedRoles={["STUDENT"]}>
             <StudentGameRoomPage />
           </PrivateRoute>
         } />
-        <Route path="/student/sandbox" element={
+        <Route path="/student/Chem-Simulation" element={
           <PrivateRoute allowedRoles={["STUDENT"]}>
             <StudentSandboxPage />
           </PrivateRoute>
@@ -119,7 +119,7 @@ export default function App() {
             <TeacherSandbox/>
           </PrivateRoute>
         } />
-        <Route path="/teacher/game-room" element={
+        <Route path="/teacher/Chem-Simulation" element={
           <PrivateRoute allowedRoles={["TEACHER"]}>
             <TeacherGameRoomPage />
           </PrivateRoute>
