@@ -1,16 +1,16 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
-import CustomRoom from "./custom-room"
+import CustomRoom from "./custom-room";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
 const StudentRoomPage = () => {
-  const [open, setOpen] = useState(false); 
+  const [open, setOpen] = useState(false);
 
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
@@ -26,7 +26,11 @@ const StudentRoomPage = () => {
       }}
     >
       <Navbar open={open} />
-      <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
+      <Sidebar
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
+      />
       <Box
         component="main"
         sx={{
@@ -37,7 +41,7 @@ const StudentRoomPage = () => {
           marginTop: "50px",
         }}
       >
-        <CustomRoom/>
+        <CustomRoom />
       </Box>
     </Box>
   );

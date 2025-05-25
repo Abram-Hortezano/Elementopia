@@ -21,6 +21,9 @@ public class AchievementEntity {
 
     @Column(name = "date_achieved", nullable = false)
     private LocalDate dateAchieved;
+    
+    @Column(name = "code_name", unique = true)
+    private String codeName;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)

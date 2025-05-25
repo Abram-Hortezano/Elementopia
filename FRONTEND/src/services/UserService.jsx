@@ -1,7 +1,11 @@
 import axios from "axios";
 
+<<<<<<< HEAD
 const API_URL = "http://localhost:8080/api/user";
 // const API_URL = "https://elementopia.onrender.com/api/user"; if not using localhost
+=======
+const API_URL = "https://elementopia.onrender.com/api/user";
+>>>>>>> fb3f91e307e879c78e7aa1ab124d44bba70fad0c
 
 // Get token from localStorage
 const getAuthHeader = () => {
@@ -18,12 +22,13 @@ const UserService = {
   // Login and get token
   loginUser: async (username, password) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, { username, password });
-      const { token, role } = response.data;
-  
-      localStorage.setItem("token", token);
-      localStorage.setItem("role", role);
-      
+      const response = await axios.post(`${API_URL}/login`, {
+        username,
+        password,
+      });
+
+      const { token } = response.data;
+      localStorage.setItem("token", token); // Store token securely
       return response.data;
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
