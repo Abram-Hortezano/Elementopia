@@ -48,6 +48,7 @@ export default function ProfilePage() {
       name: "Molecule Builder",
       description: "Created 5 molecules",
       progress: 60,
+      
       icon: Beaker,
     },
     {
