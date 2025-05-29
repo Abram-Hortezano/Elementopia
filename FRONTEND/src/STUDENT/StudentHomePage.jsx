@@ -45,14 +45,8 @@ const StudentHomePage = () => {
               <DiscoveriesCard />
               <AchievementsCard />
             </Grid>
-<<<<<<< HEAD
-            <Grid item xs={12} md={4}>
-              <UserCard />
-=======
             <Grid item xs={12} md={5}>
-              <UserCard/>
-              
->>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
+              <UserCard />
             </Grid>
           </Grid>
         )}

@@ -40,7 +40,6 @@ export default function App() {
         <Route path="/profile" element={<ProfilePageMain />} />
 
         {/* Student Routes - Protected */}
-<<<<<<< HEAD
         <Route
           path="/student-home-page"
           element={
@@ -185,7 +184,6 @@ export default function App() {
             <StudentCardMinigame />
           </PrivateRoute>
         } />
->>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
 
         {/* Teacher Routes - Protected */}
         <Route

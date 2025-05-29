@@ -1,20 +1,3 @@
-<<<<<<< HEAD
-import React, { useState, useEffect } from "react";
-import {
-  Box,
-  Typography,
-  Button,
-  Modal,
-  Paper,
-  Stack,
-  Chip,
-} from "@mui/material";
-import { styled } from "@mui/material/styles";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
-import AchievementService from "../services/AchievementService";
-import achievements from '../components/Student Components/achievements.json';
-=======
 import React, { useState, useEffect } from 'react';
 import { Box, Typography, Button, Modal, Paper, Stack, Chip, CircularProgress } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -22,11 +5,10 @@ import Navbar from '../components/NavBar';
 import Sidebar from '../components/Sidebar';
 import AchievementService from '../services/AchievementService';
 import achievements from '../components/MiniGames/achievements.json';
->>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
 import UserService from '../services/UserService';
 import './ElementMatcher.css';
 
-const DrawerHeader = styled("div")(({ theme }) => ({
+const DrawerHeader = styled('div')(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
@@ -66,53 +48,14 @@ const elementSets = {
     { id: 28, symbol: "Cm", name: "Curium", matched: false },
     { id: 29, symbol: "Mn", name: "Manganese", matched: false },
     { id: 30, symbol: "Mg", name: "Magnesium", matched: false },
-  ],
+  ]
 };
 
 const difficultyLabels = {
   easy: { label: "Easy", color: "#4CAF50" },
   medium: { label: "Medium", color: "#FF9800" },
-  hard: { label: "Hard", color: "#F44336" },
+  hard: { label: "Hard", color: "#F44336" }
 };
-<<<<<<< HEAD
-// unlockAchievement function using AchievementService
-const unlockAchievement = async (codeName) => {
-    try {
-      const user = JSON.parse(sessionStorage.getItem("user"));
-      if (!user || !user.id) {
-        console.error("User not found or missing ID");
-        return;
-      }
-
-      await AchievementService.unlockAchievementByCode(user.id, codeName);
-      console.log(`🏆 Achievement unlocked: ${codeName}`);
-
-      setAchievementName(getAchievementTitle(codeName));
-      setAchievementUnlocked(true);
-
-      setTimeout(() => {
-        setAchievementUnlocked(false);
-      }, 5000);
-    } catch (error) {
-      console.error("Error unlocking achievement:", error);
-    }
-  };
-
-// Helper function to get achievement title from code name
-const getAchievementTitle = (codeName) => {
-  const achievementMap = {
-    MEMORY_NOVICE: "Memory Novice",
-    MEMORY_INTERMEDIATE: "Memory Intermediate",
-    MEMORY_MASTER: "Memory Master",
-    QUICK_MATCHMAKER: "Quick Matchmaker",
-    SCORE_HUNTER: "Score Hunter",
-    MASTER_MATCHER: "Master Matcher",
-  };
-
-  return achievementMap[codeName] || codeName;
-};
-=======
->>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
 
 const StudentElementMatcher = () => {
   // Enhanced user state management
@@ -143,7 +86,7 @@ const StudentElementMatcher = () => {
   const [completedDifficulties, setCompletedDifficulties] = useState({
     easy: false,
     medium: false,
-    hard: false,
+    hard: false
   });
 
   const getAchievementTitle = (codeName) => {
@@ -248,18 +191,13 @@ const StudentElementMatcher = () => {
     if (!userId) return; // Don't shuffle if no user is loaded
     
     const elementPairs = elementSets[difficultyLevel];
-    const cardPairs = [...elementPairs].flatMap((element) => [
-      {
-        id: element.id,
-        type: "symbol",
-        content: element.symbol,
-        matched: false,
-      },
-      { id: element.id, type: "name", content: element.name, matched: false },
-    ]);
+    const cardPairs = [...elementPairs].flatMap(element => ([ 
+      { id: element.id, type: 'symbol', content: element.symbol, matched: false }, 
+      { id: element.id, type: 'name', content: element.name, matched: false }
+    ]));
     const shuffled = [...cardPairs]
       .sort(() => Math.random() - 0.5)
-      .map((card) => ({ ...card, cardId: Math.random() }));
+      .map(card => ({ ...card, cardId: Math.random() }));
 
     setCards(shuffled);
     setTurns(0);
@@ -288,12 +226,9 @@ const StudentElementMatcher = () => {
     if (firstChoice && secondChoice) {
       setDisabled(true);
 
-      if (
-        firstChoice.id === secondChoice.id &&
-        firstChoice.type !== secondChoice.type
-      ) {
-        setCards((prevCards) => {
-          return prevCards.map((card) => {
+      if (firstChoice.id === secondChoice.id && firstChoice.type !== secondChoice.type) {
+        setCards(prevCards => {
+          return prevCards.map(card => {
             if (card.id === firstChoice.id) {
               return { ...card, matched: true };
             } else {
@@ -301,7 +236,7 @@ const StudentElementMatcher = () => {
             }
           });
         });
-        setScore((prevScore) => prevScore + 1);
+        setScore(prevScore => prevScore + 1);
         setFeedback("✅ Match found!");
         resetTurn();
       } else {
@@ -314,21 +249,11 @@ const StudentElementMatcher = () => {
   useEffect(() => {
     if (gameOver) return;
 
-    if (cards.length > 0 && cards.every((card) => card.matched)) {
-      const levelScore =
-        score * (difficulty === "easy" ? 1 : difficulty === "medium" ? 2 : 3);
+    if (cards.length > 0 && cards.every(card => card.matched)) {
+      const levelScore = score * (difficulty === "easy" ? 1 : difficulty === "medium" ? 2 : 3);
       const newTotalScore = totalScore + levelScore;
       setTotalScore(newTotalScore);
       setGameOver(true);
-<<<<<<< HEAD
-
-      // Mark current difficulty as completed
-      setCompletedDifficulties((prev) => ({
-        ...prev,
-        [difficulty]: true,
-      }));
-=======
->>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
 
       // Update completed difficulties
       const newCompletedDifficulties = {
@@ -340,12 +265,6 @@ const StudentElementMatcher = () => {
       if (userId) {
         // Create achievements based on game completion
         if (difficulty === "easy") {
-<<<<<<< HEAD
-          unlockAchievement("MEMORY_NOVICE");
-
-          // Check for Quick Matchmaker achievement
-=======
->>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
           createAchievement("MEMORY_NOVICE");
           if (turns <= 20) {
             createAchievement("QUICK_MATCHMAKER");
@@ -353,16 +272,6 @@ const StudentElementMatcher = () => {
         } else if (difficulty === "medium") {
           createAchievement("MEMORY_INTERMEDIATE");
         } else if (difficulty === "hard") {
-<<<<<<< HEAD
-          unlockAchievement("MEMORY_MASTER");
-
-          // Check for Master Matcher achievement (completed all three levels)
-          if (completedDifficulties.easy && completedDifficulties.medium) {
-            unlockAchievement("MASTER_MATCHER");
-          }
-        }
-
-        // Check for Score Hunter achievement
           createAchievement("MEMORY_MASTER");
           // Check if all difficulties are completed for Master Matcher
           if (newCompletedDifficulties.easy && newCompletedDifficulties.medium && newCompletedDifficulties.hard) {
@@ -370,15 +279,6 @@ const StudentElementMatcher = () => {
           }
         }
 
-=======
-          createAchievement("MEMORY_MASTER");
-          // Check if all difficulties are completed for Master Matcher
-          if (newCompletedDifficulties.easy && newCompletedDifficulties.medium && newCompletedDifficulties.hard) {
-            createAchievement("MASTER_MATCHER");
-          }
-        }
-
->>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
         // Check for score-based achievement
         if (newTotalScore >= 100) {
           createAchievement("SCORE_HUNTER");
@@ -392,25 +292,12 @@ const StudentElementMatcher = () => {
         setFeedback("🎉 Level completed!");
         setTimeout(() => setModalOpen(true), 1000);
       }
-  }, [
-    cards,
-    difficulty,
-    score,
-    userId,
-    turns,
-    totalScore,
-    completedDifficulties,
-    gameOver,
-  ]);
+    }
+  }, [cards, difficulty, score, userId, turns, totalScore, completedDifficulties, gameOver]);
 
   const resetTurn = () => {
     setFirstChoice(null);
     setSecondChoice(null);
-<<<<<<< HEAD
-    setTurns((prevTurns) => prevTurns + 1);
-
-=======
->>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
     setTurns(prev => prev + 1);
     setDisabled(false);
     setTimeout(() => setFeedback(""), 1000);
@@ -436,7 +323,7 @@ const StudentElementMatcher = () => {
     setCompletedDifficulties({
       easy: false,
       medium: false,
-      hard: false,
+      hard: false
     });
     shuffleCards("easy");
   };
@@ -483,19 +370,10 @@ const StudentElementMatcher = () => {
   }
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box sx={{ display: 'flex' }}>
       <Navbar open={open} />
-      <Sidebar
-        open={open}
-        handleDrawerOpen={handleDrawerOpen}
-        handleDrawerClose={handleDrawerClose}
-      />
-      <Box
-        component="main"
-        className={`main-container ${
-          open ? "main-container-open" : "main-container-closed"
-        }`}
-      >
+      <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
+      <Box component="main" className={`main-container ${open ? 'main-container-open' : 'main-container-closed'}`}>
         <DrawerHeader />
 
         {/* Achievement Notification */}
@@ -508,7 +386,7 @@ const StudentElementMatcher = () => {
             </div>
           </div>
         )}
-
+        
         <Box className="game-container">
           <Box className="header-section">
             <Box>
@@ -519,9 +397,9 @@ const StudentElementMatcher = () => {
                 label={difficultyLabels[difficulty].label}
                 sx={{
                   backgroundColor: difficultyLabels[difficulty].color,
-                  color: "white",
-                  fontWeight: "bold",
-                  mt: 1,
+                  color: 'white',
+                  fontWeight: 'bold',
+                  mt: 1
                 }}
               />
             </Box>
@@ -540,12 +418,9 @@ const StudentElementMatcher = () => {
 
           <Box className="instruction-panel">
             <Typography variant="body1">
-              Match element symbols with their names. Click on cards to flip
-              them and find matching pairs!
-              {difficulty === "medium" &&
-                " This level has more elements to match."}
-              {difficulty === "hard" &&
-                " Warning: This level contains elements with similar symbols and names!"}
+              Match element symbols with their names. Click on cards to flip them and find matching pairs!
+              {difficulty === "medium" && " This level has more elements to match."}
+              {difficulty === "hard" && " Warning: This level contains elements with similar symbols and names!"}
             </Typography>
           </Box>
 
@@ -555,27 +430,15 @@ const StudentElementMatcher = () => {
             </Typography>
           )}
 
-          <Box
-            className={`card-grid ${
-              difficulty === "hard" ? "card-grid-hard" : ""
-            }`}
-          >
-            {cards.map((card) => (
+          <Box className={`card-grid ${difficulty === "hard" ? "card-grid-hard" : ""}`}>
+            {cards.map(card => (
               <Box
                 key={card.cardId}
                 className={`memory-card ${
-                  card.matched
-                    ? "matched"
-                    : card === firstChoice || card === secondChoice
-                    ? "flipped"
-                    : ""
+                  card.matched ? 'matched' :
+                  card === firstChoice || card === secondChoice ? 'flipped' : ''
                 }`}
-                onClick={() =>
-                  !card.matched &&
-                  card !== firstChoice &&
-                  card !== secondChoice &&
-                  handleChoice(card)
-                }
+                onClick={() => !card.matched && card !== firstChoice && card !== secondChoice && handleChoice(card)}
               >
                 <Box className="card-inner">
                   <Box className="card-front">
@@ -588,7 +451,7 @@ const StudentElementMatcher = () => {
                       {card.content}
                     </Typography>
                     <Typography variant="caption" className="card-type">
-                      {card.type === "symbol" ? "Symbol" : "Name"}
+                      {card.type === 'symbol' ? 'Symbol' : 'Name'}
                     </Typography>
                   </Box>
                 </Box>
@@ -607,11 +470,7 @@ const StudentElementMatcher = () => {
             </Button>
 
             {gameComplete && (
-              <Button
-                variant="contained"
-                onClick={resetGame}
-                className="new-game-btn"
-              >
+              <Button variant="contained" onClick={resetGame} className="new-game-btn">
                 Play Again
               </Button>
             )}
@@ -621,38 +480,25 @@ const StudentElementMatcher = () => {
 
       <Modal open={modalOpen} aria-labelledby="level-complete-modal">
         <Paper className="level-modal">
-          <Typography
-            variant="h5"
-            sx={{ mb: 2, color: "#8a4bff", fontWeight: "bold" }}
-          >
+          <Typography variant="h5" sx={{ mb: 2, color: "#8a4bff", fontWeight: "bold" }}>
             Level Complete!
           </Typography>
           <Typography variant="body1" sx={{ mb: 3 }}>
-            Congratulations! You've completed the{" "}
-            {difficultyLabels[difficulty].label} level with {score} matches in{" "}
-            {turns} turns.
+            Congratulations! You've completed the {difficultyLabels[difficulty].label} level with {score} matches in {turns} turns.
           </Typography>
           <Typography variant="body1" sx={{ mb: 3, fontWeight: "bold" }}>
             Your current score: {totalScore} points
           </Typography>
           <Typography variant="body1" sx={{ mb: 3 }}>
-            Would you like to proceed to the next level or save your current
-            score?
+            Would you like to proceed to the next level or save your current score?
           </Typography>
           <Stack direction="row" spacing={2} justifyContent="center">
             <Button
               variant="contained"
               onClick={handleNextLevel}
               sx={{
-                backgroundColor:
-                  difficultyLabels[difficulty === "easy" ? "medium" : "hard"]
-                    .color,
-                "&:hover": {
-                  backgroundColor:
-                    difficultyLabels[difficulty === "easy" ? "medium" : "hard"]
-                      .color,
-                  opacity: 0.9,
-                },
+                backgroundColor: difficultyLabels[difficulty === "easy" ? "medium" : "hard"].color,
+                '&:hover': { backgroundColor: difficultyLabels[difficulty === "easy" ? "medium" : "hard"].color, opacity: 0.9 }
               }}
             >
               Next Level
