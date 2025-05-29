@@ -1,8 +1,12 @@
 import axios from "axios";
 
+<<<<<<< HEAD
 // const API_URL = "https://elementopia.onrender.com/api/achievement"; // Adjust if needed
 const API_URL = "http://localhost:8080/api/achievement";
 
+=======
+const API_URL = "http://localhost:8080/api/achievement";
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
 
 const getAuthHeader = () => {
   try {
@@ -86,10 +90,13 @@ const AchievementService = {
 
       return response.data;
     } catch (error) {
+<<<<<<< HEAD
       console.error(
         "Failed to create achievement:",
         error.response?.data || error.message
       );
+=======
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
       console.error("Failed to create achievement:", error.response?.data || error.message || error);
       throw error;
     }
@@ -131,6 +138,7 @@ const AchievementService = {
       throw error;
     }
   },
+<<<<<<< HEAD
 
   // Unlock Achievement
   unlockAchievement: async (userId, achievementId) => {
@@ -175,6 +183,8 @@ const AchievementService = {
       throw error;
     }
   },
+=======
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
 };
 
 export default AchievementService;

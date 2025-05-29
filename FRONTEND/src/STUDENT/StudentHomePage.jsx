@@ -4,7 +4,6 @@ import { Outlet, useLocation } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import DailyChallengeCard from "../components/Student Components/DailyChallengeCard";
-import LessonCards from "../components/Student Components/LessonCards";
 import AchievementsCard from "../components/Student Components/AchievementsCard";
 import DiscoveriesCard from "../components/Student Components/DiscoveriesCard";
 import UserCard from "../components/Student Components/UserCard";
@@ -41,13 +40,19 @@ const StudentHomePage = () => {
       >
         {location.pathname === "/student-home-page" && (
           <Grid container spacing={2}>
-            <Grid item xs={12} md={8}>
+            <Grid item xs={12} md={7}>
               <DailyChallengeCard />
               <DiscoveriesCard />
               <AchievementsCard />
             </Grid>
+<<<<<<< HEAD
             <Grid item xs={12} md={4}>
               <UserCard />
+=======
+            <Grid item xs={12} md={5}>
+              <UserCard/>
+              
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
             </Grid>
           </Grid>
         )}

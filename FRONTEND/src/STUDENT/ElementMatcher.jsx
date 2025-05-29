@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import {
   Box,
@@ -13,6 +14,15 @@ import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import AchievementService from "../services/AchievementService";
 import achievements from '../components/Student Components/achievements.json';
+=======
+import React, { useState, useEffect } from 'react';
+import { Box, Typography, Button, Modal, Paper, Stack, Chip, CircularProgress } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Navbar from '../components/NavBar';
+import Sidebar from '../components/Sidebar';
+import AchievementService from '../services/AchievementService';
+import achievements from '../components/MiniGames/achievements.json';
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
 import UserService from '../services/UserService';
 import './ElementMatcher.css';
 
@@ -64,6 +74,7 @@ const difficultyLabels = {
   medium: { label: "Medium", color: "#FF9800" },
   hard: { label: "Hard", color: "#F44336" },
 };
+<<<<<<< HEAD
 // unlockAchievement function using AchievementService
 const unlockAchievement = async (codeName) => {
     try {
@@ -100,6 +111,8 @@ const getAchievementTitle = (codeName) => {
 
   return achievementMap[codeName] || codeName;
 };
+=======
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
 
 const StudentElementMatcher = () => {
   // Enhanced user state management
@@ -307,12 +320,15 @@ const StudentElementMatcher = () => {
       const newTotalScore = totalScore + levelScore;
       setTotalScore(newTotalScore);
       setGameOver(true);
+<<<<<<< HEAD
 
       // Mark current difficulty as completed
       setCompletedDifficulties((prev) => ({
         ...prev,
         [difficulty]: true,
       }));
+=======
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
 
       // Update completed difficulties
       const newCompletedDifficulties = {
@@ -324,9 +340,12 @@ const StudentElementMatcher = () => {
       if (userId) {
         // Create achievements based on game completion
         if (difficulty === "easy") {
+<<<<<<< HEAD
           unlockAchievement("MEMORY_NOVICE");
 
           // Check for Quick Matchmaker achievement
+=======
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
           createAchievement("MEMORY_NOVICE");
           if (turns <= 20) {
             createAchievement("QUICK_MATCHMAKER");
@@ -334,6 +353,7 @@ const StudentElementMatcher = () => {
         } else if (difficulty === "medium") {
           createAchievement("MEMORY_INTERMEDIATE");
         } else if (difficulty === "hard") {
+<<<<<<< HEAD
           unlockAchievement("MEMORY_MASTER");
 
           // Check for Master Matcher achievement (completed all three levels)
@@ -350,6 +370,15 @@ const StudentElementMatcher = () => {
           }
         }
 
+=======
+          createAchievement("MEMORY_MASTER");
+          // Check if all difficulties are completed for Master Matcher
+          if (newCompletedDifficulties.easy && newCompletedDifficulties.medium && newCompletedDifficulties.hard) {
+            createAchievement("MASTER_MATCHER");
+          }
+        }
+
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
         // Check for score-based achievement
         if (newTotalScore >= 100) {
           createAchievement("SCORE_HUNTER");
@@ -377,8 +406,11 @@ const StudentElementMatcher = () => {
   const resetTurn = () => {
     setFirstChoice(null);
     setSecondChoice(null);
+<<<<<<< HEAD
     setTurns((prevTurns) => prevTurns + 1);
 
+=======
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
     setTurns(prev => prev + 1);
     setDisabled(false);
     setTimeout(() => setFeedback(""), 1000);

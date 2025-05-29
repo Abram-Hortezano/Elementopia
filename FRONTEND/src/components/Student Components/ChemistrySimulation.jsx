@@ -6,6 +6,7 @@ import {
   Button,
   ToggleButton,
   CircularProgress,
+  Modal, // Import Modal component
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import ElementTable from "./ElementTable";
@@ -42,11 +43,15 @@ const ChemistrySimulation = () => {
   const [dailyChallengeCompound, setDailyChallengeCompound] = useState(null);
   const [completedSymbols, setCompletedSymbols] = useState([]);
   const [loadingDefinition, setLoadingDefinition] = useState(false);
+  const [showDiscoveryModal, setShowDiscoveryModal] = useState(false); // New state for discovery modal
+  const [discoveredCompoundInfo, setDiscoveredCompoundInfo] = useState(null); // New state for discovered compound info
 
   const navigate = useNavigate();
 
   useEffect(() => {
-    const challengeFromStorage = JSON.parse(localStorage.getItem("dailyChallengeCompound"));
+    const challengeFromStorage = JSON.parse(
+      localStorage.getItem("dailyChallengeCompound")
+    );
     if (challengeFromStorage) {
       setDailyChallengeCompound(challengeFromStorage);
     } else {
@@ -90,7 +95,10 @@ const ChemistrySimulation = () => {
     const foundCompound = compoundElements.find((compound) => {
       const compoundElementsSorted = [...compound.Elements].sort();
       const currentElementsSorted = [...currentElements].sort();
-      return JSON.stringify(compoundElementsSorted) === JSON.stringify(currentElementsSorted);
+      return (
+        JSON.stringify(compoundElementsSorted) ===
+        JSON.stringify(currentElementsSorted)
+      );
     });
 
     if (foundCompound) {
@@ -103,13 +111,21 @@ const ChemistrySimulation = () => {
 
       setMoleculeOutput(
         `NAME: ${foundCompound.NAME}\n` +
-        `Symbol: ${foundCompound.Symbol}\n` +
-        `Description: ${description}\n` +
-        `Elements: ${foundCompound.Elements.join(", ")}\n` +
-        `Uses: ${foundCompound.Uses.join(", ")}`
+          `Symbol: ${foundCompound.Symbol}\n` +
+          `Description: ${description}\n` +
+          `Elements: ${foundCompound.Elements.join(", ")}\n` +
+          `Uses: ${foundCompound.Uses.join(", ")}`
       );
 
       saveDiscovery(foundCompound);
+
+      // Set discovered compound info and show the discovery modal
+      setDiscoveredCompoundInfo({
+        name: foundCompound.NAME,
+        description: description,
+        uses: foundCompound.Uses.join(", "),
+      });
+      setShowDiscoveryModal(true);
 
       if (
         dailyChallengeCompound &&
@@ -124,6 +140,7 @@ const ChemistrySimulation = () => {
       }
     } else {
       setMoleculeOutput("No known molecule formed.");
+      setDiscoveredCompoundInfo(null); // Clear info if no compound formed
     }
   };
 
@@ -199,6 +216,11 @@ const ChemistrySimulation = () => {
   const handleClear = () => {
     setAtoms([]);
     setMoleculeOutput("");
+  };
+
+  // Function for redirecting to discovery page
+  const handleGoToDiscovery = () => {
+    navigate("/student/discovery"); // Using navigate for React Router
   };
 
   return (
@@ -306,68 +328,67 @@ const ChemistrySimulation = () => {
         </Box>
       </Box>
 
-    {/* Right Sidebar */}
-<Box
-  sx={{
-    width: "300px",
-    display: "flex",
-    flexDirection: "column",
-    gap: 2,
-    mt: 8,
-    fontFamily: "'Orbitron', 'Share Tech Mono', monospace",
-  }}
->
-  {/* Molecule Output */}
-  <Box
-    sx={{
-      padding: 2,
-      background: "linear-gradient(145deg, #1c1c2c, #222244)",
-      borderRadius: "12px",
-      color: "#e0e0e0",
-      whiteSpace: "pre-line",
-      border: "1px solid #ffcc00",
-      overflowY: "auto",
-      maxHeight: "320px",
-      fontSize: "14px",
-      lineHeight: 1.6,
-      boxShadow: "0 0 10px #ffcc00aa",
-      transition: "all 0.3s ease-in-out",
-      scrollbarColor: "#ffcc00 #1c1c2e",
-      scrollbarWidth: "thin",
-    }}
-  >
-    <Typography
-      variant="h6"
-      sx={{
-        color: "#ffcc00",
-        marginBottom: 1,
-        fontWeight: "bold",
-        fontSize: "16px",
-        textShadow: "0 0 5px #ffcc00",
-      }}
-    >
-      🧪 Molecule Info
-    </Typography>
-    {loadingDefinition ? (
-      <CircularProgress size={24} sx={{ color: "#ffcc00" }} />
-    ) : (
-      <Typography
-        component="div"
+      {/* Right Sidebar */}
+      <Box
         sx={{
-          fontFamily: "'Share Tech Mono', monospace",
-          fontSize: "13.5px",
-          color: "#d0d0ff",
-          lineHeight: 1.7,
+          width: "300px",
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+          mt: 8,
+          fontFamily: "'Orbitron', 'Share Tech Mono', monospace",
         }}
       >
-        {moleculeOutput}
-      </Typography>
-    )}
-  </Box>
-</Box>
+        {/* Molecule Output */}
+        <Box
+          sx={{
+            padding: 2,
+            background: "linear-gradient(145deg, #1c1c2c, #222244)",
+            borderRadius: "12px",
+            color: "#e0e0e0",
+            whiteSpace: "pre-line",
+            border: "1px solid #ffcc00",
+            overflowY: "auto",
+            maxHeight: "320px",
+            fontSize: "14px",
+            lineHeight: 1.6,
+            boxShadow: "0 0 10px #ffcc00aa",
+            transition: "all 0.3s ease-in-out",
+            scrollbarColor: "#ffcc00 #1c1c2e",
+            scrollbarWidth: "thin",
+          }}
+        >
+          <Typography
+            variant="h6"
+            sx={{
+              color: "#ffcc00",
+              marginBottom: 1,
+              fontWeight: "bold",
+              fontSize: "16px",
+              textShadow: "0 0 5px #ffcc00",
+            }}
+          >
+            🧪 Molecule Info
+          </Typography>
+          {loadingDefinition ? (
+            <CircularProgress size={24} sx={{ color: "#ffcc00" }} />
+          ) : (
+            <Typography
+              component="div"
+              sx={{
+                fontFamily: "'Share Tech Mono', monospace",
+                fontSize: "13.5px",
+                color: "#d0d0ff",
+                lineHeight: 1.7,
+              }}
+            >
+              {moleculeOutput}
+            </Typography>
+          )}
+        </Box>
+      </Box>
 
-
-      {/* Completion Modal */}
+      {/* Completion Modal (Existing) */}
       {showChallengeModal && (
         <Box
           sx={{
@@ -400,6 +421,70 @@ const ChemistrySimulation = () => {
           </Box>
         </Box>
       )}
+
+      {/* Discovery Modal (New) */}
+      <Modal
+        open={showDiscoveryModal}
+        onClose={() => setShowDiscoveryModal(false)}
+        aria-labelledby="discovery-modal-title"
+        aria-describedby="discovery-modal-description"
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            top: "50%",
+            left: "50%",
+            transform: "translate(-50%, -50%)",
+            width: 400,
+            bgcolor: "#222",
+            border: "2px solid #ffcc00",
+            borderRadius: 4,
+            boxShadow: 24,
+            p: 4,
+            color: "white",
+            textAlign: "center",
+          }}
+        >
+          <Typography
+            id="discovery-modal-title"
+            variant="h6"
+            component="h2"
+            sx={{ color: "#ffcc00", marginBottom: 2 }}
+          >
+            🌟 Compound Discovered!
+          </Typography>
+          {discoveredCompoundInfo && (
+            <Box>
+              <Typography variant="body1" sx={{ marginBottom: 1 }}>
+                You discovered:{" "}
+                <strong style={{ color: "#aaffaa" }}>
+                  {discoveredCompoundInfo.name}
+                </strong>
+              </Typography>
+              <Typography variant="body2" sx={{ marginBottom: 1 }}>
+                **Description:** {discoveredCompoundInfo.description}
+              </Typography>
+              <Typography variant="body2">
+                **Uses:** {discoveredCompoundInfo.uses}
+              </Typography>
+            </Box>
+          )}
+          <Box sx={{ display: "flex", justifyContent: "space-around", mt: 3 }}>
+            {/* Moved "Go to Discoveries" button inside the modal */}
+            <Button
+              variant="contained"
+              onClick={handleGoToDiscovery}
+              sx={{
+                backgroundColor: "#4CAF50", // Green color for the button
+                color: "white",
+                "&:hover": { backgroundColor: "#388E3C" },
+              }}
+            >
+              Go to Discoveries
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
     </Box>
   );
 };

@@ -40,6 +40,7 @@ export default function App() {
         <Route path="/profile" element={<ProfilePageMain />} />
 
         {/* Student Routes - Protected */}
+<<<<<<< HEAD
         <Route
           path="/student-home-page"
           element={
@@ -128,6 +129,63 @@ export default function App() {
             </PrivateRoute>
           }
         />
+=======
+        <Route path="/student-home-page" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <StudentHomePage />
+          </PrivateRoute>
+        } />
+        <Route path="/student/profile" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <ProfilePage />
+          </PrivateRoute>
+        } />
+        <Route path="/student/room" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <StudentRoomPage />
+          </PrivateRoute>
+        } />
+        <Route path="/student/student-career-page" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <StudentCareerPage />
+          </PrivateRoute>
+        } />
+        <Route path="/student/discovery" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <StudentDiscoveryPage />
+          </PrivateRoute>
+        } />
+        <Route path="/student/sandbox" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <StudentGameRoomPage />
+          </PrivateRoute>
+        } />
+        <Route path="/student/Chem-Simulation" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <StudentSandboxPage />
+          </PrivateRoute>
+        } />
+        <Route path="/student/daily-challenge" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <ChallengePage />
+          </PrivateRoute>
+        } />
+        <Route path="/student/game1" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <StudentElementMatcher />
+          </PrivateRoute>
+        } />
+        <Route path="/student/game2" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <StudentStateChanges />
+          </PrivateRoute>
+        } />
+        <Route path="/student/game3" element={
+          <PrivateRoute allowedRoles={["STUDENT"]}>
+            <StudentCardMinigame />
+          </PrivateRoute>
+        } />
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
 
         {/* Teacher Routes - Protected */}
         <Route
@@ -180,7 +238,7 @@ export default function App() {
             <TeacherSandbox/>
           </PrivateRoute>
         } />
-        <Route path="/teacher/game-room" element={
+        <Route path="/teacher/Chem-Simulation" element={
           <PrivateRoute allowedRoles={["TEACHER"]}>
             <TeacherGameRoomPage />
           </PrivateRoute>

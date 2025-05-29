@@ -86,10 +86,13 @@ export default function Login({ onLoginSuccess }) {
         <button className="input-field login-button" onClick={handleLogin}>
           Login
         </button>
+<<<<<<< HEAD
         <button className="google-login">
           <img className="logo-img" src={googleLogo} alt="My Image" />
           Login with Google
         </button>
+=======
+>>>>>>> 67f7118f23cd2c20d6bc26195ad418ad05c55e5c
         {message && <p className="status-message">{message}</p>}
         <p className="signup-msg">
           Don’t have an account?{" "}

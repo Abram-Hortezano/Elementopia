@@ -18,8 +18,8 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import home from "../../assets/img/home.png";
 import room from "../../assets/img/room.png";
 import career from "../../assets/img/career.png";
-import sandBox from "../../assets/img/sandBox.png";
-import gameRoom from "../../assets/img/gameRoom.png";
+import sandBox from "../../assets/img/sandbox.png";
+import chemSimulation from "../../assets/img/chemSimulation.png"
 
 const drawerWidth = 180;
 const closedWidth = 60;
@@ -46,8 +46,8 @@ const menuItems = [
   { text: "Home", icon: home, path: "/teacher/analytics" },
   { text: "Room", icon: room, path: "/teacher/room" },
   { text: "Career", icon: career, path: "/teacher/career" },
+  { text: "Chem-Simulation", icon: chemSimulation, path: "/teacher/Chem-Simulation" },
   { text: "Sandbox", icon: sandBox, path: "/teacher/sandbox" },
-  { text: "Game Room", icon: gameRoom, path: "/teacher/game-room" },
 ];
 
 const TeacherSidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {

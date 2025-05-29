@@ -20,7 +20,7 @@ import room from "../assets/img/room.png";
 import career from "../assets/img/career.png";
 import discovery from "../assets/img/discovery.png";
 import sandBox from "../assets/img/sandBox.png";
-import gameRoom from "../assets/img/gameRoom.png";
+import chemSimulation from "../assets/img/chemSimulation.png"
 
 const drawerWidth = 180;
 const closedWidth = 60;
@@ -48,8 +48,8 @@ const menuItems = [
   { text: "Room", icon: room, path: "/student/room" },
   { text: "Career", icon: career, path: "/student/student-career-page" },
   { text: "Discovery", icon: discovery, path: "/student/discovery" },
+  { text: "Chem-Simulation", icon: chemSimulation, path: "/student/Chem-Simulation" },
   { text: "Sandbox", icon: sandBox, path: "/student/sandbox" },
-  { text: "Game Room", icon: gameRoom, path: "/student/game-room" },
 ];
 
 const Sidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {
