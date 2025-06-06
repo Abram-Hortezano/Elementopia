@@ -19,10 +19,10 @@ const UserService = {
     try {
       const response = await axios.post(`${API_URL}/login`, { username, password });
       const { token, role } = response.data;
-  
+
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
-      
+
       return response.data;
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
@@ -44,6 +44,19 @@ const UserService = {
         "Failed to fetch current user:",
         error.response?.data || error.message
       );
+      throw error;
+    }
+  },
+
+  // Get all users
+  getAllUsers: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/getAllUsers`, {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch all users:", error.response?.data || error.message);
       throw error;
     }
   },
@@ -127,6 +140,5 @@ const UserService = {
     return localStorage.getItem("role");
   },
 };
-
 
 export default UserService;
