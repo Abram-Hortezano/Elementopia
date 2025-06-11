@@ -4,7 +4,8 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "laboratory")
@@ -32,8 +33,13 @@ public class LabEntity {
             joinColumns = @JoinColumn(name = "lab_id"),
             inverseJoinColumns = @JoinColumn(name = "student_id")
     )
-    private List<UserEntity> students;
+    private Set<UserEntity> students = new HashSet<>();
 
-    @Column(name = "lesson")
-    private String lesson;
+    @ManyToMany
+    @JoinTable(
+            name = "laboratory_lessons",
+            joinColumns = @JoinColumn(name = "lab_id"),
+            inverseJoinColumns = @JoinColumn(name = "lesson_id")
+    )
+    private Set<LessonEntity> lessons = new HashSet<>();
 }

@@ -42,5 +42,11 @@ public class LabController {
     public void deleteLab(@PathVariable Long labId) {
         labService.deleteLab(labId);
     }
+
+    @PutMapping("/{labCode}/add-lesson")
+    public LabEntity addLesson(@PathVariable String labCode, @RequestParam Long lessonId) {
+        return labService.addLessonToLab(labCode, lessonId);
+    }
+
 }
 

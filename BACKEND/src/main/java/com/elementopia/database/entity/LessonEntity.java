@@ -20,6 +20,9 @@ public class LessonEntity {
     @Column(name = "title")
     private String title;
 
+    @ManyToMany(mappedBy = "lessons")
+    private List<LabEntity> labs;
+
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<TopicEntity> topics = new ArrayList<>();
