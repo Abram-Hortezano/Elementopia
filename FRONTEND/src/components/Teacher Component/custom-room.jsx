@@ -2,6 +2,7 @@ import { useState } from "react";
 import { Users, BookOpen, Plus, Search, Beaker, Edit, Trash, Globe, Lock, X } from "lucide-react";
 import CreateLaboratory from "./create-lab";
 import "../../assets/css/custom-room.css";
+import PublicLab from "./publicLab";
 
 export default function CustomRoomView() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -158,59 +159,8 @@ export default function CustomRoomView() {
       </div>
 
       {/* Public Laboratories */}
-      <div className="labs-container">
-        <div className="labs-header">
-          <h2 className="labs-title">Public Laboratories</h2>
-          <p className="labs-subtitle">Browse and join public laboratories created by teachers</p>
-        </div>
-        <div className="labs-content">
-          <div className="labs-list">
-            {filteredPublicLabs.map((lab) => (
-              <div key={lab.id} className="lab-card">
-                <div className="lab-card-content">
-                  <div className="lab-info">
-                    <div className="lab-icon-container">
-                      <Beaker className="lab-icon" />
-                    </div>
-                    <div>
-                      <h3 className="lab-name">{lab.name}</h3>
-                      <p className="lab-creator">Created by {lab.creator}</p>
-                      <div className="lab-stats">
-                        <div className="lab-stat">
-                          <Users className="stat-icon" />
-                          <span className="stat-text">{lab.students} students</span>
-                        </div>
-                        <div className="lab-stat">
-                          <Beaker className="stat-icon" />
-                          <span className="stat-text">{lab.experiments} experiments</span>
-                        </div>
-                        {lab.isPublic && (
-                          <div className="lab-stat">
-                            <Globe className="stat-icon purple" />
-                            <span className="stat-text">Public</span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="lab-actions">
-                    <button onClick={() => handleJoinLab(lab.id)} className="join-lab-button">
-                      Join Laboratory
-                    </button>
-                  </div>
-                </div>
-              </div>
-            ))}
-            {filteredPublicLabs.length === 0 && (
-              <div className="empty-state">
-                <Beaker className="empty-icon" />
-                <p className="empty-text">No laboratories found</p>
-              </div>
-            )}
-          </div>
-        </div>
-      </div>
-
+      <PublicLab/>
+      
       {/* My Laboratories Modal */}
       {myLabsModalOpen && (
         <div className="modal-overlay">

@@ -29,7 +29,7 @@ export default function CreateLaboratory({ onClose }) {
   const [allUsers, setAllUsers] = useState([]);
   const [selectedStudentIds, setSelectedStudentIds] = useState([]);
   const [lessons, setLessons] = useState([]);
-  const [selectedLessonId, setSelectedLessonId] = useState("");
+  const [selectedLessonIds, setSelectedLessonIds] = useState([]);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -77,19 +77,21 @@ export default function CreateLaboratory({ onClose }) {
       setLabNameError("Laboratory name is required.");
       return;
     }
-    if (!selectedLessonId) {
+    if (!selectedLessonIds) {
       alert("Please select a lesson.");
       return;
     }
 
     try {
       const labData = {
-        LaboratoryName: laboratoryName,
-        LabCode: code,
-        LessonID: selectedLessonId,
-        CreatorID: creatorId,
-        Students: selectedStudentIds,
+        laboratoryName: laboratoryName,
+        labCode: code,
+        creatorId: creatorId,
+        studentIds: selectedStudentIds,
+        lessonIds: selectedLessonIds,
       };
+
+      console.log(labData);
 
       await LaboratoryService.createLab(labData);
       alert("Laboratory created successfully!");
@@ -144,10 +146,19 @@ export default function CreateLaboratory({ onClose }) {
       </div>
 
       <div className="input-group">
-        <label>Select Lesson</label>
-        <select value={selectedLessonId} onChange={(e) => setSelectedLessonId(e.target.value)}>
-          <option value="">-- Select a lesson --</option>
-          {lessons.length === 0 && <option disabled>Loading lessons or no lessons found...</option>}
+        <label>Select Lessons</label>
+        <select
+          multiple
+          value={selectedLessonIds}
+          onChange={(e) => {
+            // grab all selected <option> values
+            const values = Array.from(e.target.selectedOptions, o => parseInt(o.value));
+            setSelectedLessonIds(values);
+          }}
+        >
+          {lessons.length === 0 && (
+            <option disabled>Loading lessons or no lessons found...</option>
+          )}
           {lessons.map((lesson) => (
             <option key={lesson.id} value={lesson.id}>
               {lesson.title}
@@ -155,6 +166,7 @@ export default function CreateLaboratory({ onClose }) {
           ))}
         </select>
       </div>
+
 
       <div className="input-group">
         <label>Select Students</label>
