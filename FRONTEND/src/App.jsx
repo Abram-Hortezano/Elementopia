@@ -19,7 +19,7 @@ import StudentStateChanges from "./STUDENT/StudentStateChanges";
 import StudentCardMinigame from "./STUDENT/StudentCardMinigame";
 import ProfilePageMain from "./pages/profile-page";
 import TeacherGameRoomPage from "./TEACHER/TeacherGameRoomPage";
-import TeacherRoomPage from "./TEACHER/TeacherGameRoomPage"
+import TeacherRoomPage from "./TEACHER/TeacherRoomPage"
 import TeacherSandbox from "./TEACHER/TeacherSandboxPage"
 
 import PrivateRoute from "./components/utils/PrivateRoute";
@@ -228,7 +228,7 @@ export default function App() {
         } />
         <Route path="/teacher/room" element={
           <PrivateRoute allowedRoles={["TEACHER"]}>
-            <TeacherRoomPage />
+            <TeacherRoomPage/>
           </PrivateRoute>
         } />
         <Route path="/teacher/sandbox" element={
