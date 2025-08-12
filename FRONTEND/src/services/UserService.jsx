@@ -19,22 +19,12 @@ const UserService = {
   // Login and get token
   loginUser: async (username, password) => {
     try {
-<<<<<<< HEAD
-      const response = await axios.post(`${API_URL}/login`, {
-        username,
-        password,
-      });
-
-      const { token } = response.data;
-      localStorage.setItem("token", token); // Store token securely
-=======
       const response = await axios.post(`${API_URL}/login`, { username, password });
       const { token, role } = response.data;
 
       localStorage.setItem("token", token);
       localStorage.setItem("role", role);
 
->>>>>>> 66378e62d6662f22cb52b7bc3abe94b80a327178
       return response.data;
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
