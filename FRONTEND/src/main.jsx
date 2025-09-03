@@ -13,7 +13,7 @@ import Laboratory from "./STUDENT/laboratory";
 import CreateExperimentModal from "./STUDENT/create-experiment";
 import AddStudentModal from "./STUDENT/add-student-modal";
 import StudentProgressModal from "./STUDENT/student-progress-modal";
-
+import PracticeSprite from "./STUDENT/practice-sprite";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -22,7 +22,8 @@ createRoot(document.getElementById("root")).render(
     {/* <StudentRoomPage /> */}
     {/* <TeacherRoomPage /> */}
     {/* <Laboratory /> */}
-    <StudentProgressModal />
+    {/* <StudentProgressModal /> */}
+    <PracticeSprite />
     {/* <AddStudentModal /> */}
      {/* <StudentHomePage /> */}
      {/* <CreateExperimentModal /> */}
