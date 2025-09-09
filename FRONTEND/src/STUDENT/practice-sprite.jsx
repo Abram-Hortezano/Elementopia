@@ -82,6 +82,11 @@ export default function PracticeSprite() {
     return () => clearInterval(interval);
   }, [spriteState, frame]);
 
+useEffect(() => {
+  setFrame(0);   // reset to the first frame whenever the spriteState changes
+}, [spriteState]);
+
+
   // --- Movement + background scroll ---
   useEffect(() => {
     const handleKeyDown = (e) => {
@@ -239,6 +244,7 @@ setY((prevY) => {
           bottom: `${50 + y}px`,
         }}
       />
+      
 
       {activeLesson && (
         <div className="lesson-popup">

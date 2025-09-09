@@ -36,3 +36,34 @@
   border-radius: 12px;
   text-align: center;
 }
+
+.quiz-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.doors {
+  display: flex;
+  gap: 40px;
+  margin-top: 20px;
+}
+
+.door {
+  padding: 20px 40px;
+  background: #444;
+  border: 2px solid white;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.door.selected {
+  background: #2ecc71;
+  border-color: yellow;
+}
