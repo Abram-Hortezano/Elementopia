@@ -14,6 +14,11 @@ import CreateExperimentModal from "./STUDENT/create-experiment";
 import AddStudentModal from "./STUDENT/add-student-modal";
 import StudentProgressModal from "./STUDENT/student-progress-modal";
 import PracticeSprite from "./STUDENT/practice-sprite";
+import LandingPage from "./STUDENT/LandingPage";
+import MapTree from "./STUDENT/Map-Tree";
+import AtomBuilder from "./STUDENT/AtomBuilder";
+import CovalentBonding from "./STUDENT/CovalentBonding";
+import IonicBonding from "./STUDENT/IonicBonding";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
@@ -23,8 +28,13 @@ createRoot(document.getElementById("root")).render(
     {/* <TeacherRoomPage /> */}
     {/* <Laboratory /> */}
     {/* <StudentProgressModal /> */}
-    <PracticeSprite />
+    {/* <PracticeSprite /> */}
+    <MapTree />
+    {/* <IonicBonding /> */}
+    {/* <CovalentBonding /> */}
+    {/* <AtomBuilder /> */}
     {/* <AddStudentModal /> */}
+    {/* <LandingPage /> */}
      {/* <StudentHomePage /> */}
      {/* <CreateExperimentModal /> */}
     </BrowserRouter>
