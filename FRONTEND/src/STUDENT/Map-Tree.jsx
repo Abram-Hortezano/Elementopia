@@ -5,12 +5,13 @@ import "../assets/css/Map-tree.css";
 // --- Import your lesson components ---
 import AtomBuilder from '../STUDENT/AtomBuilder';
 import IonicBonding from '../STUDENT/IonicBonding';
+import CovalentBonding from '../STUDENT/CovalentBonding';
 
 // --- DATA STRUCTURE with lesson mapping ---
 const nodes = [
     { id: 1, label: 'The Atom',         position: { top: '20%', left: '50%' }, prerequisites: [], lesson: 'AtomBuilder' },
     { id: 2, label: 'Ionic Bonding',    position: { top: '20%', left: '30%' }, prerequisites: [1], lesson: 'IonicBonding' },
-    { id: 3, label: 'Covalent Bonding', position: { top: '55%', left: '30%' }, prerequisites: [2], lesson: null }, // Lesson not yet built
+    { id: 3, label: 'Covalent Bonding', position: { top: '55%', left: '30%' }, prerequisites: [2], lesson: 'CovalentBonding' }, // Lesson not yet built
     { id: 4, label: 'Molar Mass',       position: { top: '55%', left: '50%' }, prerequisites: [3], lesson: null },
     { id: 5, label: 'Moles to Grams',   position: { top: '80%', left: '50%' }, prerequisites: [4], lesson: null },
     { id: 6, label: '% Composition',    position: { top: '80%', left: '70%' }, prerequisites: [3, 5], lesson: null },
@@ -25,6 +26,7 @@ const connections = [
 const lessonComponents = {
     AtomBuilder: AtomBuilder,
     IonicBonding: IonicBonding,
+    CovalentBonding: CovalentBonding,
     // Add CovalentBonding and others when available
 };
 
@@ -102,7 +104,7 @@ export default function MapTree() {
     );
 }
 
-// --- The ConnectorLine component (no changes) ---
+// --- The ConnectorLine component ---
 const ConnectorLine = ({ startNode, endNode, isCompleted, containerDims }) => {
     if (!startNode || !endNode || !containerDims.width) return null;
 
