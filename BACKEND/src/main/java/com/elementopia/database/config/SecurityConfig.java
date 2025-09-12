@@ -74,8 +74,12 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
+<<<<<<< HEAD
         configuration.setAllowedOrigins(List.of("https://elementopia.netlify.app", "elementopia://"));
         configuration.setAllowedOrigins(List.of("http://localhost:5173/", "elementopia://"));
+=======
+        configuration.setAllowedOrigins(List.of("https://elementopia.netlify.app", "elementopia://", "http://localhost:5173"));
+>>>>>>> a97301219e1c288d37a16baa659dd1fff5610691
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization"));

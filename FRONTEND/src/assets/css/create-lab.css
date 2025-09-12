@@ -13,7 +13,11 @@
     border: 1px solid #3b3b3b;
     font-weight: bold;
     position: absolute;
+<<<<<<< HEAD
     margin-left: 30vw;
+=======
+    margin-left: 35vw;
+>>>>>>> a97301219e1c288d37a16baa659dd1fff5610691
     margin-top: 10vh;
   }
   

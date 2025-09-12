@@ -22,11 +22,17 @@ body {
 /* Ensures content stays centered */
 .root {
   display: flex;
+<<<<<<< HEAD
   /* border: 1px solid red; */
   /* padding-bottom: 0; */
   /* width: 100vw; */
   max-width: 100vw;
   /* max-height: 100vh; */
+=======
+  border: 1px solid red;
+  /* margin-left: 1rem; */
+  max-width: 100vw;
+>>>>>>> a97301219e1c288d37a16baa659dd1fff5610691
 }
 
 /* ========== Landing Page ========== */
