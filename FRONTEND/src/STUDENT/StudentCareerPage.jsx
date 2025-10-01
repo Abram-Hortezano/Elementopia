@@ -3,6 +3,8 @@ import { Box, Typography } from "@mui/material";
 import Navbar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 import CurriculumOverview from "../components/Curriculum Components/CurriculumOverview";
+import BondBuilderModule from "../components/Curriculum Components/BondBuilderModule";
+import MapTree from "./Map-Tree";
 
 const StudentCareerPage = () => {
   const [open, setOpen] = useState(false);
@@ -36,7 +38,7 @@ const StudentCareerPage = () => {
           marginTop: "50px",
         }}
       >
-        <CurriculumOverview />
+        <MapTree/>
       </Box>
     </Box>
   );

@@ -45,4 +45,19 @@ public class LessonService {
         topic.getSubtopics().add(subtopic);
         return lessonRepo.save(lesson);
     }
+
+    public LessonEntity updateDescription(Long lessonId, String newDescription) {
+        LessonEntity lesson = getLesson(lessonId);
+        lesson.setDescription(newDescription);
+        return lessonRepo.save(lesson);
+    }
+
+    public String deleteLesson(Long id) {
+        if (lessonRepo.existsById(id)) {
+            lessonRepo.deleteById(id);
+            return "Lesson with ID " + id + " deleted successfully!";
+        } else {
+            return "Lesson with ID " + id + " not found!";
+        }
+    }
 }
