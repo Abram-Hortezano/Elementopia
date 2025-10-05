@@ -5,15 +5,18 @@ import "../assets/css/Map-tree.css";
 import AtomBuilder from '../STUDENT/AtomBuilder';
 import IonicBonding from '../STUDENT/IonicBonding';
 import CovalentBonding from '../STUDENT/CovalentBonding';
+import MoleMass from '../STUDENT/MoleMass';
+import MolesToGrams from '../STUDENT/MolesToGrams';
+import PercentComposition from '../STUDENT/PercentComposition';
 
 // --- DATA STRUCTURE with lesson mapping ---
 const nodes = [
     { id: 1, label: 'The Atom',         position: { top: '20%', left: '50%' }, prerequisites: [], lesson: 'AtomBuilder' },
     { id: 2, label: 'Ionic Bonding',    position: { top: '20%', left: '30%' }, prerequisites: [1], lesson: 'IonicBonding' },
     { id: 3, label: 'Covalent Bonding', position: { top: '55%', left: '30%' }, prerequisites: [2], lesson: 'CovalentBonding' },
-    { id: 4, label: 'Molar Mass',       position: { top: '55%', left: '50%' }, prerequisites: [3], lesson: null },
-    { id: 5, label: 'Moles to Grams',   position: { top: '80%', left: '50%' }, prerequisites: [4], lesson: null },
-    { id: 6, label: '% Composition',    position: { top: '80%', left: '70%' }, prerequisites: [3, 5], lesson: null },
+    { id: 4, label: 'Molar Mass',       position: { top: '55%', left: '50%' }, prerequisites: [3], lesson: 'MoleMass' },
+    { id: 5, label: 'Moles to Grams',   position: { top: '80%', left: '50%' }, prerequisites: [4], lesson: 'MolesToGrams' },
+    { id: 6, label: '% Composition',    position: { top: '80%', left: '70%' }, prerequisites: [3, 5], lesson: 'PercentComposition' },
 ];
 
 const connections = [
@@ -26,6 +29,9 @@ const lessonComponents = {
     AtomBuilder,
     IonicBonding,
     CovalentBonding,
+    MoleMass,
+    MolesToGrams,
+    PercentComposition,
 };
 
 const getNodeById = (id) => nodes.find(node => node.id === id);
