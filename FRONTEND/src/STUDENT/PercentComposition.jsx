@@ -17,24 +17,24 @@ const PercentComposition = ({ onComplete }) => {
   };
 
   return (
-    <div className="lesson-panel" style={{ "--accent": "#9b59b6" }}>
+    <div className="lesson-pc-container">
       {step === 0 && (
-        <>
-          <h2>Percent Composition</h2>
+        <div className="lesson-pc-step">
+          <h2>Lesson 6: Percent Composition</h2>
           <p>
-            Learn how to find what percent of a compound's mass comes from each
-            element!
+            In this lesson, you will learn how to calculate the percent composition of a compound. 
+            This tells you what fraction of the total mass comes from each element. Understanding 
+            percent composition is essential for chemical analysis, stoichiometry, and formula verification.
           </p>
           <button onClick={() => setStep(1)}>Start Lesson</button>
-        </>
+        </div>
       )}
 
       {step === 1 && (
-        <>
+        <div className="lesson-pc-step">
           <h3>Example Problem</h3>
           <p>
-            What is the percent composition of <b>hydrogen</b> in H₂O?  
-            (H = 1, O = 16)
+            What is the percent composition of <b>hydrogen</b> in H₂O? (H = 1, O = 16)
           </p>
           <input
             type="number"
@@ -43,16 +43,15 @@ const PercentComposition = ({ onComplete }) => {
             onChange={(e) => setInputValue(e.target.value)}
           />
           <button onClick={handleCheck}>Check</button>
-          <div className="feedback">{feedback}</div>
-        </>
+          {feedback && <p className="feedback">{feedback}</p>}
+        </div>
       )}
 
       {step === 2 && (
-        <>
+        <div className="lesson-pc-step">
           <h3>Final Challenge</h3>
           <p>
-            Determine the percent composition of <b>carbon</b> in CO₂  
-            (C = 12, O = 16)
+            Determine the percent composition of <b>carbon</b> in CO₂ (C = 12, O = 16)
           </p>
           <input
             type="number"
@@ -73,8 +72,8 @@ const PercentComposition = ({ onComplete }) => {
           >
             Check
           </button>
-          <div className="feedback">{feedback}</div>
-        </>
+          {feedback && <p className="feedback">{feedback}</p>}
+        </div>
       )}
     </div>
   );

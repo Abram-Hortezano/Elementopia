@@ -249,3 +249,50 @@
         50% { box-shadow: 0 0 24px #2ecc71, 0 0 48px #27ae60; }
         100% { box-shadow: 0 0 12px #2ecc71, 0 0 24px #27ae60; }
     }
+
+    .node.completed {
+        background: linear-gradient(145deg, #27ae60, #2ecc71);
+        border-color: #2ecc71;
+        cursor: pointer; /* ✅ clickable again */
+        animation: pulseGreen 2s infinite;
+        transition: all 0.3s ease;
+    }
+
+    .node.completed:hover {
+        transform: translate(-50%, -50%) scale(1.1) rotate(2deg);
+        box-shadow: 0 0 35px #00ffff, 0 0 60px rgba(0, 255, 255, 0.7);
+    }
+
+    @keyframes pulseGreen {
+        0%, 100% {
+            box-shadow: 0 0 10px #27ae60, 0 0 25px rgba(39, 174, 96, 0.6);
+        }
+        50% {
+            box-shadow: 0 0 25px #00ffff, 0 0 40px rgba(0, 255, 255, 0.8);
+        }
+    }
+
+    /* --- 🎓 Replay Tooltip --- */
+    .replay-tooltip {
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 255, 255, 0.15);
+        color: #00ffff;
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border: 1px solid rgba(0, 255, 255, 0.6);
+        border-radius: 6px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.25s ease;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+    }
+
+    /* --- Show tooltip on hover --- */
+    .node.completed:hover .replay-tooltip {
+        opacity: 1;
+        top: -45px;
+    }

@@ -51,8 +51,9 @@ export default function MapTree() {
         }
     }, []);
 
+    // ⭐ Updated: allow clicking on completed lessons too
     const handleNodeClick = (node, status) => {
-        if (status === 'unlocked' && node.lesson) {
+        if ((status === 'unlocked' || status === 'completed') && node.lesson) {
             setActiveLesson(node);
         }
     };
@@ -78,9 +79,12 @@ export default function MapTree() {
                         containerDims={containerDims}
                     />
                 ))}
+
                 {nodes.map(node => {
                     const isCompleted = completedNodes.has(node.id);
                     const isUnlocked = node.prerequisites.every(id => completedNodes.has(id));
+
+                    // ⭐ Updated: "completed" nodes remain clickable
                     let status = isCompleted ? 'completed' : isUnlocked ? 'unlocked' : 'locked';
 
                     return (
@@ -91,6 +95,7 @@ export default function MapTree() {
                             onClick={() => handleNodeClick(node, status)}
                         >
                             <span className="node-label">{node.label}</span>
+                            {status === "completed" && <div className="replay-tooltip">Replay Lesson</div>}
                         </div>
                     );
                 })}
@@ -110,7 +115,6 @@ export default function MapTree() {
 }
 
 // --- ConnectorLine component ---
-// --- ConnectorLine component ---
 const ConnectorLine = ({ startNode, endNode, completedNodes, containerDims }) => {
     if (!startNode || !endNode || !containerDims.width) return null;
 
@@ -122,19 +126,17 @@ const ConnectorLine = ({ startNode, endNode, completedNodes, containerDims }) =>
     const length = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
     const angle = Math.atan2(y2 - y1, x2 - x1) * (180 / Math.PI);
 
-    // --- Node status checks ---
     const startCompleted = completedNodes.has(startNode.id);
     const endCompleted = completedNodes.has(endNode.id);
     const endUnlocked = endNode.prerequisites.every(id => completedNodes.has(id));
 
     let status = "locked";
-
     if (startCompleted && endCompleted) {
-        status = "completed";   // ✅ Both nodes done → green
+        status = "completed";
     } else if (startCompleted && !endCompleted) {
-        status = "active";      // 🔵 Start done but end not done yet → glowing
+        status = "active";
     } else if (!startCompleted && endUnlocked) {
-        status = "active";      // 🔵 End is unlocked → glowing line
+        status = "active";
     }
 
     const lineStyle = {

@@ -55,21 +55,21 @@ export default function MolarMassLesson({ onComplete }) {
   };
 
   return (
-    <div className="lesson-container">
+    <div className="lesson-molemass-container">
       {step === 0 && (
-        <div className="lesson-step">
+        <div className="lesson-molemass-step">
           <h2>Lesson 4: Molar Mass</h2>
           <p>
             The <strong>molar mass</strong> of a compound is the mass (in grams)
             of one mole of its particles. It is found by adding up the atomic
             masses of all atoms in the formula.
           </p>
-          <button onClick={nextStep}>Start Example ➡️</button>
+          <button onClick={nextStep}>Start Lesson</button>
         </div>
       )}
 
       {step === 1 && (
-        <div className="lesson-step">
+        <div className="lesson-molemass-step">
           <h3>Example: H₂O</h3>
           <p>
             H₂O = (2 × 1.008) + (1 × 15.999) = <strong>18.015 g/mol</strong>

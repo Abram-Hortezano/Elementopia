@@ -152,7 +152,7 @@ export default function AtomBuilder({ onComplete }) {
 function IntroScreen({ onStart }) {
     return (
         <div className="intro-screen">
-            <h1 className="intro-title">Lesson 1: The Atom</h1>
+            <h1 className="intro-ab-title">Lesson 1: The Atom</h1>
             <p className="intro-text">
                 Everything in the universe is made of tiny building blocks called atoms. In this lesson, you'll learn about the fundamental particles that make up an atom and build one yourself.
             </p>

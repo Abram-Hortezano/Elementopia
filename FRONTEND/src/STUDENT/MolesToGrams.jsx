@@ -6,7 +6,7 @@ const MolesToGrams = ({ onComplete }) => {
   const [inputValue, setInputValue] = useState("");
   const [feedback, setFeedback] = useState("");
 
-  const correctAnswer = 18; // Example: 1 mole of H2O = 18 grams
+  const correctAnswer = 18; // 1 mole of H2O = 18 grams
 
   const handleCheck = () => {
     const value = parseFloat(inputValue);
@@ -19,23 +19,22 @@ const MolesToGrams = ({ onComplete }) => {
   };
 
   return (
-    <div className="lesson-panel" style={{ "--accent": "#e67e22" }}>
+    <div className="lesson-mtg-container">
       {step === 0 && (
-        <>
-          <h2>Moles to Grams Conversion</h2>
-          <p>
-            Welcome! Let’s convert between moles and grams using molar mass.
+        <div className="lesson-mtg-step">
+          <h2>Lesson 5: Moles to Grams Conversion</h2>
+           <p>
+            Welcome! In this lesson, you will learn how to convert between moles and grams using the molar mass of compounds.
+            This is a key skill in chemistry because it allows you to calculate the mass of a substance from the number of moles, and vice versa.
           </p>
           <button onClick={() => setStep(1)}>Start Lesson</button>
-        </>
+        </div>
       )}
 
       {step === 1 && (
-        <>
+        <div className="lesson-mtg-step">
           <h3>Example Problem</h3>
-          <p>
-            How many grams are in <b>1 mole of H₂O</b>?
-          </p>
+          <p>How many grams are in <b>1 mole of H₂O</b>?</p>
           <input
             type="number"
             placeholder="Enter your answer"
@@ -43,12 +42,12 @@ const MolesToGrams = ({ onComplete }) => {
             onChange={(e) => setInputValue(e.target.value)}
           />
           <button onClick={handleCheck}>Check</button>
-          <div className="feedback">{feedback}</div>
-        </>
+          {feedback && <p className="feedback">{feedback}</p>}
+        </div>
       )}
 
       {step === 2 && (
-        <>
+        <div className="lesson-mtg-step">
           <h3>Final Challenge</h3>
           <p>
             If 2.5 moles of CO₂ are present, what is the total mass (in grams)?
@@ -73,8 +72,8 @@ const MolesToGrams = ({ onComplete }) => {
           >
             Check
           </button>
-          <div className="feedback">{feedback}</div>
-        </>
+          {feedback && <p className="feedback">{feedback}</p>}
+        </div>
       )}
     </div>
   );
