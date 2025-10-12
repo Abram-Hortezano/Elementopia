@@ -1,0 +1,298 @@
+    /* ✅ Fixed Galaxy Background */
+    .Map-Container {
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        font-family: sans-serif;
+        background: url('../assets/Background/galaxy.jpg') no-repeat center center fixed;
+        background-size: cover;
+        position: relative;
+    }
+
+    /* Dark overlay */
+    .Map-Container::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: rgba(10, 10, 30, 0.65);
+        z-index: -1;
+    }
+
+    /* --- Node Base Style --- */
+    .node {
+        transform: translate(-50%, -50%);
+        position: absolute;
+        width: 110px;
+        height: 110px;
+        border-radius: 50%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        text-align: center;
+        padding: 5px;
+        font-weight: bold;
+        transition: all 0.4s ease;
+        border: 4px solid;
+        box-shadow: 0 0 20px rgba(0, 0, 0, 0.8);
+        color: white;
+    }
+
+    /* Node Labels */
+    .node-label {
+        pointer-events: none;
+        font-size: 14px;
+    }
+
+    /* 🔒 Locked Node */
+    .node.locked {
+        background: radial-gradient(circle, #2c3e50, #1a252f);
+        border-color: #7f8c8d;
+        color: #bdc3c7;
+        cursor: not-allowed;
+        filter: grayscale(80%);
+    }
+    .node.locked::before {
+        content: '🔒';
+        position: absolute;
+        top: -12px;
+        font-size: 20px;
+        opacity: 0.7;
+    }
+
+    /* ✨ Unlocked Node */
+    .node.unlocked {
+        cursor: pointer;
+        animation: glowPulse 2s infinite;
+    }
+    .node.unlocked:hover {
+        transform: translate(-50%, -50%) scale(1.15) rotate(2deg);
+    }
+
+    /* ✅ Completed Node */
+    .node.completed {
+        background: linear-gradient(145deg, #27ae60, #2ecc71);
+        border-color: #2ecc71;
+        cursor: default;
+        animation: pulseGreen 2s infinite;
+    }
+    .node.completed::before {
+        content: '✅';
+        position: absolute;
+        bottom: -14px;
+        font-size: 18px;
+    }
+
+    /* --- Topic-Specific Visuals --- */
+
+    /* 🟣 The Atom = orbiting electrons */
+    .node:nth-child(1).unlocked {
+        background: radial-gradient(circle, #6a11cb, #2575fc);
+        box-shadow: 0 0 20px #6a11cb, 0 0 40px #2575fc;
+        position: relative;
+    }
+    .node:nth-child(1).unlocked::after {
+        content: "";
+        position: absolute;
+        width: 140px;
+        height: 140px;
+        border: 2px dashed rgba(255,255,255,0.3);
+        border-radius: 50%;
+        animation: orbit 6s linear infinite;
+    }
+
+    /* ⚡ Ionic Bonding = sparks */
+    .node:nth-child(2).unlocked {
+        background: linear-gradient(135deg, #ff512f, #dd2476);
+        box-shadow: 0 0 25px #ff512f, 0 0 50px #dd2476;
+        animation: sparks 2s infinite;
+    }
+    .node:nth-child(2).unlocked::after {
+        content: "";
+        position: absolute;
+        width: 130%;
+        height: 130%;
+        border-radius: 50%;
+        border: 2px dotted rgba(255,255,255,0.3);
+        animation: electric 1.5s linear infinite;
+    }
+
+    /* 🔗 Covalent Bonding = glowing link rings */
+    .node:nth-child(3).unlocked {
+        background: linear-gradient(135deg, #1d976c, #93f9b9);
+        box-shadow: inset 0 0 15px rgba(255,255,255,0.3), 0 0 25px #1d976c;
+    }
+    .node:nth-child(3).unlocked::before,
+    .node:nth-child(3).unlocked::after {
+        content: "";
+        position: absolute;
+        border: 2px solid rgba(255,255,255,0.4);
+        border-radius: 50%;
+        width: 130px;
+        height: 130px;
+        animation: rotateRing 8s linear infinite;
+    }
+    .node:nth-child(3).unlocked::after {
+        animation-direction: reverse;
+    }
+
+    /* ⚖️ Molar Mass = weight balance swing */
+    .node:nth-child(4).unlocked {
+        background: linear-gradient(145deg, #f7971e, #ffd200);
+        box-shadow: 0 0 25px #ffd200, inset 0 0 10px rgba(0,0,0,0.3);
+        animation: swing 4s ease-in-out infinite;
+    }
+
+    /* ⚗️ Moles to Grams = bubbling reaction */
+    .node:nth-child(5).unlocked {
+        background: linear-gradient(135deg, #00c6ff, #0072ff);
+        box-shadow: 0 0 25px #00c6ff, 0 0 50px #0072ff;
+        overflow: hidden;
+    }
+    .node:nth-child(5).unlocked::after {
+        content: "";
+        position: absolute;
+        width: 10px;
+        height: 10px;
+        background: white;
+        border-radius: 50%;
+        animation: bubbles 3s infinite;
+    }
+
+    /* 📊 % Composition = rotating chart */
+    .node:nth-child(6).unlocked {
+        background: conic-gradient(#ff6a00, #ee0979, #ff6a00);
+        box-shadow: 0 0 30px #ee0979, inset 0 0 15px rgba(255,255,255,0.2);
+        animation: rotate 8s linear infinite;
+    }
+
+    /* --- Connectors --- */
+    .connector {
+        position: absolute;
+        height: 4px;
+        background: #7f8c8d;
+        transform-origin: 0 50%;
+        z-index: -1;
+        transition: background 0.5s ease, box-shadow 0.5s ease;
+    }
+
+    /* 🔒 Locked */
+    .connector.locked {
+        background: rgba(127, 140, 141, 0.5);
+    }
+
+    /* 🔵 Active (unlocked but not yet complete) */
+    .connector.active {
+        background: linear-gradient(90deg, rgba(255,255,255,0.4), #00bfff, rgba(255,255,255,0.4));
+        background-size: 200% auto;
+        animation: flow 3s linear infinite;
+        box-shadow: 0 0 8px #00bfff;
+    }
+
+    /* ✅ Completed */
+    .connector.completed {
+        background: linear-gradient(90deg, #2ecc71, #27ae60, #2ecc71);
+        background-size: 200% auto;
+        box-shadow: 0 0 12px #2ecc71;
+        animation: flow 2s linear infinite;
+    }
+
+    /* --- Animations --- */
+    @keyframes glowPulse {
+        0% { box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+        50% { box-shadow: 0 0 30px rgba(255,255,255,0.8); }
+        100% { box-shadow: 0 0 15px rgba(255,255,255,0.4); }
+    }
+
+    @keyframes sparks {
+        0%, 100% { box-shadow: 0 0 15px #ff512f; }
+        50% { box-shadow: 0 0 35px #dd2476; }
+    }
+
+    @keyframes rotate {
+        from { transform: translate(-50%, -50%) rotate(0deg); }
+        to { transform: translate(-50%, -50%) rotate(360deg); }
+    }
+
+    @keyframes orbit {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes electric {
+        from { transform: rotate(0deg); opacity: 0.6; }
+        to { transform: rotate(360deg); opacity: 1; }
+    }
+
+    @keyframes rotateRing {
+        from { transform: rotate(0deg); }
+        to { transform: rotate(360deg); }
+    }
+
+    @keyframes swing {
+        0%, 100% { transform: translate(-50%, -50%) rotate(-5deg); }
+        50% { transform: translate(-50%, -50%) rotate(5deg); }
+    }
+
+    @keyframes bubbles {
+        0% { bottom: 0; opacity: 0; }
+        30% { bottom: 40%; opacity: 1; }
+        100% { bottom: 100%; opacity: 0; }
+    }
+
+    @keyframes flow {
+        from { background-position: 200% center; }
+        to { background-position: 0% center; }
+    }
+
+    @keyframes pulseGreen {
+        0% { box-shadow: 0 0 12px #2ecc71, 0 0 24px #27ae60; }
+        50% { box-shadow: 0 0 24px #2ecc71, 0 0 48px #27ae60; }
+        100% { box-shadow: 0 0 12px #2ecc71, 0 0 24px #27ae60; }
+    }
+
+    .node.completed {
+        background: linear-gradient(145deg, #27ae60, #2ecc71);
+        border-color: #2ecc71;
+        cursor: pointer; /* ✅ clickable again */
+        animation: pulseGreen 2s infinite;
+        transition: all 0.3s ease;
+    }
+
+    .node.completed:hover {
+        transform: translate(-50%, -50%) scale(1.1) rotate(2deg);
+        box-shadow: 0 0 35px #00ffff, 0 0 60px rgba(0, 255, 255, 0.7);
+    }
+
+    @keyframes pulseGreen {
+        0%, 100% {
+            box-shadow: 0 0 10px #27ae60, 0 0 25px rgba(39, 174, 96, 0.6);
+        }
+        50% {
+            box-shadow: 0 0 25px #00ffff, 0 0 40px rgba(0, 255, 255, 0.8);
+        }
+    }
+
+    /* --- 🎓 Replay Tooltip --- */
+    .replay-tooltip {
+        position: absolute;
+        top: -35px;
+        left: 50%;
+        transform: translateX(-50%);
+        background: rgba(0, 255, 255, 0.15);
+        color: #00ffff;
+        font-size: 0.75rem;
+        padding: 4px 8px;
+        border: 1px solid rgba(0, 255, 255, 0.6);
+        border-radius: 6px;
+        white-space: nowrap;
+        opacity: 0;
+        pointer-events: none;
+        transition: all 0.25s ease;
+        box-shadow: 0 0 8px rgba(0, 255, 255, 0.4);
+    }
+
+    /* --- Show tooltip on hover --- */
+    .node.completed:hover .replay-tooltip {
+        opacity: 1;
+        top: -45px;
+    }

@@ -1,10 +1,10 @@
 import React from "react";
 import { Navigate } from "react-router-dom";
-import { getUserRole } from "../services/UserService";
+import UserService from "../services/UserService";
 import AccessDenied from "./AccessDenied";
 
 const ProtectedRoute = ({ element, allowedRoles }) => {
-  const role = getUserRole();
+  const role = UserService.getUserRole();
 
   if (!role) {
     return <Navigate to="/login" />;

@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
@@ -40,7 +41,9 @@ public class UserService {
         dto.setFirstName(user.getFirstName());
         dto.setLastName(user.getLastName());
         dto.setRole(user.getRole());
-
+        dto.setBio(user.getBio());
+        dto.setSchool(user.getSchool());
+        dto.setGradeLevel(user.getGradeLevel());
         // Map Student
         if (user.getStudent() != null) {
             StudentDTO studentDTO = new StudentDTO();
@@ -81,6 +84,13 @@ public class UserService {
             dto.setAchievements(achievementDTOs);
         }
 
+        if (user.getScore() != null) {
+            ScoreDTO scoreDTO = new ScoreDTO();
+            scoreDTO.setScore(user.getScore().getCareerScore()); // Replace with actual getter
+            dto.setCareerScore(Collections.singletonList(scoreDTO));
+        }
+
+
         return dto;
     }
 
@@ -98,6 +108,20 @@ public class UserService {
     // Get All Users
     public List<UserEntity> getAllUsers() {
         return uRepo.findAll();
+    }
+
+    public List<UserSummaryDto> getAllStudentsWithCareerScores() {
+        List<UserEntity> students = uRepo.findAllStudentsWithScores();
+
+        return students.stream().map(user -> {
+            int careerScore = user.getScore() != null ? user.getScore().getCareerScore() : 0;
+            return new UserSummaryDto(
+                    user.getUserId(),
+                    user.getFirstName(),
+                    user.getLastName(),
+                    careerScore
+            );
+        }).collect(Collectors.toList());
     }
 
     // Get User By ID
@@ -144,6 +168,15 @@ public class UserService {
         }
         if (newUserDetails.getEmail() != null) {
             user.setEmail(newUserDetails.getEmail());
+        }
+        if (newUserDetails.getBio() != null) {
+            user.setBio(newUserDetails.getBio());
+        }
+        if (newUserDetails.getGradeLevel() != null) {
+            user.setGradeLevel(newUserDetails.getGradeLevel());
+        }
+        if (newUserDetails.getSchool() != null) {
+            user.setSchool(newUserDetails.getSchool());
         }
         return uRepo.save(user);
     }

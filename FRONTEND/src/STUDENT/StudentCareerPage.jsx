@@ -1,8 +1,10 @@
 import React, { useState } from "react";
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import Navbar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 import CurriculumOverview from "../components/Curriculum Components/CurriculumOverview";
+import BondBuilderModule from "../components/Curriculum Components/BondBuilderModule";
+import MapTree from "./Map-Tree";
 
 const StudentCareerPage = () => {
   const [open, setOpen] = useState(false);
@@ -21,7 +23,11 @@ const StudentCareerPage = () => {
       }}
     >
       <Navbar open={open} />
-      <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
+      <Sidebar
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
+      />
       <Box
         component="main"
         sx={{
@@ -32,7 +38,7 @@ const StudentCareerPage = () => {
           marginTop: "50px",
         }}
       >
-        <CurriculumOverview />
+        <MapTree/>
       </Box>
     </Box>
   );

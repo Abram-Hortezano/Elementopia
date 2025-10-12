@@ -2,8 +2,9 @@ import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Navbar from "../components/NavBar";
-import Sidebar from "../components/Sidebar";
+import TeacherSidebar from "../components/Teacher Component/TeacherSidebar.jsx";
 import CurriculumBuilder from "../components/Teacher Component/CurriculumBuilder";
+import LessonBuilder from "../components/Teacher Component/LessonBuilder.jsx";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
@@ -16,18 +17,23 @@ const TeacherCareerPage = () => {
   const handleDrawerClose = () => setOpen(false);
 
   return (
-    <Box sx={{ display: "flex" }}>
-      {/* Navbar with dynamic width */}
-      <Navbar open={open} />
-
-      {/* Sidebar with control props */}
-      <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
+    <Box sx={{ display: "flex", bgcolor: "#121212", color: "white", minHeight: "100vh", width: "100vw" }}>
+    <Navbar open={open} />
+    <TeacherSidebar open={open} handleDrawerOpen={() => setOpen(true)} handleDrawerClose={() => setOpen(false)} />
 
       {/* Main Content Area */}
-       <Box component="main" sx={{ flexGrow: 1, p: 3, marginLeft: open ? "20px" : "10px", width: "100%", marginTop: "50px" }}>
-       
-        <CurriculumBuilder/>
-       
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          marginLeft: open ? "10px" : "5px",
+          width: "100%",
+          marginTop: "50px",
+        }}
+      >
+       {/* <CurriculumBuilder /> */}
+        <LessonBuilder/>
       </Box>
     </Box>
   );

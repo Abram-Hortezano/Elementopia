@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { useState } from "react"
+import { useState } from "react";
 import {
   Box,
   Typography,
@@ -13,7 +13,7 @@ import {
   Paper,
   Rating,
   Button,
-} from "@mui/material"
+} from "@mui/material";
 import {
   LineChart,
   Line,
@@ -25,9 +25,9 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-} from "recharts"
-import Navbar from "../components/NavBar"
-import Sidebar from "../components/Sidebar"
+} from "recharts";
+import Navbar from "../components/NavBar";
+import TeacherSidebar from "../components/Teacher Component/TeacherSidebar.jsx";
 
 // Sample data for charts
 const lineData = [
@@ -41,7 +41,7 @@ const lineData = [
   { name: "7", pink: 780, green: 420 },
   { name: "8", pink: 750, green: 220 },
   { name: "9", pink: 100, green: 200 },
-]
+];
 
 const pieData = [
   { name: "545", value: 545, color: "#d4a6b3" },
@@ -49,7 +49,7 @@ const pieData = [
   { name: "532", value: 532, color: "#d4a6b3" },
   { name: "622", value: 622, color: "#d4a6b3" },
   { name: "346", value: 346, color: "#d4a6b3" },
-]
+];
 
 // Sample data for table
 const tableData = [
@@ -80,7 +80,7 @@ const tableData = [
     col5: 4,
     buttonText: "View Details",
   },
-]
+];
 
 // CSS styles as objects
 const styles = {
@@ -249,7 +249,7 @@ const styles = {
     color: "#fff",
     textShadow: "0 0 2px #ff00ff",
   },
-}
+};
 
 // Custom label component for pie chart
 const PieChartLabel = ({ name, x, y, dx, dy }) => {
@@ -266,25 +266,22 @@ const PieChartLabel = ({ name, x, y, dx, dy }) => {
     >
       {name}
     </text>
-  )
-}
+  );
+};
 
 const TeacherAnalyticsPage = () => {
-  const [open, setOpen] = useState(false) // Sidebar state
+  const [open, setOpen] = useState(false); // Sidebar state
 
-  const handleDrawerOpen = () => setOpen(true)
-  const handleDrawerClose = () => setOpen(false)
+  const handleDrawerOpen = () => setOpen(true);
+  const handleDrawerClose = () => setOpen(false);
 
   // For responsive design
-  const isMobile = window.innerWidth < 960
+  const isMobile = window.innerWidth < 960;
 
   return (
-    <Box sx={{ display: "flex" }}>
-      {/* Navbar with dynamic width */}
-      <Navbar open={open} />
-
-      {/* Sidebar with control props */}
-      <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
+    <Box sx={{ display: "flex", bgcolor: "#121212", color: "white", minHeight: "100vh", width: "100vw" }}>
+    <Navbar open={open} />
+    <TeacherSidebar open={open} handleDrawerOpen={() => setOpen(true)} handleDrawerClose={() => setOpen(false)} />
 
       {/* Main Content Area */}
       <Box
@@ -293,7 +290,7 @@ const TeacherAnalyticsPage = () => {
           flexGrow: 1,
           p: 3,
           transition: "margin 0.3s ease",
-          marginLeft: open ? "180px" : "60px",
+          marginLeft: open ? "20px" : "10px",
         }}
       >
         <div style={styles.drawerHeader} />
@@ -324,8 +321,14 @@ const TeacherAnalyticsPage = () => {
               }}
             >
               <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={lineData} margin={{ top: 20, right: 30, left: 20, bottom: 20 }}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="rgba(0, 255, 255, 0.2)" />
+                <LineChart
+                  data={lineData}
+                  margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                >
+                  <CartesianGrid
+                    strokeDasharray="3 3"
+                    stroke="rgba(0, 255, 255, 0.2)"
+                  />
                   <XAxis dataKey="name" stroke="#00ffff" />
                   <YAxis stroke="#00ffff" domain={[0, 1000]} />
                   <Tooltip contentStyle={styles.tooltipStyle} />
@@ -369,7 +372,12 @@ const TeacherAnalyticsPage = () => {
                     label={PieChartLabel}
                   >
                     {pieData.map((entry, index) => (
-                      <Cell key={`cell-${index}`} fill={entry.color} stroke="#fff" strokeWidth={1} />
+                      <Cell
+                        key={`cell-${index}`}
+                        fill={entry.color}
+                        stroke="#fff"
+                        strokeWidth={1}
+                      />
                     ))}
                   </Pie>
                   <Tooltip
@@ -410,26 +418,41 @@ const TeacherAnalyticsPage = () => {
               </TableHead>
               <TableBody>
                 {tableData.map((row, index) => (
-                  <TableRow key={row.id} style={index % 2 === 0 ? styles.tableRowOdd : {}} hover>
+                  <TableRow
+                    key={row.id}
+                    style={index % 2 === 0 ? styles.tableRowOdd : {}}
+                    hover
+                  >
                     <TableCell style={styles.tableCell}>
-                      <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 2 }}
+                      >
                         <div style={styles.iconContainer}>
                           <Typography variant="body2" sx={{ color: "#00ffff" }}>
                             {row.id}
                           </Typography>
                         </div>
                         <div>
-                          <Typography variant="subtitle2" style={styles.headingText}>
+                          <Typography
+                            variant="subtitle2"
+                            style={styles.headingText}
+                          >
                             Heading
                           </Typography>
-                          <Typography variant="caption" style={styles.captionText}>
+                          <Typography
+                            variant="caption"
+                            style={styles.captionText}
+                          >
                             Caption text
                           </Typography>
                         </div>
                       </Box>
                     </TableCell>
                     <TableCell style={styles.tableCell}>
-                      <Typography variant="subtitle2" style={styles.headingText}>
+                      <Typography
+                        variant="subtitle2"
+                        style={styles.headingText}
+                      >
                         Heading
                       </Typography>
                       <Typography variant="caption" style={styles.captionText}>
@@ -437,7 +460,10 @@ const TeacherAnalyticsPage = () => {
                       </Typography>
                     </TableCell>
                     <TableCell style={styles.tableCell}>
-                      <Typography variant="subtitle2" style={styles.headingText}>
+                      <Typography
+                        variant="subtitle2"
+                        style={styles.headingText}
+                      >
                         Heading
                       </Typography>
                       <Typography variant="caption" style={styles.captionText}>
@@ -445,7 +471,10 @@ const TeacherAnalyticsPage = () => {
                       </Typography>
                     </TableCell>
                     <TableCell style={styles.tableCell}>
-                      <Typography variant="subtitle2" style={styles.headingText}>
+                      <Typography
+                        variant="subtitle2"
+                        style={styles.headingText}
+                      >
                         Heading
                       </Typography>
                       <Typography variant="caption" style={styles.captionText}>
@@ -453,9 +482,22 @@ const TeacherAnalyticsPage = () => {
                       </Typography>
                     </TableCell>
                     <TableCell style={styles.tableCell}>
-                      <Box sx={{ display: "flex", flexDirection: "column", gap: 0.5 }}>
-                        <Rating value={row.col5} readOnly sx={styles.ratingStyles} />
-                        <Typography variant="caption" style={styles.captionText}>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          flexDirection: "column",
+                          gap: 0.5,
+                        }}
+                      >
+                        <Rating
+                          value={row.col5}
+                          readOnly
+                          sx={styles.ratingStyles}
+                        />
+                        <Typography
+                          variant="caption"
+                          style={styles.captionText}
+                        >
                           Caption text
                         </Typography>
                       </Box>
@@ -466,12 +508,14 @@ const TeacherAnalyticsPage = () => {
                         size="small"
                         style={styles.retroButton}
                         onMouseOver={(e) => {
-                          e.currentTarget.style.backgroundColor = "rgba(255, 0, 255, 0.2)"
-                          e.currentTarget.style.boxShadow = "0 0 10px #ff00ff, 0 0 20px #ff00ff"
+                          e.currentTarget.style.backgroundColor =
+                            "rgba(255, 0, 255, 0.2)";
+                          e.currentTarget.style.boxShadow =
+                            "0 0 10px #ff00ff, 0 0 20px #ff00ff";
                         }}
                         onMouseOut={(e) => {
-                          e.currentTarget.style.backgroundColor = ""
-                          e.currentTarget.style.boxShadow = "0 0 5px #ff00ff"
+                          e.currentTarget.style.backgroundColor = "";
+                          e.currentTarget.style.boxShadow = "0 0 5px #ff00ff";
                         }}
                       >
                         Button text
@@ -488,7 +532,7 @@ const TeacherAnalyticsPage = () => {
         </div>
       </Box>
     </Box>
-  )
-}
+  );
+};
 
-export default TeacherAnalyticsPage
+export default TeacherAnalyticsPage;

@@ -3,15 +3,18 @@ package com.elementopia.database.entity;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.List;
 
 @Entity
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 @Table(name = "user")
 @Data
 public class UserEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @EqualsAndHashCode.Include
     @Column(name = "userId")
     private Long userId;
 
@@ -29,6 +32,15 @@ public class UserEntity {
 
     @Column(name = "last_name")
     private String lastName;
+
+    @Column(name = "school")
+    private String school;
+
+    @Column(name = "bio")
+    private String bio;
+
+    @Column(name = "grade_level")
+    private String gradeLevel;
 
     @Column(name = "role", nullable = false)
     private String role;  // Role: "STUDENT" or "TEACHER"
@@ -48,4 +60,9 @@ public class UserEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private List<AchievementEntity> achievements;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private ScoreEntity score;
+
 }
