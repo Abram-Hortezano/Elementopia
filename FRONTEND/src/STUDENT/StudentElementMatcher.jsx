@@ -1,11 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import { Box, Typography, Button, Modal, Paper, Stack, Chip } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import Navbar from '../components/NavBar';
-import Sidebar from '../components/Sidebar';
-import AchievementService from '../services/AchievementService';
-import UserService from "../services/UserService";
-import './StudentElementMatcher.css';
+import React, { useState, useEffect } from "react";
+import { Box, Typography, Button } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
+import "./StudentElementMatcher.css"; // Import the CSS file
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
@@ -38,18 +36,18 @@ const StudentElementMatcher = () => {
   const handleDrawerOpen = () => setOpen(true);
   const handleDrawerClose = () => setOpen(false);
 
-  const achievementData = {
-    dateAchieved : dateAchieved,
-    title : title,
-    description : description
-  }
+  // Shuffle cards
+  const shuffleCards = () => {
+    const cardPairs = [...elementPairs].flatMap((element) => [
+      {
+        id: element.id,
+        type: "symbol",
+        content: element.symbol,
+        matched: false,
+      },
+      { id: element.id, type: "name", content: element.name, matched: false },
+    ]);
 
-  const shuffleCards = (difficultyLevel = difficulty) => {
-    const elementPairs = elementSets[difficultyLevel];
-    const cardPairs = [...elementPairs].flatMap(element => ([ 
-      { id: element.id, type: 'symbol', content: element.symbol, matched: false }, 
-      { id: element.id, type: 'name', content: element.name, matched: false }
-    ]));
     const shuffled = [...cardPairs]
       .sort(() => Math.random() - 0.5)
       .map((card) => ({ ...card, cardId: Math.random() }));
@@ -98,47 +96,7 @@ const StudentElementMatcher = () => {
   useEffect(() => {
     if (cards.length > 0 && cards.every((card) => card.matched)) {
       setGameOver(true);
-      
-      // Mark current difficulty as completed
-      setCompletedDifficulties(prev => ({
-        ...prev,
-        [difficulty]: true
-      }));
-
-      // Only unlock achievements if we have a valid userId
-      if (userId) {
-        // Game-specific achievements based on difficulty level completed
-        if (difficulty === "easy") {
-          unlockAchievement("MEMORY_NOVICE");
-          
-          // Check for Quick Matchmaker achievement
-          if (turns <= 20) {
-            AchievementService.createAchievement(achievementData, userId)
-          }
-        } else if (difficulty === "medium") {
-          unlockAchievement("MEMORY_INTERMEDIATE");
-        } else if (difficulty === "hard") {
-          unlockAchievement("MEMORY_MASTER");
-          
-          // Check for Master Matcher achievement (completed all three levels)
-          if (completedDifficulties.easy && completedDifficulties.medium) {
-            unlockAchievement("MASTER_MATCHER");
-          }
-        }
-        
-        // Check for Score Hunter achievement
-        if (newTotalScore >= 100) {
-          unlockAchievement("SCORE_HUNTER");
-        }
-      }
-
-      if (difficulty === "hard") {
-        setFeedback("🏆 You completed all levels!");
-        setGameComplete(true);
-      } else {
-        setFeedback("🎉 Level completed!");
-        setTimeout(() => setModalOpen(true), 1000);
-      }
+      setFeedback("🎉 You completed the game!");
     }
   }, [cards]);
 

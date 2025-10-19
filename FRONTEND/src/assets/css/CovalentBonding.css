@@ -59,7 +59,7 @@
     animation: fade-in-text 1s ease-out;
 }
 
-.intro-title {
+.intro-cb-title {
     font-size: 2.5rem;
     color: #2ecc71;
     margin-bottom: 1rem;
@@ -85,6 +85,7 @@
     color: white;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+    margin-top: 1rem;
 }
 
 .intro-start-btn:hover {

@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from "react";
-import { Card, CardContent, Grid, Typography, Box, Tooltip, Button, CircularProgress } from "@mui/material";
-import { Lock, EmojiEvents, Refresh } from "@mui/icons-material";
-import AchievementService from '../../services/AchievementService';
+import React, { useEffect, useState } from "react";
+import {
+  Grid, Card, CardContent, Typography, Dialog, DialogTitle, DialogContent, IconButton
+} from "@mui/material";
+import { Lock, EmojiEvents, Close } from "@mui/icons-material";
+import achievements from "../MiniGames/achievements.json";
+import AchievementService from "../../services/AchievementService";
 import UserService from "../../services/UserService";
-
-
 
 const AchievementTable = () => {
   const [unlockedAchievements, setUnlockedAchievements] = useState([]);
