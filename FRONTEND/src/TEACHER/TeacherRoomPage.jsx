@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
@@ -27,15 +26,6 @@ const TeacherRoomPage = () => {
   </Box>
   );
 };
-
-export default TeacherRoomPage;
-=======
-import { useState } from "react";
-import { Users, BookOpen, Plus, Search, Beaker, Edit, Trash, Globe, Lock, X, Download } from "lucide-react";
-import CreateLaboratory from "../STUDENT/create-lab";
-import "../assets/css/teacherroompage.css";
-import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
 
 export default function StudentRoomPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -360,4 +350,3 @@ export default function StudentRoomPage() {
     </div>
   );
 }
->>>>>>> a97301219e1c288d37a16baa659dd1fff5610691

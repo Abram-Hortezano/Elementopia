@@ -1,77 +1,30 @@
-<<<<<<< HEAD
 import React, { useState } from "react";
-import { Box, Typography } from "@mui/material";
-import { styled } from "@mui/material/styles";
+import { Box } from "@mui/material";
 import Navbar from "../components/Navbar";
 import Sidebar from "../components/Sidebar";
 import CustomRoom from "./custom-room";
-=======
-import { useState } from "react";
 import { Users, BookOpen, Plus, Search, Beaker, Edit, Trash, Globe, Lock, X } from "lucide-react";
 import CreateLaboratory from "./create-lab";
 import "../assets/css/studentroompage.css";
-import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
->>>>>>> a97301219e1c288d37a16baa659dd1fff5610691
 
 export default function StudentRoomPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [createLabModalOpen, setCreateLabModalOpen] = useState(false); // This controls the modal visibility
+  const [createLabModalOpen, setCreateLabModalOpen] = useState(false);
   const [myLabsModalOpen, setMyLabsModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
   // Mock data for public laboratories
   const publicLaboratories = [
-    {
-      id: 1,
-      name: "Chemistry 101 Lab",
-      creator: "Prof. Johnson",
-      students: 24,
-      experiments: 8,
-      isPublic: true,
-    },
-    {
-      id: 2,
-      name: "Advanced Organic Chemistry Lab",
-      creator: "Dr. Smith",
-      students: 18,
-      experiments: 12,
-      isPublic: true,
-    },
-    {
-      id: 3,
-      name: "Biochemistry Fundamentals Lab",
-      creator: "Prof. Williams",
-      students: 22,
-      experiments: 6,
-      isPublic: true,
-    },
-    {
-      id: 4,
-      name: "Inorganic Chemistry Lab",
-      creator: "Dr. Brown",
-      students: 15,
-      experiments: 10,
-      isPublic: true,
-    },
+    { id: 1, name: "Chemistry 101 Lab", creator: "Prof. Johnson", students: 24, experiments: 8, isPublic: true },
+    { id: 2, name: "Advanced Organic Chemistry Lab", creator: "Dr. Smith", students: 18, experiments: 12, isPublic: true },
+    { id: 3, name: "Biochemistry Fundamentals Lab", creator: "Prof. Williams", students: 22, experiments: 6, isPublic: true },
+    { id: 4, name: "Inorganic Chemistry Lab", creator: "Dr. Brown", students: 15, experiments: 10, isPublic: true },
   ];
 
   // Mock data for user's laboratories
   const myLaboratories = [
-    {
-      id: 101,
-      name: "My Chemistry Class",
-      students: 20,
-      experiments: 5,
-      isPublic: false,
-    },
-    {
-      id: 102,
-      name: "Chemistry Club",
-      students: 12,
-      experiments: 3,
-      isPublic: true,
-    },
+    { id: 101, name: "My Chemistry Class", students: 20, experiments: 5, isPublic: false },
+    { id: 102, name: "Chemistry Club", students: 12, experiments: 3, isPublic: true },
   ];
 
   const filteredPublicLabs = searchQuery
@@ -84,56 +37,27 @@ export default function StudentRoomPage() {
 
   const handleCreateLab = (data) => {
     console.log("Laboratory created:", data);
-    // Send this data to your backend
-    // Then redirect to the laboratory details page
-    // router.push(`/dashboard/laboratory/${Date.now()}`); // Uncomment if using routing
   };
 
   const handleJoinLab = (labId) => {
-    // Join the laboratory
-    // router.push(`/dashboard/laboratory/${labId}`); // Uncomment if using routing
+    console.log("Joining lab:", labId);
   };
 
   return (
-<<<<<<< HEAD
-    <Box
-      sx={{
-        display: "flex",
-        bgcolor: "#121212",
-        color: "white",
-        minHeight: "100vh",
-        width: "100vw",
-      }}
-    >
-      <Navbar open={open} />
-      <Sidebar
-        open={open}
-        handleDrawerOpen={handleDrawerOpen}
-        handleDrawerClose={handleDrawerClose}
-      />
-      <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          p: 3,
-          marginLeft: open ? "20px" : "10px",
-          width: "100%",
-          marginTop: "50px",
-        }}
-      >
-        <CustomRoom />
-      </Box>
-    </Box>
-  );
-};
-=======
     <div className="custom-room-container">
-      <Sidebar open={drawerOpen} handleDrawerOpen={() => setDrawerOpen(true)} handleDrawerClose={() => setDrawerOpen(false)} />
+      <Sidebar
+        open={drawerOpen}
+        handleDrawerOpen={() => setDrawerOpen(true)}
+        handleDrawerClose={() => setDrawerOpen(false)}
+      />
       <Navbar />
+
       <div className="custom-room-header">
         <div className="custom-room-title-container">
           <h1 className="custom-room-title">Custom Laboratories</h1>
-          <p className="custom-room-subtitle">Explore and join public laboratories or create your own</p>
+          <p className="custom-room-subtitle">
+            Explore and join public laboratories or create your own
+          </p>
         </div>
         <div className="custom-room-actions">
           <div className="search-container">
@@ -146,7 +70,10 @@ export default function StudentRoomPage() {
               className="search-input"
             />
           </div>
-          <button onClick={() => setCreateLabModalOpen(prevState => !prevState)} className="create-lab-button">
+          <button
+            onClick={() => setCreateLabModalOpen((prevState) => !prevState)}
+            className="create-lab-button"
+          >
             <Plus className="button-icon" /> Create Laboratory
           </button>
           <button onClick={() => setMyLabsModalOpen(true)} className="my-labs-button">
@@ -154,7 +81,6 @@ export default function StudentRoomPage() {
           </button>
         </div>
       </div>
->>>>>>> a97301219e1c288d37a16baa659dd1fff5610691
 
       {/* Create Laboratory Modal */}
       {createLabModalOpen && (
@@ -167,7 +93,6 @@ export default function StudentRoomPage() {
 
       {/* Summary Cards */}
       <div className="summary-cards">
-        {/* Card 1 */}
         <div className="summary-card">
           <div className="card-content">
             <div>
@@ -178,7 +103,6 @@ export default function StudentRoomPage() {
           </div>
         </div>
 
-        {/* Card 2 */}
         <div className="summary-card my-labs-card">
           <div className="card-content">
             <div>
@@ -189,7 +113,6 @@ export default function StudentRoomPage() {
           </div>
         </div>
 
-        {/* Card 3 */}
         <div className="summary-card">
           <div className="card-content">
             <div>
@@ -306,7 +229,7 @@ export default function StudentRoomPage() {
                           <button
                             onClick={() => {
                               setMyLabsModalOpen(false);
-                              router.push(`/dashboard/laboratory/${lab.id}`);
+                              console.log(`Go to /dashboard/laboratory/${lab.id}`);
                             }}
                             className="manage-button"
                           >

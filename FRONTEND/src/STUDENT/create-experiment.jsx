@@ -1,14 +1,11 @@
 import { useState } from "react"
 import { CalendarIcon } from "lucide-react"
 import { Switch } from "@mui/material"
-<<<<<<< HEAD
-=======
 import dayjs from 'dayjs';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
->>>>>>> a97301219e1c288d37a16baa659dd1fff5610691
 // import { format } from "date-fns"
 import "../assets/css/create-experiment.css"
 
@@ -19,11 +16,8 @@ export default function CreateExperimentModal({ isOpen, onClose, onSubmit }) {
   const [accessType, setAccessType] = useState("public")
   const [multipleAttempts, setMultipleAttempts] = useState(false)
   const [instructions, setInstructions] = useState("")
-<<<<<<< HEAD
-=======
   // const [value, setValue] = React.useState(dayjs('2022-04-17'));
 
->>>>>>> a97301219e1c288d37a16baa659dd1fff5610691
 console.log("It is loaded");
   const handleSubmit = () => {
     if (title && experimentType && accessType) {
@@ -71,7 +65,6 @@ console.log("It is loaded");
           <div className="form-group">
             <label htmlFor="deadline">Deadline</label>
             <div className="date-picker">
-<<<<<<< HEAD
               <button
                 onClick={() => {
                   const today = new Date()
@@ -94,7 +87,6 @@ console.log("It is loaded");
                 />
               </DemoContainer>
             </LocalizationProvider>
->>>>>>> a97301219e1c288d37a16baa659dd1fff5610691
             </div>
           </div>
 
