@@ -1,0 +1,32 @@
+.bonding-container {
+  font-family: sans-serif;
+  padding: 20px;
+  max-width: 700px;
+  margin: auto;
+}
+
+.buttons button,
+.controls button {
+  margin: 5px;
+  padding: 10px 15px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+button.active {
+  background-color: #4caf50;
+  color: white;
+}
+
+.bond-stats,
+.octet-status {
+  margin-top: 20px;
+  padding: 10px;
+  border-radius: 8px;
+}
+
+.message-box {
+  margin-top: 15px;
+  padding: 10px;
+  border-left: 4px solid #4285f4;
+}

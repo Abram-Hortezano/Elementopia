@@ -152,7 +152,11 @@ export default function AtomBuilder({ onComplete }) {
 function IntroScreen({ onStart }) {
     return (
         <div className="intro-screen">
+<<<<<<< HEAD
             <h1 className="intro-title">Lesson 1: The Atom</h1>
+=======
+            <h1 className="intro-ab-title">Lesson 1: The Atom</h1>
+>>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15
             <p className="intro-text">
                 Everything in the universe is made of tiny building blocks called atoms. In this lesson, you'll learn about the fundamental particles that make up an atom and build one yourself.
             </p>
@@ -208,4 +212,8 @@ function DropZone({ id, children, className }) {
             {children}
         </div>
     );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15

@@ -44,7 +44,11 @@
     animation: fade-in-text 1s ease-out;
 }
 
+<<<<<<< HEAD
 .intro-title {
+=======
+.intro-ab-title {
+>>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15
     font-size: 2.5rem;
     color: #3498db;
     margin-bottom: 1rem;

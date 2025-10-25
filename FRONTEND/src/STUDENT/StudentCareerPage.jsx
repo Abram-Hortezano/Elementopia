@@ -3,7 +3,12 @@ import { Box, Typography } from "@mui/material";
 import Navbar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 import CurriculumOverview from "../components/Curriculum Components/CurriculumOverview";
+<<<<<<< HEAD
 import BackButton from "../components/BackButton";
+=======
+import BondBuilderModule from "../components/Curriculum Components/BondBuilderModule";
+import MapTree from "./Map-Tree";
+>>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15
 
 const StudentCareerPage = () => {
   const [open, setOpen] = useState(false);
@@ -37,11 +42,15 @@ const StudentCareerPage = () => {
           marginTop: "50px",
         }}
       >
+<<<<<<< HEAD
         {/* <Box sx={{ mb: 2 }}>
           <BackButton />
         </Box> */}
 
         <CurriculumOverview />
+=======
+        <MapTree/>
+>>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15
       </Box>
     </Box>
   );

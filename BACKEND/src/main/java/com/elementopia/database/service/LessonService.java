@@ -51,4 +51,17 @@ public class LessonService {
         lesson.setDescription(newDescription);
         return lessonRepo.save(lesson);
     }
+<<<<<<< HEAD
 }
+=======
+
+    public String deleteLesson(Long id) {
+        if (lessonRepo.existsById(id)) {
+            lessonRepo.deleteById(id);
+            return "Lesson with ID " + id + " deleted successfully!";
+        } else {
+            return "Lesson with ID " + id + " not found!";
+        }
+    }
+}
+>>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15

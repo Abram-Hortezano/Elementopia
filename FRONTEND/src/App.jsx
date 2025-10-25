@@ -21,6 +21,7 @@ import ProfilePageMain from "./pages/profile-page";
 import TeacherGameRoomPage from "./TEACHER/TeacherGameRoomPage";
 import TeacherRoomPage from "./TEACHER/TeacherRoomPage"
 import TeacherSandbox from "./TEACHER/TeacherSandboxPage"
+import MapTree from "./STUDENT/Map-Tree";
 
 import PrivateRoute from "./components/utils/PrivateRoute";
 
