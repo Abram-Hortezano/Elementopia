@@ -140,11 +140,9 @@ export default function IonicBonding({ onComplete }) {
 function IntroScreen({ onStart }) {
     return (
         <div className="intro-screen">
-<<<<<<< HEAD
+
             <h1 className="intro-title">Lesson 2: Ionic Bonding</h1>
-=======
             <h1 className="intro-ib-title">Lesson 2: Ionic Bonding</h1>
->>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15
             <p className="intro-text">
                 Some atoms are givers, and some are takers. In this lesson, you'll see how the transfer of electrons creates powerful attractions called ionic bonds, forming new compounds.
             </p>
