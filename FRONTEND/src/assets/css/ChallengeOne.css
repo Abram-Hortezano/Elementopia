@@ -1,0 +1,215 @@
+/* === General Modal === */
+.lesson-modal.ionic-bonding {
+  background: radial-gradient(circle at center, #050513 0%, #000010 100%);
+  color: #fff;
+  padding: 2.5rem;
+  border-radius: 1.2rem;
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.15);
+  text-align: center;
+  font-family: "Poppins", sans-serif;
+  overflow: hidden;
+  position: relative;
+}
+
+/* Subtle moving glow effect */
+.lesson-modal.ionic-bonding::before {
+  content: "";
+  position: absolute;
+  top: -100px;
+  left: -100px;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(0, 255, 255, 0.15), transparent 70%);
+  animation: float-glow 8s infinite alternate;
+  z-index: 0;
+}
+
+@keyframes float-glow {
+  0% { transform: translate(0, 0); opacity: 0.5; }
+  100% { transform: translate(100px, 100px); opacity: 0.9; }
+}
+
+.challenge-box {
+  position: relative;
+  z-index: 1;
+}
+
+.challenge-box h3 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  color: #00eaff;
+  text-shadow: 0 0 20px rgba(0, 234, 255, 0.6);
+  margin-bottom: 0.5rem;
+}
+
+.challenge-box p {
+  color: #c8d7ff;
+  font-size: 1.1rem;
+  margin-bottom: 1.6rem;
+}
+
+/* === Workspace === */
+.workspace {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 180px;
+  margin: 2rem 0;
+  position: relative;
+  transition: all 0.6s ease;
+  perspective: 800px;
+}
+
+/* === Atom Styles === */
+.atom {
+  width: 140px;
+  height: 140px;
+  border-radius: 50%;
+  border: 3px solid rgba(0, 255, 255, 0.7);
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.15);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.3rem;
+  position: relative;
+  text-transform: capitalize;
+  color: #fff;
+  transition: transform 0.8s ease, box-shadow 0.5s ease;
+  transform-style: preserve-3d;
+}
+
+.atom::after {
+  content: attr(class);
+  display: none;
+}
+
+.atom.hovering {
+  box-shadow: 0 0 35px rgba(0, 255, 150, 0.7), inset 0 0 20px rgba(255, 255, 255, 0.2);
+  transform: scale(1.05);
+}
+
+/* === Individual Atom Colors === */
+.left-atom.sodium {
+  background: radial-gradient(circle, #007bff 0%, #002f88 100%);
+}
+
+.right-atom.chlorine {
+  background: radial-gradient(circle, #00ff9d 0%, #007a55 100%);
+}
+
+.left-atom.magnesium {
+  background: radial-gradient(circle, #cfd8dc 0%, #546e7a 100%);
+}
+
+.left-atom.calcium {
+  background: radial-gradient(circle, #f9f871 0%, #b59f00 100%);
+}
+
+.right-atom.oxygen {
+  background: radial-gradient(circle, #ff6b6b 0%, #a30000 100%);
+}
+
+/* === Electrons === */
+.electron {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #00eaff 0%, #007bff 90%);
+  position: absolute;
+  box-shadow: 0 0 20px rgba(0, 234, 255, 0.9);
+  cursor: grab;
+  transition: transform 0.25s ease, box-shadow 0.3s ease;
+  z-index: 10;
+}
+
+.electron:hover {
+  transform: scale(1.2);
+  box-shadow: 0 0 30px rgba(0, 255, 255, 1);
+}
+
+.electron.is-dragging {
+  box-shadow: 0 0 35px rgba(0, 255, 255, 1);
+  transform: scale(1.3);
+  cursor: grabbing;
+}
+
+/* === Bond Animation === */
+@keyframes attract {
+  0% { transform: translateX(0) scale(1); }
+  50% { transform: translateX(40px) scale(1.05); }
+  100% { transform: translateX(90px) scale(0.98); }
+}
+
+.atom.final-state {
+  animation: attract 1.4s ease-in-out forwards;
+}
+
+.atom.final-state.opposite {
+  animation-direction: reverse;
+}
+
+/* === Spark Effect === */
+.workspace.bonded::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 25px;
+  height: 25px;
+  background: radial-gradient(circle, #00ffff 0%, transparent 70%);
+  border-radius: 50%;
+  box-shadow: 0 0 100px 40px rgba(0, 255, 255, 0.6);
+  transform: translate(-50%, -50%) scale(0);
+  animation: bond-spark 0.7s ease-out forwards;
+}
+
+@keyframes bond-spark {
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0.8; }
+  40% { transform: translate(-50%, -50%) scale(2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
+}
+
+/* === Buttons === */
+.check-btn {
+  background: linear-gradient(90deg, #00c3ff, #0099ff);
+  border: none;
+  color: white;
+  font-weight: 600;
+  border-radius: 0.6rem;
+  padding: 0.75rem 1.6rem;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(0, 153, 255, 0.4);
+  transition: transform 0.25s, box-shadow 0.35s ease;
+}
+
+.check-btn:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 35px rgba(0, 255, 255, 0.8);
+}
+
+.check-btn.incorrect {
+  background: linear-gradient(90deg, #ff5757, #cc0000);
+  box-shadow: 0 0 25px rgba(255, 87, 87, 0.5);
+}
+
+.check-btn.correct {
+  background: linear-gradient(90deg, #00ffae, #00b36b);
+  box-shadow: 0 0 25px rgba(0, 255, 174, 0.5);
+}
+
+/* === Success Message === */
+.success-message {
+  margin-top: 1rem;
+  color: #00ffae;
+  font-weight: 700;
+  font-size: 1.1rem;
+  letter-spacing: 0.5px;
+  text-shadow: 0 0 15px rgba(0, 255, 174, 0.6);
+  animation: pulse 1.2s infinite alternate;
+}
+
+@keyframes pulse {
+  from { opacity: 0.8; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.07); }
+}

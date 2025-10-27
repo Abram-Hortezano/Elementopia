@@ -1,26 +1,69 @@
 import React, { useState } from "react";
-import ChallengeOne from "./IonicChallenge1";
-import ChallengeTwo from "./IonicChallenge2";
-import ChallengeThree from "./IonicChallenge3";
-import "../../assets/css/IonicBonding.css";
+import {
+  DndContext,
+  useDraggable,
+  useDroppable,
+  DragOverlay,
+} from "@dnd-kit/core";
+import "../assets/css/ChallengeOne.css";
 
-export default function IonicChallenge({ onExit }) {
-  const [currentChallenge, setCurrentChallenge] = useState(0);
+// --- Electron (draggable) ---
+function Electron({ id }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
 
-  const challenges = [
-    { id: 1, component: <ChallengeOne onNext={() => setCurrentChallenge(1)} /> },
-    { id: 2, component: <ChallengeTwo onNext={() => setCurrentChallenge(2)} /> },
-    { id: 3, component: <ChallengeThree onNext={() => onExit?.()} /> },
-  ];
+  const style = {
+    transform: transform
+      ? `translate3d(${transform.x}px, ${transform.y}px, 0)`
+      : "none",
+  };
 
   return (
-    <div className="lesson-modal ionic-bonding">
-      <h1 className="intro-ib-title">⚡ Ionic Bonding Practice</h1>
-      <p className="intro-text">
-        Apply what you’ve learned! Form correct ionic bonds in each challenge.
-      </p>
-      {challenges[currentChallenge].component}
+    <div
+      ref={setNodeRef}
+      {...listeners}
+      {...attributes}
+      className="electron"
+      style={style}
+    />
+  );
+}
+
+// --- Atom (droppable) ---
+function Atom({ id, electrons }) {
+  const { isOver, setNodeRef } = useDroppable({ id });
+
+  return (
+    <div ref={setNodeRef} className={`atom ${isOver ? "highlight" : ""}`}>
+      <div className="nucleus" />
+      <div className="electron-shell">
+        {electrons.map((e) => (
+          <Electron key={e.id} id={e.id} />
+        ))}
+      </div>
     </div>
   );
 }
 
+// --- Main Challenge Component ---
+export default function ChallengeOne() {
+  const [atoms] = useState([
+    { id: "sodium", electrons: [{ id: "e1" }, { id: "e2" }] },
+  ]);
+  const [activeId, setActiveId] = useState(null);
+
+  return (
+    <div className="lesson-modal ionic-bonding">
+      <DndContext onDragStart={(e) => setActiveId(e.active.id)} onDragEnd={() => setActiveId(null)}>
+        <div className="workspace">
+          {atoms.map((atom) => (
+            <Atom key={atom.id} id={atom.id} electrons={atom.electrons} />
+          ))}
+        </div>
+
+        <DragOverlay>
+          {activeId ? <div className="electron overlay" /> : null}
+        </DragOverlay>
+      </DndContext>
+    </div>
+  );
+}

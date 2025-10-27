@@ -64,7 +64,7 @@ public class AchievementService {
     @Transactional
     public AchievementEntity unlockAchievementByCode(Long userId, String codeName) {
         if (achievementRepo.existsByUser_UserIdAndCodeName(userId, codeName)) {
-            return null; // Already unlocked — like Discovery
+            return null; // Already unlocked
         }
 
         UserEntity user = userRepo.findById(userId)
@@ -83,12 +83,19 @@ public class AchievementService {
         return achievementRepo.save(newAchievement);
     }
 
+    /**
+     * Find an achievement by its title (used by unlockByCode if you pass a title instead of code name)
+     */
+    public AchievementEntity findAchievementByTitle(String title) {
+        return achievementRepo.findByTitle(title)
+                .orElseThrow(() -> new NoSuchElementException("Achievement not found with title: " + title));
+    }
 
     /**
-     * Check if a user has already unlocked an achievement with the given title
+     * Check if a user has already unlocked an achievement with the given code name
      * @param userId The user ID
-     * @param title The achievement title
-     * @return true if the user has the achievement, false otherwise
+     * @param codeName The achievement's code name
+     * @return true if already unlocked, false otherwise
      */
     public boolean hasUserUnlockedAchievement(Long userId, String codeName) {
         return achievementRepo.existsByUser_UserIdAndCodeName(userId, codeName);

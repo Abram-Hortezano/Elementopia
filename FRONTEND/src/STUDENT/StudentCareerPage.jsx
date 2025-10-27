@@ -43,7 +43,7 @@ const StudentCareerPage = () => {
           <BackButton />
         </Box> */}
 
-        <CurriculumOverview />
+        {/*<CurriculumOverview /> */}
         <MapTree/>
       </Box>
     </Box>

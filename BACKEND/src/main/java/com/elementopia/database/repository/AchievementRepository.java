@@ -13,7 +13,7 @@ public interface AchievementRepository extends JpaRepository<AchievementEntity, 
     List<AchievementEntity> findByUser_UserId(Long userId);
     
     Optional<AchievementEntity> findByCodeName(String codeName);
-    
+    Optional<AchievementEntity> findByTitle(String title);
     boolean existsByUser_UserIdAndCodeName(Long userId, String codeName);
 
 }
