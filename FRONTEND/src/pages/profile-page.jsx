@@ -21,7 +21,7 @@ import {
 } from "lucide-react";
 import "./profile-page.css";
 
-export default function ProfilePageMain() {
+export default function ProfilePage() {
   const [activeTab, setActiveTab] = useState("profile");
   const [editMode, setEditMode] = useState(false);
   const navigate = useNavigate();

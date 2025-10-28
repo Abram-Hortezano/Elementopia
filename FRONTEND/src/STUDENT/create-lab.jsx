@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { X, Plus, User, Copy, Check } from "lucide-react";
-import '../assets/css/create-Lab.css';  // Import the CSS file
+import "../assets/css/create-lab.css"; // Keep only one CSS import
 
 export default function CreateLaboratory({ onClose }) {
   const [laboratoryName, setLaboratoryName] = useState("");
@@ -8,8 +8,8 @@ export default function CreateLaboratory({ onClose }) {
   const [students, setStudents] = useState([]);
   const [code, setCode] = useState("");
   const [copied, setCopied] = useState(false);
-  const [emailError, setEmailError] = useState(""); // To store the email validation error
-  const [labNameError, setLabNameError] = useState(""); // To store the lab name error
+  const [emailError, setEmailError] = useState("");
+  const [labNameError, setLabNameError] = useState("");
 
   useEffect(() => {
     generateCode();
@@ -28,7 +28,7 @@ export default function CreateLaboratory({ onClose }) {
     if (studentEmail && !students.includes(studentEmail) && validateEmail(studentEmail)) {
       setStudents([...students, studentEmail]);
       setStudentEmail("");
-      setEmailError(""); // Reset email error
+      setEmailError("");
     } else if (!validateEmail(studentEmail)) {
       setEmailError("Please enter a valid email address.");
     }
@@ -50,21 +50,18 @@ export default function CreateLaboratory({ onClose }) {
       return;
     }
 
-    if (laboratoryName) {
-      console.log({
-        name: laboratoryName,
-        students,
-        code,
-      });
-      onClose(); // Close the modal after submitting the laboratory creation
-    }
+    console.log({
+      name: laboratoryName,
+      students,
+      code,
+    });
+    onClose();
   };
 
   const handleCancel = () => {
-    onClose(); // Close the modal when cancel is clicked
+    onClose();
   };
 
-  // Email validation function
   const validateEmail = (email) => {
     const regex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
     return regex.test(email);
@@ -86,10 +83,10 @@ export default function CreateLaboratory({ onClose }) {
           value={laboratoryName}
           onChange={(e) => {
             setLaboratoryName(e.target.value);
-            setLabNameError(""); // Reset error when the user starts typing
+            setLabNameError("");
           }}
         />
-        {labNameError && <p className="error-message">{labNameError}</p>} {/* Display lab name error */}
+        {labNameError && <p className="error-message">{labNameError}</p>}
       </div>
 
       <div className="input-group">
@@ -117,7 +114,7 @@ export default function CreateLaboratory({ onClose }) {
             <Plus size={15} /> Add
           </button>
         </div>
-        {emailError && <p className="error-message">{emailError}</p>} {/* Display email error */}
+        {emailError && <p className="error-message">{emailError}</p>}
       </div>
 
       {students.length > 0 && (

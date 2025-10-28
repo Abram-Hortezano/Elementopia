@@ -16,13 +16,25 @@ import {
   ArrowLeft,
   FileText,
 } from "lucide-react";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
+import CreateExperiment from "../STUDENT/create-experiment";
+import AddStudentModal from "../STUDENT/add-student-modal";
+import StudentProgressModalComponent from "../STUDENT/student-progress-modal";
+
 import "../assets/css/laboratory.css";
 
 export default function Laboratory({ laboratoryId }) {
   const [searchQuery, setSearchQuery] = useState("");
-  const [createExperimentModalOpen, setCreateExperimentModalOpen] = useState(false);
+  const [createExperimentModalOpen, setCreateExperimentModalOpen] =
+    useState(false);
   const [copied, setCopied] = useState(false);
-  const [activeTab, setActiveTab] = useState("experiments"); // New state to manage active tab
+  const [activeTab, setActiveTab] = useState("experiments");
+  const [addStudentModal, setAddStudentModalOpen] = useState(false);
+  const [studentProgressModalOpen, setStudentProgressModalOpen] =
+    useState(false);
+  const [selectedStudent, setSelectedStudent] = useState(null);
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
   const laboratory = {
     id: laboratoryId,
@@ -62,6 +74,19 @@ export default function Laboratory({ laboratoryId }) {
     ],
   };
 
+  const handleCreateExperiment = (data) => {
+    console.log("Experiment created:", data);
+  };
+
+  const handleAddStudent = (data) => {
+    console.log("Students added:", data);
+  };
+
+  const viewStudentProgress = (student) => {
+    setSelectedStudent(student);
+    setStudentProgressModalOpen(true);
+  };
+
   const copyCode = () => {
     navigator.clipboard.writeText(laboratory.code);
     setCopied(true);
@@ -82,33 +107,62 @@ export default function Laboratory({ laboratoryId }) {
   };
 
   const filteredExperiments = searchQuery
-    ? laboratory.experiments.filter((exp) =>
-        exp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        exp.type.toLowerCase().includes(searchQuery.toLowerCase())
+    ? laboratory.experiments.filter(
+        (exp) =>
+          exp.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+          exp.type.toLowerCase().includes(searchQuery.toLowerCase())
       )
     : laboratory.experiments;
 
   return (
     <div className="lab-container">
+      <Navbar />
+      <Sidebar
+        open={drawerOpen}
+        handleDrawerOpen={() => setDrawerOpen(true)}
+        handleDrawerClose={() => setDrawerOpen(false)}
+      />
+
       <div className="lab-header">
         <div>
           <ArrowLeft className="back-icon" />
           <div className="lab-title-group">
             <h1 className="lab-title">{laboratory.name}</h1>
             <p className="lab-subtitle">
-              Laboratory Code: <span className="lab-code">{laboratory.code}</span>
+              Laboratory Code:{" "}
+              <span className="lab-code">{laboratory.code}</span>
               <button onClick={copyCode} className="copy-button">
-                {copied ? <Check className="icon-xs"/> : <Copy className="icon-xs" size={20}/> }
+                {copied ? (
+                  <Check className="icon-xs" />
+                ) : (
+                  <Copy className="icon-xs" size={20} />
+                )}
               </button>
-              <span className="lab-status">{laboratory.isPublic ? < Globe size={20} className="globe-icon"/> : <Lock className="lock-icon"/>} Public</span>
+              <span className="lab-status">
+                {laboratory.isPublic ? (
+                  <Globe size={20} className="globe-icon" />
+                ) : (
+                  <Lock className="lock-icon" />
+                )}{" "}
+                Public
+              </span>
             </p>
           </div>
         </div>
+
         <div className="lab-actions-group">
-          <button className="btn-create" onClick={() => setCreateExperimentModalOpen(true)}>
+          <button
+            className="btn-create"
+            onClick={() =>
+              setCreateExperimentModalOpen((prev) => !prev)
+            }
+          >
             <Plus size={16} /> Create Experiment
           </button>
-          <button className="btn-add">
+          <button
+            className="btn-add"
+            onClick={() => setAddStudentModalOpen((prev) => !prev)}
+          >
             <UserPlus size={16} /> Add Students
           </button>
           <button className="btn-settings">
@@ -120,32 +174,59 @@ export default function Laboratory({ laboratoryId }) {
       <div className="lab-stats">
         <div className="stat-box">
           <div className="stats">
-          <p>Total Students</p>
-          <h2>{laboratory.students.length}</h2>
+            <p>Total Students</p>
+            <h2>{laboratory.students.length}</h2>
           </div>
-          <Users color= "#9c83ff" size={40}/>
+          <Users color="#9c83ff" size={40} />
         </div>
         <div className="stat-box">
-        <div className="stats">
-          <p>Total Experiments</p>
-          <h2>{laboratory.experiments.length}</h2>
+          <div className="stats">
+            <p>Total Experiments</p>
+            <h2>{laboratory.experiments.length}</h2>
           </div>
-          <Beaker color="#e151ff" size={40}/>
+          <Beaker color="#e151ff" size={40} />
         </div>
         <div className="stat-box">
-        <div className="stats">
-          <p>Avg. Completion Rate</p>
-          <h2>
-            {Math.round(
-              (laboratory.experiments.reduce((acc, exp) => acc + exp.submissions, 0) /
-                (laboratory.experiments.length * laboratory.students.length)) *
-                100
-            )}%
-          </h2>
+          <div className="stats">
+            <p>Avg. Completion Rate</p>
+            <h2>
+              {Math.round(
+                (laboratory.experiments.reduce(
+                  (acc, exp) => acc + exp.submissions,
+                  0
+                ) /
+                  (laboratory.experiments.length *
+                    laboratory.students.length)) *
+                  100
+              )}
+              %
+            </h2>
           </div>
-          <BookOpen color="#fff759" size={40}/>
+          <BookOpen color="#fff759" size={40} />
         </div>
       </div>
+
+      {createExperimentModalOpen && (
+        <CreateExperiment
+          isOpen={true}
+          onClose={() => setCreateExperimentModalOpen(false)}
+          onSubmit={handleCreateExperiment}
+        />
+      )}
+      {addStudentModal && (
+        <AddStudentModal
+          isOpen={true}
+          onClose={() => setAddStudentModalOpen(false)}
+          onSubmit={handleAddStudent}
+        />
+      )}
+      {studentProgressModalOpen && selectedStudent && (
+        <StudentProgressModalComponent
+          isOpen={true}
+          onClose={() => setStudentProgressModalOpen(false)}
+          student={selectedStudent}
+        />
+      )}
 
       <div className="lab-management">
         <div className="lab-management-header">
@@ -166,13 +247,17 @@ export default function Laboratory({ laboratoryId }) {
 
         <div className="tabs">
           <button
-            className={`tab ${activeTab === "experiments" ? "active" : ""}`}
+            className={`tab ${
+              activeTab === "experiments" ? "active" : ""
+            }`}
             onClick={() => setActiveTab("experiments")}
           >
             Experiments
           </button>
           <button
-            className={`tab ${activeTab === "students" ? "active" : ""}`}
+            className={`tab ${
+              activeTab === "students" ? "active" : ""
+            }`}
             onClick={() => setActiveTab("students")}
           >
             Students
@@ -183,15 +268,22 @@ export default function Laboratory({ laboratoryId }) {
           <div className="experiment-list">
             {filteredExperiments.map((exp) => (
               <div className="experiment-card" key={exp.id}>
-                <div className="experiment-icon">{getExperimentTypeIcon(exp.type)}</div>
+                <div className="experiment-icon">
+                  {getExperimentTypeIcon(exp.type)}
+                </div>
                 <div className="experiment-content">
                   <h3 className="experiment-title">{exp.title}</h3>
-                  <p className="experiment-type">{exp.type.replace(/-/g, " ")}</p>
+                  <p className="experiment-type">
+                    {exp.type.replace(/-/g, " ")}
+                  </p>
                 </div>
                 <div className="experiment-meta">
-                  <p><strong>Due:</strong> {exp.dueDate}</p>
                   <p>
-                    <strong>Submissions:</strong> {exp.submissions}/{exp.totalStudents}
+                    <strong>Due:</strong> {exp.dueDate}
+                  </p>
+                  <p>
+                    <strong>Submissions:</strong> {exp.submissions}/
+                    {exp.totalStudents}
                   </p>
                 </div>
                 <div className="experiment-actions">
@@ -210,21 +302,23 @@ export default function Laboratory({ laboratoryId }) {
         {activeTab === "students" && (
           <div className="student-list">
             {laboratory.students.map((student) => (
-              <div className="student-card-wrapper">
-                <div className="student-card" key={student.id}>
+              <div className="student-card-wrapper" key={student.id}>
+                <div className="student-card">
                   <p className="student-name">{student.name}</p>
                   <p className="student-email">{student.email}</p>
                 </div>
-             
-                  <div className="students-actions">
-                    <button className="btn-view-progress">
-                      <FileText size={16} /> View Progress
-                    </button>
-                    <button className="btn-remove-student">
-                      <Trash size={16} /> Remove
-                    </button>
-                  </div>
+                <div className="students-actions">
+                  <button
+                    className="btn-view-progress"
+                    onClick={() => viewStudentProgress(student)}
+                  >
+                    <FileText size={16} /> View Progress
+                  </button>
+                  <button className="btn-remove-student">
+                    <Trash size={16} /> Remove
+                  </button>
                 </div>
+              </div>
             ))}
           </div>
         )}

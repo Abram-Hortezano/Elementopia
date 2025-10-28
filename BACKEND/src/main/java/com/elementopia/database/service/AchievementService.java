@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.NoSuchElementException;
 
@@ -60,11 +61,30 @@ public class AchievementService {
         return false;
     }
 
+    @Transactional
+    public AchievementEntity unlockAchievementByCode(Long userId, String codeName) {
+        if (achievementRepo.existsByUser_UserIdAndCodeName(userId, codeName)) {
+            return null; // Already unlocked
+        }
+
+        UserEntity user = userRepo.findById(userId)
+                .orElseThrow(() -> new NoSuchElementException("User not found with id: " + userId));
+
+        AchievementEntity template = achievementRepo.findByCodeName(codeName)
+                .orElseThrow(() -> new NoSuchElementException("Achievement not found with code name: " + codeName));
+
+        AchievementEntity newAchievement = new AchievementEntity();
+        newAchievement.setTitle(template.getTitle());
+        newAchievement.setDescription(template.getDescription());
+        newAchievement.setCodeName(template.getCodeName());
+        newAchievement.setDateAchieved(LocalDate.now());
+        newAchievement.setUser(user);
+
+        return achievementRepo.save(newAchievement);
+    }
+
     /**
-     * Find an achievement by its title
-     * @param title The title of the achievement
-     * @return The achievement with the given title
-     * @throws NoSuchElementException if no achievement with the given title exists
+     * Find an achievement by its title (used by unlockByCode if you pass a title instead of code name)
      */
     public AchievementEntity findAchievementByTitle(String title) {
         return achievementRepo.findByTitle(title)
@@ -72,12 +92,12 @@ public class AchievementService {
     }
 
     /**
-     * Check if a user has already unlocked an achievement with the given title
+     * Check if a user has already unlocked an achievement with the given code name
      * @param userId The user ID
-     * @param title The achievement title
-     * @return true if the user has the achievement, false otherwise
+     * @param codeName The achievement's code name
+     * @return true if already unlocked, false otherwise
      */
-    public boolean hasUserUnlockedAchievement(Long userId, String title) {
-        return achievementRepo.existsByUser_UserIdAndTitle(userId, title);
+    public boolean hasUserUnlockedAchievement(Long userId, String codeName) {
+        return achievementRepo.existsByUser_UserIdAndCodeName(userId, codeName);
     }
 }

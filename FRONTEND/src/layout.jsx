@@ -1,12 +1,11 @@
-import React from "react";
-import Navigation from "./components/navigation"; 
+import React from 'react';
 
-
-export default function Layout({ children }) {
+function MyComponent() {
   return (
-    <>
-      <Navigation />
-      <main>{children}</main> {/* This is where each page's content will go */}
-    </>
+    <div>
+      <h2>Hello from MyComponent 👋</h2>
+    </div>
   );
 }
+
+export default MyComponent;
