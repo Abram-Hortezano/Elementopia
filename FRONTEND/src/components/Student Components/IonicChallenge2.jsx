@@ -5,7 +5,7 @@ import {
   useDraggable,
   DragOverlay,
 } from "@dnd-kit/core";
-import "../../assets/css/ChallengeOne.css"; // your provided CSS
+import "../../assets/css/ChallengeOne.css";
 
 export default function IonicChallenge2() {
   const [challenge, setChallenge] = useState(1);
@@ -129,7 +129,7 @@ export default function IonicChallenge2() {
             <DropZone
               id={current.atom1}
               className={`atom left-atom ${current.atom1} ${
-                bondFormed ? "final-left" : ""
+                bondFormed ? "final-state" : ""
               }`}
             >
               <div className="atom-symbol">{getSymbol(current.atom1)}</div>
@@ -138,9 +138,7 @@ export default function IonicChallenge2() {
 
             <DropZone
               id={current.atom2}
-              className={`atom right-atom ${current.atom2} ${
-                bondFormed ? "final-right" : ""
-              }`}
+               className={`atom right-atom ${current.atom2} ${bondFormed ? "final-state opposite" : ""}`}
             >
               <div className="atom-symbol">{getSymbol(current.atom2)}</div>
               {renderElectronsOn(current.atom2, items, activeId)}

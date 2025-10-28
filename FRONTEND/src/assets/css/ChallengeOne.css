@@ -137,8 +137,7 @@
 /* === Bond Animation === */
 @keyframes attract {
   0% { transform: translateX(0) scale(1); }
-  50% { transform: translateX(40px) scale(1.05); }
-  100% { transform: translateX(90px) scale(0.98); }
+  100% { transform: translateX(165px) scale(0.98); }
 }
 
 .atom.final-state {
@@ -148,6 +147,14 @@
 .atom.final-state.opposite {
   animation-direction: reverse;
 }
+.atom-symbol {
+  position: absolute;
+  font-size: 1.4rem;
+  font-weight: bold;
+  color: white;
+  pointer-events: none;
+}
+
 
 /* === Spark Effect === */
 .workspace.bonded::after {

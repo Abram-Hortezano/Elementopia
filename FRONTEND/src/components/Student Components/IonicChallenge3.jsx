@@ -126,7 +126,7 @@ export default function IonicChallenge3() {
             <DropZone
               id={current.atom1}
               className={`atom left-atom ${current.atom1} ${
-                bondFormed ? "final-left" : ""
+                bondFormed ? "final-state" : ""
               }`}
             >
               <span className="atom-symbol">{current.symbol1}</span>
@@ -135,9 +135,7 @@ export default function IonicChallenge3() {
 
             <DropZone
               id={current.atom2}
-              className={`atom right-atom ${current.atom2} ${
-                bondFormed ? "final-right" : ""
-              }`}
+               className={`atom right-atom ${current.atom2} ${bondFormed ? "final-state opposite" : ""}`}
             >
               <span className="atom-symbol">{current.symbol2}</span>
               {renderElectronsOn(current.atom2, items, activeId)}

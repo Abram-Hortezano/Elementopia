@@ -192,7 +192,7 @@ function DraggableParticle({ id, type, isHidden, index, total }) {
     // Electron orbit
     if (index !== undefined && total !== undefined) {
         const angle = total > 0 ? (index / total) * 360 : 0;
-        const radius = 135;
+        const radius = 140;
         const x = radius * Math.cos(angle * Math.PI / 180);
         const y = radius * Math.sin(angle * Math.PI / 180);
         particleStyle.top = `calc(50% + ${y}px - 15px)`;

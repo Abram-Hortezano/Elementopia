@@ -9,7 +9,6 @@ export default function ChallengeOne({ onComplete }) {
   const [status, setStatus] = useState("pending");
   const [bondFormed, setBondFormed] = useState(false);
 
-  // 🧪 Generate random electrons each time challenge changes
   useEffect(() => {
     resetChallenge(challenge);
   }, [challenge]);
@@ -101,12 +100,16 @@ export default function ChallengeOne({ onComplete }) {
   // --- Dynamic labels ---
   const atomLeft = challenge === 1 ? "na" : challenge === 2 ? "mg" : "ca";
   const atomRight = challenge === 1 ? "cl" : challenge === 2 ? "cl" : "o";
+  const symbolLeft = challenge === 1 ? "Na" : challenge === 2 ? "Mg" : "Ca";
+  const symbolRight = challenge === 1 ? "Cl" : challenge === 2 ? "Cl" : "O";
+
   const title =
     challenge === 1
       ? "Challenge 1: Form Sodium Chloride (NaCl)"
       : challenge === 2
       ? "Challenge 2: Form Magnesium Chloride (MgCl₂)"
       : "Challenge 3: Form Calcium Oxide (CaO)";
+
   const instruction =
     challenge === 1
       ? "Drag one electron from Sodium (Na) to Chlorine (Cl)."
@@ -128,14 +131,17 @@ export default function ChallengeOne({ onComplete }) {
                 bondFormed ? "final-state" : ""
               }`}
             >
+              <span className="atom-symbol">{symbolLeft}</span>
               {renderElectronsOn(atomLeft, items, activeId)}
             </DropZone>
+
             <DropZone
               id={atomRight}
               className={`atom right-atom ${items[atomRight]?.type} ${
                 bondFormed ? "final-state opposite" : ""
               }`}
             >
+              <span className="atom-symbol">{symbolRight}</span>
               {renderElectronsOn(atomRight, items, activeId)}
             </DropZone>
           </div>
