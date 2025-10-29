@@ -1,0 +1,434 @@
+/* ChallengeGames.css - shared style for all challenge components */
+.game-container {
+  background: linear-gradient(180deg, #071427, #021019);
+  color: #e6f7ff;
+  padding: 18px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  font-family: Inter, Arial, sans-serif;
+  margin: 8px;
+}
+
+/* common */
+.game-container h2 {
+  text-align: center;
+  margin-bottom: 10px;
+}
+.game-btn {
+  background: linear-gradient(90deg, #19f59c, #0bd3ff);
+  border: none;
+  padding: 8px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 700;
+}
+.game-btn:hover {
+  transform: translateY(-2px);
+}
+.score,
+.lives {
+  margin-top: 8px;
+  font-weight: 700;
+}
+
+/* BondBuilder */
+.game-top-row {
+  display: flex;
+  gap: 12px;
+}
+.side-panel {
+  width: 200px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 10px;
+  border-radius: 8px;
+}
+.atom-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.atom-card {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 8px;
+  border-radius: 8px;
+  cursor: grab;
+  background: rgba(255, 255, 255, 0.02);
+}
+.atom-visual {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.atom-visual.h {
+  background: linear-gradient(90deg, #fff, #dfe6ff);
+  color: #000;
+}
+.atom-visual.o {
+  background: linear-gradient(90deg, #ffdede, #ff9e9e);
+  color: #000;
+}
+.atom-visual.c {
+  background: linear-gradient(90deg, #e6ffe6, #9ef59e);
+  color: #000;
+}
+.atom-visual.n {
+  background: linear-gradient(90deg, #e6f0ff, #9eb8ff);
+  color: #000;
+}
+.atom-meta {
+  font-size: 12px;
+  color: #bcd;
+}
+.board-wrap {
+  flex: 1;
+}
+.bond-board {
+  position: relative;
+  height: 380px;
+  border-radius: 10px;
+  overflow: hidden;
+  background: linear-gradient(180deg, #0b2430, #03202b);
+  border: 1px dashed rgba(255, 255, 255, 0.04);
+}
+.board-hint {
+  position: absolute;
+  right: 10px;
+  bottom: 6px;
+  color: #6fb8c6;
+  font-size: 12px;
+}
+.workspace-atom {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  transform: translate(-50%, -50%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.workspace-atom .bond-count {
+  position: absolute;
+  bottom: -8px;
+  right: -8px;
+  background: #072;
+  color: #baffc9;
+  padding: 2px 6px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.workspace-atom.selected {
+  box-shadow: 0 0 12px rgba(120, 200, 255, 0.45);
+}
+.bond-svg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+}
+
+/* Electron Defense */
+.defense-area {
+  display: flex;
+  gap: 12px;
+}
+.defense-hud {
+  width: 200px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 8px;
+  border-radius: 8px;
+}
+.defense-board {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.molecule-stack {
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.molecule-card {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 8px;
+  border-radius: 8px;
+  color: #cff;
+}
+.progress-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  margin-top: 6px;
+}
+.progress-bar > div {
+  height: 100%;
+  background: linear-gradient(90deg, #6ff, #0bf);
+  width: 0%;
+  border-radius: 6px;
+  transition: width 0.2s;
+}
+.electron-field {
+  position: relative;
+  flex: 1;
+  height: 300px;
+  background: linear-gradient(180deg, #02171a, #001018);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.electron {
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, #fff, #0bf);
+  border-radius: 50%;
+  position: absolute;
+  cursor: pointer;
+  box-shadow: 0 0 6px rgba(30, 200, 255, 0.6);
+}
+.base-center {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  color: #9ef;
+  font-weight: 700;
+}
+
+/* Bond Energy Breaker */
+.breaker-area {
+  display: flex;
+  gap: 12px;
+}
+.molecule-preview {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 10px;
+  border-radius: 8px;
+  width: 60%;
+}
+.atoms-row {
+  display: flex;
+  gap: 8px;
+  margin: 8px 0;
+}
+.atom-circle {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.03);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+.bonds-row {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+.bond-card {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 8px;
+  border-radius: 8px;
+  width: 180px;
+}
+.energy-bar {
+  height: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
+  margin: 6px 0;
+}
+.energy-bar > div {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, #f6b, #f90);
+  transition: width 0.1s;
+}
+.hold-btn {
+  background: linear-gradient(90deg, #f77, #fa0);
+  padding: 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  text-align: center;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+/* Mole Mixer */
+.mixer-top {
+  display: flex;
+  gap: 12px;
+}
+.elements-panel {
+  width: 220px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 8px;
+  border-radius: 8px;
+}
+.element-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+.element-card {
+  width: 72px;
+  height: 72px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+}
+.cauldron-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.cauldron {
+  width: 320px;
+  height: 200px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #0b2330, #04202a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed rgba(255, 255, 255, 0.05);
+}
+.cauldron-inside {
+  width: 90%;
+  height: 80%;
+  background: linear-gradient(180deg, #06161a, #04202a);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cauldron-item {
+  background: rgba(255, 255, 255, 0.03);
+  padding: 6px 8px;
+  border-radius: 6px;
+  margin: 2px;
+}
+
+/* Mole Scale */
+.scale-top {
+  display: flex;
+  gap: 12px;
+  align-items: flex-start;
+}
+.molecule-pallet {
+  width: 200px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 8px;
+  border-radius: 8px;
+}
+.molecule-draggable {
+  background: rgba(255, 255, 255, 0.02);
+  padding: 6px;
+  border-radius: 6px;
+  margin: 6px 0;
+  cursor: grab;
+}
+.scale-area {
+  flex: 1;
+  text-align: center;
+}
+.scale-visual {
+  margin: 12px auto;
+  width: 420px;
+  height: 80px;
+  background: linear-gradient(180deg, #0a2b2f, #04171a);
+  border-radius: 8px;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 20px;
+  transition: transform 0.2s;
+}
+.pan {
+  width: 180px;
+  height: 64px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  padding: 8px;
+  overflow: auto;
+}
+.pivot {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+}
+
+/* Conveyor */
+.conveyor-area {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  align-items: center;
+}
+.conveyor-track {
+  width: 100%;
+  height: 120px;
+  position: relative;
+  background: linear-gradient(90deg, #04151a, #031116);
+  border-radius: 8px;
+  overflow: hidden;
+}
+.conveyor-item {
+  position: absolute;
+  top: 20px;
+  width: 110px;
+  height: 60px;
+  background: linear-gradient(90deg, #063a3f, #02484b);
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #dff;
+  cursor: pointer;
+  box-shadow: 0 6px 14px rgba(2, 20, 22, 0.6);
+}
+.conveyor-bins {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.bin {
+  width: 160px;
+  height: 60px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #cff;
+}
+
+/* responsive */
+@media (max-width: 900px) {
+  .game-top-row,
+  .mixer-top,
+  .breaker-area {
+    flex-direction: column;
+  }
+}

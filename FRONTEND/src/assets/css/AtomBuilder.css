@@ -149,17 +149,6 @@
     z-index: 1;
 }
 
-.electron-shell::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    border: 3px dashed rgba(127, 140, 141, 0.5);
-    border-radius: 50%;
-    animation: rotate 60s linear infinite;
-}
 
 .nucleus {
     width: 100px;
@@ -225,7 +214,10 @@
 .particle.proton::after { content: 'p+'; }
 .particle.neutron { background-color: #95a5a6; }
 .particle.neutron::after { content: 'n'; }
-.particle.electron { background-color: #3498db; }
+.particle.electron { background-color: #3498db; 
+    width: 26px;
+  height: 26px;
+    color:#161e27;}
 .particle.electron::after { content: 'e-'; }
 
 /* --- Controls & Feedback --- */

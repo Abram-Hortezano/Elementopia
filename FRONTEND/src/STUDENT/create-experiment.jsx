@@ -1,6 +1,10 @@
 import { useState } from "react"
 import { CalendarIcon } from "lucide-react"
 import { Switch } from "@mui/material"
+import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 // import { format } from "date-fns"
 import "../assets/css/create-experiment.css"
 
@@ -11,6 +15,8 @@ export default function CreateExperimentModal({ isOpen, onClose, onSubmit }) {
   const [accessType, setAccessType] = useState("public")
   const [multipleAttempts, setMultipleAttempts] = useState(false)
   const [instructions, setInstructions] = useState("")
+  // const [value, setValue] = React.useState(dayjs('2022-04-17'));
+
 console.log("It is loaded");
   const handleSubmit = () => {
     if (title && experimentType && accessType) {
@@ -67,6 +73,19 @@ console.log("It is loaded");
                 <CalendarIcon size={16} />
                 {deadline ? format(deadline, "PPP") : "Select a date"}
               </button>
+=======
+            <LocalizationProvider dateAdapter={AdapterDayjs}>
+              <DemoContainer components={['DatePicker', 'DatePicker']}>
+                <DatePicker
+                className="date-picker"
+                  // label="Controlled picker"
+                //value={value}
+                
+                sx={{width: 500, backgroundColor: '#1f2937', borderRadius: '10px', color: 'white', border: '1px solid #838383'}}
+                  onChange={(newValue) => setValue(newValue)}
+                />
+              </DemoContainer>
+            </LocalizationProvider>
             </div>
           </div>
 

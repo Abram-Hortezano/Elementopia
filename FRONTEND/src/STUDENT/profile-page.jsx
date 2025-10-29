@@ -1,7 +1,8 @@
-import { useState } from "react"
-// import { Router } from "next/navigation"
-import Sidebar from "../components/Sidebar"
-import Navbar from "../components/NavBar"
+import { useState, useEffect } from "react";
+import Sidebar from "../components/Sidebar";
+import Navbar from "../components/Navbar";
+import { useNavigate } from "react-router-dom";
+import UserService from "../services/UserService";
 import {
   User,
   Mail,
@@ -15,81 +16,145 @@ import {
   Shield,
   Save,
   X,
-  Camera,
   Beaker,
   Atom,
-} from "lucide-react"
-import "../assets/css/profile-page.css"
+} from "lucide-react";
+import "../pages/profile-page.css";
 
 export default function ProfilePage() {
-//   const router = useRouter()
-  const [activeTab, setActiveTab] = useState("profile")
-  const [editMode, setEditMode] = useState(false)
-
-  // Mock user data pending backend integration
+  const [activeTab, setActiveTab] = useState("profile");
+  const [editMode, setEditMode] = useState(false);
+  const navigate = useNavigate();
   const [userData, setUserData] = useState({
-    name: "John Doe",
-    email: "john.doe@example.com",
-    role: "Student",
-    bio: "Chemistry enthusiast and aspiring scientist. I love exploring the periodic table and learning about molecular structures.",
-    school: "Science High School",
-    grade: "11th Grade",
-    joinDate: "January 2023",
-    profileImage: "/placeholder.svg?height=200&width=200",
-  })
-  const handleImageUpload = (e) => {
-    const file = e.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onloadend = () => {
-        setUserData({
-          ...userData,
-          profileImage: reader.result,
-        })
-      }
-      reader.readAsDataURL(file)
-    }
-  }  
+    id: "",
+    name: "",
+    email: "",
+    bio: "",
+    school: "",
+    grade: "",
+    role: "",
+  });
 
-  // Mock achievements data pending backend integration
-  const achievements = [
-    { id: 1, name: "Element Master", description: "Learned about 10 elements", progress: 100, icon: Atom },
-    { id: 2, name: "Molecule Builder", description: "Created 5 molecules", progress: 60, icon: Beaker },
-    { id: 3, name: "Quiz Champion", description: "Completed 3 quizzes with perfect score", progress: 30, icon: Book },
-  ]
+  const [achievements] = useState([
+    {
+      id: 1,
+      name: "Element Master",
+      description: "Learned about 10 elements",
+      progress: 100,
+      icon: Atom,
+    },
+    {
+      id: 2,
+      name: "Molecule Builder",
+      description: "Created 5 molecules",
+      progress: 60,
+      
+      icon: Beaker,
+    },
+    {
+      id: 3,
+      name: "Quiz Champion",
+      description: "Completed 3 quizzes with perfect score",
+      progress: 30,
+      icon: Book,
+    },
+  ]);
 
-  // Mock stats data pending backend integration
-  const stats = [
+  const [stats] = useState([
     { label: "Experiments Completed", value: 24 },
     { label: "Elements Discovered", value: 18 },
     { label: "Achievements", value: 12 },
     { label: "Labs Joined", value: 5 },
-  ]
+  ]);
 
-  const handleSaveProfile = () => {
-    // Replace with actual save logic 
-    console.log("Saving profile data:", userData)
-    setEditMode(false)
-  }
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const user = await UserService.getCurrentUser();
+        setUserData({
+          id: user.userId,
+          name: `${user.firstName || ""} ${user.lastName || ""}`.trim(),
+          email: user.email || "",
+          bio: user.bio || "",
+          school: user.school || "",
+          grade: user.gradeLevel || "",
+          role: user.role || "Student",
+        });
+        console.log("id: ", user.userId);
+      } catch (error) {
+        console.error("Error loading user data:", error);
+        navigate("/login");
+      }
+    };
+    fetchUserData();
+  }, [navigate]);
 
+  const handleSaveProfile = async () => {
+    try {
+      if (!userData.id) throw new Error("No user ID available");
+
+      const updateData = {
+        firstName: userData.name.split(" ")[0],
+        lastName: userData.name.split(" ").slice(1).join(" "),
+        email: userData.email,
+        bio: userData.bio,
+        school: userData.school,
+        gradeLevel: userData.grade,
+      };
+
+      const response = await UserService.updateProfile(userData.id, updateData);
+      console.log("Update response:", response);
+
+      // Refresh user data after update
+      const updatedUser = await UserService.getCurrentUser();
+      setUserData({
+        ...userData,
+        name: `${updatedUser.firstName} ${updatedUser.lastName}`,
+        grade: updatedUser.gradeLevel,
+      });
+
+      alert("Profile updated successfully!");
+      setEditMode(false);
+    } catch (error) {
+      console.error("Full error:", error);
+      alert(`Update failed: ${error.message}`);
+    }
+  };
   const handleInputChange = (e) => {
-    const { name, value } = e.target
+    const { name, value } = e.target;
     setUserData({
       ...userData,
       [name]: value,
-    })
-  }
+    });
+  };
+
+  const handleDeleteAccount = async () => {
+    const isConfirmed = window.confirm(
+      "Are you sure you want to permanently delete your account? This action cannot be undone."
+    );
+
+    if (isConfirmed) {
+      try {
+        await UserService.deleteUser(userData.id);
+        UserService.logout();
+        navigate("/login");
+      } catch (error) {
+        console.error("Account deletion failed:", error);
+        alert("Failed to delete account. Please try again.");
+      }
+    }
+  };
 
   const handleLogout = () => {
-    // handle logout logic here
-    // router.push("/")
-  }
+    UserService.logout();
+    navigate("/login");
+  };
 
   return (
     <div className="profile-container">
-      <Navbar/>
+      <Navbar />
       <Sidebar />
-      {/* Profile Header */}
+
       <div className="profile-header">
         <h1 className="profile-title">My Profile</h1>
         <div className="profile-actions">
@@ -99,7 +164,10 @@ export default function ProfilePage() {
             </button>
           ) : (
             <div className="edit-actions">
-              <button onClick={() => setEditMode(false)} className="cancel-button">
+              <button
+                onClick={() => setEditMode(false)}
+                className="cancel-button"
+              >
                 <X className="button-icon" /> Cancel
               </button>
               <button onClick={handleSaveProfile} className="save-button">
@@ -111,27 +179,11 @@ export default function ProfilePage() {
       </div>
 
       <div className="profile-content">
-        {/* Profile Sidebar */}
         <div className="profile-sidebar">
           <div className="profile-card">
-            <div className="profile-image-container">
-              <img src={userData.profileImage || "/placeholder.svg"} alt="Profile" className="profile-image" />
-              {editMode && (
-                <label className="change-photo-button">
-                  <Camera className="camera-icon" />
-                  <input
-                    type="file"
-                    accept="image/*"
-                    style={{ display: "none" }}
-                    onChange={handleImageUpload}
-                  />
-                </label>
-              )}
-            </div>
             <div className="profile-info">
               <h2 className="profile-name">{userData.name}</h2>
               <p className="profile-role">{userData.role}</p>
-              <p className="profile-joined">Joined {userData.joinDate}</p>
             </div>
             <div className="profile-stats">
               {stats.map((stat, index) => (
@@ -145,21 +197,27 @@ export default function ProfilePage() {
 
           <div className="profile-navigation">
             <button
-              className={`nav-button ${activeTab === "profile" ? "active" : ""}`}
+              className={`nav-button ${
+                activeTab === "profile" ? "active" : ""
+              }`}
               onClick={() => setActiveTab("profile")}
             >
               <User className="nav-icon" />
               <span>Profile Information</span>
             </button>
             <button
-              className={`nav-button ${activeTab === "achievements" ? "active" : ""}`}
+              className={`nav-button ${
+                activeTab === "achievements" ? "active" : ""
+              }`}
               onClick={() => setActiveTab("achievements")}
             >
               <Award className="nav-icon" />
               <span>Achievements</span>
             </button>
             <button
-              className={`nav-button ${activeTab === "settings" ? "active" : ""}`}
+              className={`nav-button ${
+                activeTab === "settings" ? "active" : ""
+              }`}
               onClick={() => setActiveTab("settings")}
             >
               <Settings className="nav-icon" />
@@ -172,9 +230,7 @@ export default function ProfilePage() {
           </div>
         </div>
 
-        {/* Profile Main Content */}
         <div className="profile-main">
-          {/* Profile Information Tab */}
           {activeTab === "profile" && (
             <div className="profile-section">
               <h2 className="section-title">Profile Information</h2>
@@ -281,12 +337,19 @@ export default function ProfilePage() {
                     </div>
                     <div className="achievement-info">
                       <h3 className="achievement-name">{achievement.name}</h3>
-                      <p className="achievement-description">{achievement.description}</p>
+                      <p className="achievement-description">
+                        {achievement.description}
+                      </p>
                       <div className="achievement-progress-container">
                         <div className="achievement-progress">
-                          <div className="achievement-progress-bar" style={{ width: `${achievement.progress}%` }}></div>
+                          <div
+                            className="achievement-progress-bar"
+                            style={{ width: `${achievement.progress}%` }}
+                          ></div>
                         </div>
-                        <span className="achievement-progress-text">{achievement.progress}%</span>
+                        <span className="achievement-progress-text">
+                          {achievement.progress}%
+                        </span>
                       </div>
                     </div>
                   </div>
@@ -306,7 +369,9 @@ export default function ProfilePage() {
                   Password
                 </h3>
                 <div className="settings-content">
-                  <p className="settings-description">Change your password to keep your account secure</p>
+                  <p className="settings-description">
+                    Change your password to keep your account secure
+                  </p>
                   <button className="settings-button">Change Password</button>
                 </div>
               </div>
@@ -320,7 +385,9 @@ export default function ProfilePage() {
                   <div className="settings-option">
                     <div>
                       <h4 className="option-title">Email Notifications</h4>
-                      <p className="option-description">Receive emails about your account activity</p>
+                      <p className="option-description">
+                        Receive emails about your account activity
+                      </p>
                     </div>
                     <label className="toggle">
                       <input type="checkbox" defaultChecked />
@@ -331,7 +398,9 @@ export default function ProfilePage() {
                   <div className="settings-option">
                     <div>
                       <h4 className="option-title">Achievement Alerts</h4>
-                      <p className="option-description">Get notified when you earn a new achievement</p>
+                      <p className="option-description">
+                        Get notified when you earn a new achievement
+                      </p>
                     </div>
                     <label className="toggle">
                       <input type="checkbox" defaultChecked />
@@ -350,7 +419,9 @@ export default function ProfilePage() {
                   <div className="settings-option">
                     <div>
                       <h4 className="option-title">Profile Visibility</h4>
-                      <p className="option-description">Allow other students to see your profile</p>
+                      <p className="option-description">
+                        Allow other students to see your profile
+                      </p>
                     </div>
                     <label className="toggle">
                       <input type="checkbox" defaultChecked />
@@ -361,7 +432,9 @@ export default function ProfilePage() {
                   <div className="settings-option">
                     <div>
                       <h4 className="option-title">Share Achievements</h4>
-                      <p className="option-description">Display your achievements on your public profile</p>
+                      <p className="option-description">
+                        Display your achievements on your public profile
+                      </p>
                     </div>
                     <label className="toggle">
                       <input type="checkbox" defaultChecked />
@@ -374,14 +447,17 @@ export default function ProfilePage() {
               <div className="danger-zone">
                 <h3 className="danger-title">Danger Zone</h3>
                 <p className="danger-description">
-                  Once you delete your account, there is no going back. Please be certain.
+                  Once you delete your account, there is no going back. Please
+                  be certain.
                 </p>
-                <button className="danger-button">Delete Account</button>
+                <button className="danger-button" onClick={handleDeleteAccount}>
+                  Delete Account
+                </button>
               </div>
             </div>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 }

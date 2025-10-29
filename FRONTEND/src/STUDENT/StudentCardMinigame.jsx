@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
-import { Box, Typography } from '@mui/material';
-import { styled } from '@mui/material/styles';
-import Navbar from '../components/NavBar';
-import Sidebar from '../components/Sidebar';
-import './StudentCardMinigame.css';
+import React, { useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import Navbar from "../components/Navbar";
+import Sidebar from "../components/Sidebar";
+import "./StudentCardMinigame.css";
 
-const DrawerHeader = styled('div')(({ theme }) => ({
+const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
 }));
 
@@ -50,7 +50,9 @@ const StudentCardMinigame = () => {
       setPlusOnePosition(cardIndex);
       setShowPlusOne(true);
     } else {
-      setFeedback(`❌ Incorrect! Correct answer: ${questionSet[index].correct}`);
+      setFeedback(
+        `❌ Incorrect! Correct answer: ${questionSet[index].correct}`
+      );
       setLives((prev) => {
         const updatedLives = prev - 1;
         if (updatedLives <= 0) {
@@ -68,13 +70,19 @@ const StudentCardMinigame = () => {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{ display: "flex" }}>
       <Navbar open={open} />
-      <Sidebar open={open} handleDrawerOpen={handleDrawerOpen} handleDrawerClose={handleDrawerClose} />
+      <Sidebar
+        open={open}
+        handleDrawerOpen={handleDrawerOpen}
+        handleDrawerClose={handleDrawerClose}
+      />
 
       <Box
         component="main"
-        className={`main-container ${open ? 'main-container-open' : 'main-container-closed'}`}
+        className={`main-container ${
+          open ? "main-container-open" : "main-container-closed"
+        }`}
       >
         <DrawerHeader />
 
@@ -106,7 +114,8 @@ const StudentCardMinigame = () => {
             <>
               <Box className="question-panel">
                 <Typography variant="h5" className="question-text">
-                  What bond type is formed between {questionSet[index].question}?
+                  What bond type is formed between {questionSet[index].question}
+                  ?
                 </Typography>
               </Box>
 
