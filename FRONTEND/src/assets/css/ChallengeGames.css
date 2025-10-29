@@ -1,19 +1,29 @@
-/* ChallengeGames.css - shared style for all challenge components */
+/* ChallengeGames.css — shared style for all challenge components */
 .game-container {
   background: linear-gradient(180deg, #071427, #021019);
   color: #e6f7ff;
   padding: 18px;
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  font-family: Inter, Arial, sans-serif;
+  font-family: "Inter", Arial, sans-serif;
   margin: 8px;
+  transition: transform 0.2s, box-shadow 0.3s;
+}
+.game-container:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
 }
 
-/* common */
+/* Headings and text */
 .game-container h2 {
   text-align: center;
   margin-bottom: 10px;
 }
+p {
+  text-align: center;
+}
+
+/* Buttons */
 .game-btn {
   background: linear-gradient(90deg, #19f59c, #0bd3ff);
   border: none;
@@ -21,9 +31,12 @@
   border-radius: 8px;
   cursor: pointer;
   font-weight: 700;
+  color: #001;
+  transition: transform 0.2s, box-shadow 0.2s;
 }
 .game-btn:hover {
   transform: translateY(-2px);
+  box-shadow: 0 0 12px #0bd3ff;
 }
 .score,
 .lives {
@@ -31,10 +44,12 @@
   font-weight: 700;
 }
 
-/* BondBuilder */
+/* --- Covalent bonding game styles --- */
 .game-top-row {
   display: flex;
   gap: 12px;
+  justify-content: center;
+  align-items: flex-start;
 }
 .side-panel {
   width: 200px;
@@ -54,7 +69,12 @@
   padding: 8px;
   border-radius: 8px;
   cursor: grab;
-  background: rgba(255, 255, 255, 0.02);
+  background: rgba(255, 255, 255, 0.03);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.atom-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 12px rgba(120, 200, 255, 0.25);
 }
 .atom-visual {
   width: 44px;
@@ -85,12 +105,13 @@
   font-size: 12px;
   color: #bcd;
 }
+
 .board-wrap {
   flex: 1;
 }
 .bond-board {
   position: relative;
-  height: 380px;
+  height: 360px;
   border-radius: 10px;
   overflow: hidden;
   background: linear-gradient(180deg, #0b2430, #03202b);
@@ -113,190 +134,52 @@
   justify-content: center;
   border-radius: 50%;
   cursor: pointer;
+  font-weight: 700;
+  background: radial-gradient(circle at 30% 30%, #fff, #aaf);
+  color: #001;
+  animation: float 1.8s ease-in-out infinite;
 }
-.workspace-atom .bond-count {
-  position: absolute;
-  bottom: -8px;
-  right: -8px;
-  background: #072;
-  color: #baffc9;
-  padding: 2px 6px;
-  border-radius: 8px;
-  font-size: 12px;
+@keyframes float {
+  0%,
+  100% {
+    transform: translate(-50%, -50%) translateY(0px);
+  }
+  50% {
+    transform: translate(-50%, -50%) translateY(-5px);
+  }
 }
 .workspace-atom.selected {
   box-shadow: 0 0 12px rgba(120, 200, 255, 0.45);
 }
-.bond-svg {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-}
 
-/* Electron Defense */
-.defense-area {
-  display: flex;
-  gap: 12px;
-}
-.defense-hud {
-  width: 200px;
-  background: rgba(255, 255, 255, 0.02);
-  padding: 8px;
-  border-radius: 8px;
-}
-.defense-board {
-  flex: 1;
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-}
-.molecule-stack {
-  width: 180px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.molecule-card {
-  background: rgba(255, 255, 255, 0.03);
-  padding: 8px;
-  border-radius: 8px;
-  color: #cff;
-}
-.progress-bar {
-  height: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-  margin-top: 6px;
-}
-.progress-bar > div {
-  height: 100%;
-  background: linear-gradient(90deg, #6ff, #0bf);
-  width: 0%;
-  border-radius: 6px;
-  transition: width 0.2s;
-}
-.electron-field {
-  position: relative;
-  flex: 1;
-  height: 300px;
-  background: linear-gradient(180deg, #02171a, #001018);
-  border-radius: 8px;
-  overflow: hidden;
-}
-.electron {
-  width: 12px;
-  height: 12px;
-  background: radial-gradient(circle, #fff, #0bf);
-  border-radius: 50%;
-  position: absolute;
-  cursor: pointer;
-  box-shadow: 0 0 6px rgba(30, 200, 255, 0.6);
-}
-.base-center {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
-  color: #9ef;
-  font-weight: 700;
-}
-
-/* Bond Energy Breaker */
-.breaker-area {
-  display: flex;
-  gap: 12px;
-}
-.molecule-preview {
-  background: rgba(255, 255, 255, 0.02);
-  padding: 10px;
-  border-radius: 8px;
-  width: 60%;
-}
-.atoms-row {
-  display: flex;
-  gap: 8px;
-  margin: 8px 0;
-}
-.atom-circle {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.03);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-}
-.bonds-row {
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-.bond-card {
-  background: rgba(255, 255, 255, 0.02);
-  padding: 8px;
-  border-radius: 8px;
-  width: 180px;
-}
-.energy-bar {
-  height: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
-  margin: 6px 0;
-}
-.energy-bar > div {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, #f6b, #f90);
-  transition: width 0.1s;
-}
-.hold-btn {
-  background: linear-gradient(90deg, #f77, #fa0);
-  padding: 6px;
-  border-radius: 6px;
-  cursor: pointer;
-  text-align: center;
-  font-weight: 700;
-  margin-top: 6px;
-}
-
-/* Mole Mixer */
-.mixer-top {
-  display: flex;
-  gap: 12px;
-}
-.elements-panel {
-  width: 220px;
-  background: rgba(255, 255, 255, 0.02);
-  padding: 8px;
-  border-radius: 8px;
-}
+/* --- Molar mass games --- */
 .element-grid {
   display: flex;
-  gap: 8px;
+  gap: 10px;
+  justify-content: center;
   flex-wrap: wrap;
+  margin: 10px 0;
 }
 .element-card {
-  width: 72px;
-  height: 72px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
+  width: 80px;
+  height: 80px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   cursor: grab;
+  font-weight: 600;
+  color: #aff;
+  transition: transform 0.2s, background 0.2s;
 }
-.cauldron-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+.element-card:hover {
+  background: rgba(255, 255, 255, 0.07);
+  transform: scale(1.1);
 }
+
+/* Molar mix area */
 .cauldron {
   width: 320px;
   height: 200px;
@@ -307,15 +190,6 @@
   justify-content: center;
   border: 2px dashed rgba(255, 255, 255, 0.05);
 }
-.cauldron-inside {
-  width: 90%;
-  height: 80%;
-  background: linear-gradient(180deg, #06161a, #04202a);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 .cauldron-item {
   background: rgba(255, 255, 255, 0.03);
   padding: 6px 8px;
@@ -323,112 +197,10 @@
   margin: 2px;
 }
 
-/* Mole Scale */
-.scale-top {
-  display: flex;
-  gap: 12px;
-  align-items: flex-start;
-}
-.molecule-pallet {
-  width: 200px;
-  background: rgba(255, 255, 255, 0.02);
-  padding: 8px;
-  border-radius: 8px;
-}
-.molecule-draggable {
-  background: rgba(255, 255, 255, 0.02);
-  padding: 6px;
-  border-radius: 6px;
-  margin: 6px 0;
-  cursor: grab;
-}
-.scale-area {
-  flex: 1;
-  text-align: center;
-}
-.scale-visual {
-  margin: 12px auto;
-  width: 420px;
-  height: 80px;
-  background: linear-gradient(180deg, #0a2b2f, #04171a);
-  border-radius: 8px;
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px;
-  transition: transform 0.2s;
-}
-.pan {
-  width: 180px;
-  height: 64px;
-  border-radius: 6px;
-  background: rgba(255, 255, 255, 0.02);
-  padding: 8px;
-  overflow: auto;
-}
-.pivot {
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.05);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-}
-
-/* Conveyor */
-.conveyor-area {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  align-items: center;
-}
-.conveyor-track {
-  width: 100%;
-  height: 120px;
-  position: relative;
-  background: linear-gradient(90deg, #04151a, #031116);
-  border-radius: 8px;
-  overflow: hidden;
-}
-.conveyor-item {
-  position: absolute;
-  top: 20px;
-  width: 110px;
-  height: 60px;
-  background: linear-gradient(90deg, #063a3f, #02484b);
-  border-radius: 6px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  color: #dff;
-  cursor: pointer;
-  box-shadow: 0 6px 14px rgba(2, 20, 22, 0.6);
-}
-.conveyor-bins {
-  display: flex;
-  gap: 8px;
-  margin-top: 8px;
-}
-.bin {
-  width: 160px;
-  height: 60px;
-  background: rgba(255, 255, 255, 0.02);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: #cff;
-}
-
-/* responsive */
+/* Responsive layout */
 @media (max-width: 900px) {
-  .game-top-row,
-  .mixer-top,
-  .breaker-area {
+  .game-top-row {
     flex-direction: column;
+    align-items: center;
   }
 }

@@ -1,4 +1,3 @@
-// Covalent_BondBuilder.jsx
 import React, { useState, useRef, useEffect } from "react";
 import "../../assets/css/ChallengeGames.css";
 
