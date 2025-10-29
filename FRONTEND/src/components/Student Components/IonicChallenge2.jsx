@@ -14,31 +14,31 @@ export default function IonicChallenge2() {
   const [status, setStatus] = useState("pending");
   const [bondFormed, setBondFormed] = useState(false);
 
-  // 🧩 Challenge data
+  // 🧩 Challenge data — NEW compounds!
   const challenges = [
     {
       id: 1,
-      title: "Sodium Chloride (NaCl)",
-      atom1: "sodium",
-      atom2: "chlorine",
+      title: "Potassium Fluoride (KF)",
+      atom1: "potassium",
+      atom2: "fluorine",
       targetTransfer: 1,
-      message: "✅ Excellent! Na⁺ and Cl⁻ form Sodium Chloride!",
+      message: "✅ Great! K⁺ and F⁻ form Potassium Fluoride!",
     },
     {
       id: 2,
-      title: "Magnesium Oxide (MgO)",
-      atom1: "magnesium",
-      atom2: "oxygen",
+      title: "Calcium Chloride (CaCl₂)",
+      atom1: "calcium",
+      atom2: "chlorine",
       targetTransfer: 2,
-      message: "✅ Excellent! Mg²⁺ and O²⁻ form Magnesium Oxide!",
+      message: "✅ Excellent! Ca²⁺ and 2Cl⁻ form Calcium Chloride!",
     },
     {
       id: 3,
-      title: "Aluminum Nitride (AlN)",
+      title: "Aluminum Oxide (Al₂O₃)",
       atom1: "aluminum",
-      atom2: "nitrogen",
+      atom2: "oxygen",
       targetTransfer: 3,
-      message: "✅ Excellent! Al³⁺ and N³⁻ form Aluminum Nitride!",
+      message: "✅ Excellent! Al³⁺ and O²⁻ form Aluminum Oxide!",
     },
   ];
 
@@ -120,7 +120,7 @@ export default function IonicChallenge2() {
             Challenge {challenge}: {current.title}
           </h3>
           <p>
-            Transfer {current.targetTransfer} electron
+            Transfer electron
             {current.targetTransfer > 1 ? "s" : ""} from{" "}
             {capitalize(current.atom1)} to {capitalize(current.atom2)}.
           </p>
@@ -138,7 +138,9 @@ export default function IonicChallenge2() {
 
             <DropZone
               id={current.atom2}
-               className={`atom right-atom ${current.atom2} ${bondFormed ? "final-state opposite" : ""}`}
+              className={`atom right-atom ${current.atom2} ${
+                bondFormed ? "final-state opposite" : ""
+              }`}
             >
               <div className="atom-symbol">{getSymbol(current.atom2)}</div>
               {renderElectronsOn(current.atom2, items, activeId)}
@@ -211,12 +213,12 @@ function capitalize(s) {
 // 🧪 Map atom names to their symbols
 function getSymbol(atom) {
   const map = {
-    sodium: "Na",
+    potassium: "K",
+    fluorine: "F",
+    calcium: "Ca",
     chlorine: "Cl",
-    magnesium: "Mg",
-    oxygen: "O",
     aluminum: "Al",
-    nitrogen: "N",
+    oxygen: "O",
   };
   return map[atom] || atom.charAt(0).toUpperCase();
 }

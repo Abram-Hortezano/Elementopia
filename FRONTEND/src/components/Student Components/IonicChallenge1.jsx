@@ -112,10 +112,10 @@ export default function ChallengeOne({ onComplete }) {
 
   const instruction =
     challenge === 1
-      ? "Drag one electron from Sodium (Na) to Chlorine (Cl)."
+      ? "Drag electron from Sodium (Na) to Chlorine (Cl)."
       : challenge === 2
-      ? "Drag two electrons from Magnesium (Mg) to Chlorine (Cl)."
-      : "Drag two electrons from Calcium (Ca) to Oxygen (O).";
+      ? "Drag electrons from Magnesium (Mg) to Chlorine (Cl)."
+      : "Drag electrons from Calcium (Ca) to Oxygen (O).";
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>

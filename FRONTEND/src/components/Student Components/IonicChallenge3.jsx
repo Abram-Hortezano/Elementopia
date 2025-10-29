@@ -117,7 +117,7 @@ export default function IonicChallenge3() {
             Challenge {challenge}: {current.title}
           </h3>
           <p>
-            Transfer {current.targetTransfer} electron
+            Transfer electron
             {current.targetTransfer > 1 ? "s" : ""} from{" "}
             {capitalize(current.atom1)} to {capitalize(current.atom2)}.
           </p>

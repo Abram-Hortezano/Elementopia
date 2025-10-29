@@ -87,7 +87,7 @@ const StatusIndicator = styled(Box)(({ theme, available }) => ({
   borderRadius: '8px',
   margin: theme.spacing(1.5, 0), 
   width: '100%',
-  background: available ? 'linear-gradient(45deg, #4CAF50 30%, #81C784 90%)' : 'linear-gradient(45deg, #FF5722 30%, #FFAB91 90%)', // Green for available, orange for cooldown
+  background: available ? 'linear-gradient(45deg, #4CAF50 30%, #81C784 90%)' : 'linear-gradient(45deg, #FF5722 30%, #FFAB91 90%)', 
   boxShadow: available ? '0 0 15px rgba(76, 175, 80, 0.7)' : '0 0 15px rgba(255, 87, 34, 0.7)',
   color: '#fff',
   fontWeight: 'bold',
