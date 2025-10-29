@@ -20,7 +20,7 @@ function DraggableParticle({ id, type, isHidden, index, total, location }) {
   // ✅ Position electrons in orbit only when inside the shell
   if (location === "shell" && type === "electron" && index !== undefined && total !== undefined) {
     const angle = (index / total) * 360;
-    const radius = 157;
+    const radius = 140;
     const x = radius * Math.cos((angle * Math.PI) / 180);
     const y = radius * Math.sin((angle * Math.PI) / 180);
 
@@ -153,7 +153,6 @@ export default function AtomChallengeCore({ challenge, onChallengeComplete }) {
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      {/* ✅ Wrapper adds blurred background */}
       <div className="atom-challenge-wrapper">
         <div className="lesson-modal atom-builder">
           <h2>Build {challenge.name}</h2>
