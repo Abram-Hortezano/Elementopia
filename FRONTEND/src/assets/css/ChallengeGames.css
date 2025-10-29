@@ -1,206 +1,184 @@
-/* ChallengeGames.css — shared style for all challenge components */
+/* General Game Container */
 .game-container {
-  background: linear-gradient(180deg, #071427, #021019);
-  color: #e6f7ff;
-  padding: 18px;
-  border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-  font-family: "Inter", Arial, sans-serif;
-  margin: 8px;
-  transition: transform 0.2s, box-shadow 0.3s;
-}
-.game-container:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7);
+  background: rgba(20, 25, 50, 0.9);
+  border-radius: 16px;
+  padding: 24px;
+  max-width: 800px;
+  margin: 0 auto;
+  color: #f0faff;
+  box-shadow: 0 0 20px rgba(0, 0, 0, 0.4);
+  font-family: "Poppins", sans-serif;
+  text-align: center;
 }
 
-/* Headings and text */
 .game-container h2 {
-  text-align: center;
+  color: #62b0ff;
   margin-bottom: 10px;
 }
-p {
-  text-align: center;
+
+.subtitle {
+  color: #a8c4ff;
+  margin-bottom: 20px;
+}
+
+/* Layout for Atoms & Workspace */
+.game-layout {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+
+.atom-panel,
+.workspace {
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 12px;
+  padding: 16px;
+  box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.05);
+  min-width: 260px;
+}
+
+.atom-panel h3,
+.workspace h3 {
+  color: #a8e4ff;
+  margin-bottom: 10px;
+}
+
+/* Atoms */
+.atom-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  justify-content: center;
+}
+
+.atom-item {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.2rem;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.atom-item:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.3);
+}
+
+/* Atom Colors */
+.atom-h {
+  background: radial-gradient(circle, #fff, #d9f1ff);
+  color: #000;
+}
+.atom-o {
+  background: radial-gradient(circle, #ffdbdb, #ff9b9b);
+  color: #000;
+}
+.atom-c {
+  background: radial-gradient(circle, #caffca, #96ff96);
+  color: #000;
+}
+.atom-n {
+  background: radial-gradient(circle, #dbdbff, #9999ff);
+  color: #000;
+}
+
+/* Workspace */
+.workspace-display {
+  min-height: 100px;
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  padding: 10px;
+}
+
+.workspace-atom {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #03c9a9, #027a68);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-weight: bold;
+}
+
+.workspace-actions {
+  margin-top: 12px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 /* Buttons */
 .game-btn {
-  background: linear-gradient(90deg, #19f59c, #0bd3ff);
+  background: linear-gradient(90deg, #62b0ff, #2e83ff);
   border: none;
-  padding: 8px 12px;
-  border-radius: 8px;
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: bold;
   cursor: pointer;
-  font-weight: 700;
-  color: #001;
-  transition: transform 0.2s, box-shadow 0.2s;
+  transition: transform 0.2s, opacity 0.2s;
 }
+
 .game-btn:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 0 12px #0bd3ff;
-}
-.score,
-.lives {
-  margin-top: 8px;
-  font-weight: 700;
-}
-
-/* --- Covalent bonding game styles --- */
-.game-top-row {
-  display: flex;
-  gap: 12px;
-  justify-content: center;
-  align-items: flex-start;
-}
-.side-panel {
-  width: 200px;
-  background: rgba(255, 255, 255, 0.02);
-  padding: 10px;
-  border-radius: 8px;
-}
-.atom-list {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-}
-.atom-card {
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  padding: 8px;
-  border-radius: 8px;
-  cursor: grab;
-  background: rgba(255, 255, 255, 0.03);
-  transition: transform 0.2s, box-shadow 0.2s;
-}
-.atom-card:hover {
   transform: scale(1.05);
-  box-shadow: 0 0 12px rgba(120, 200, 255, 0.25);
-}
-.atom-visual {
-  width: 44px;
-  height: 44px;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 700;
-}
-.atom-visual.h {
-  background: linear-gradient(90deg, #fff, #dfe6ff);
-  color: #000;
-}
-.atom-visual.o {
-  background: linear-gradient(90deg, #ffdede, #ff9e9e);
-  color: #000;
-}
-.atom-visual.c {
-  background: linear-gradient(90deg, #e6ffe6, #9ef59e);
-  color: #000;
-}
-.atom-visual.n {
-  background: linear-gradient(90deg, #e6f0ff, #9eb8ff);
-  color: #000;
-}
-.atom-meta {
-  font-size: 12px;
-  color: #bcd;
+  opacity: 0.9;
 }
 
-.board-wrap {
-  flex: 1;
-}
-.bond-board {
-  position: relative;
-  height: 360px;
-  border-radius: 10px;
-  overflow: hidden;
-  background: linear-gradient(180deg, #0b2430, #03202b);
-  border: 1px dashed rgba(255, 255, 255, 0.04);
-}
-.board-hint {
-  position: absolute;
-  right: 10px;
-  bottom: 6px;
-  color: #6fb8c6;
-  font-size: 12px;
-}
-.workspace-atom {
-  position: absolute;
-  width: 40px;
-  height: 40px;
-  transform: translate(-50%, -50%);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  cursor: pointer;
-  font-weight: 700;
-  background: radial-gradient(circle at 30% 30%, #fff, #aaf);
-  color: #001;
-  animation: float 1.8s ease-in-out infinite;
-}
-@keyframes float {
-  0%,
-  100% {
-    transform: translate(-50%, -50%) translateY(0px);
-  }
-  50% {
-    transform: translate(-50%, -50%) translateY(-5px);
-  }
-}
-.workspace-atom.selected {
-  box-shadow: 0 0 12px rgba(120, 200, 255, 0.45);
+.clear {
+  background: linear-gradient(90deg, #ff7f7f, #ff4f4f);
 }
 
-/* --- Molar mass games --- */
-.element-grid {
-  display: flex;
-  gap: 10px;
-  justify-content: center;
-  flex-wrap: wrap;
-  margin: 10px 0;
+/* Feedback */
+.game-message {
+  margin-top: 10px;
+  font-weight: bold;
+  color: #b6eaff;
 }
-.element-card {
-  width: 80px;
-  height: 80px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 10px;
+
+/* Quiz-type layouts */
+.quiz-container {
   display: flex;
   flex-direction: column;
+  gap: 12px;
   align-items: center;
-  justify-content: center;
-  cursor: grab;
-  font-weight: 600;
-  color: #aff;
-  transition: transform 0.2s, background 0.2s;
-}
-.element-card:hover {
-  background: rgba(255, 255, 255, 0.07);
-  transform: scale(1.1);
 }
 
-/* Molar mix area */
-.cauldron {
-  width: 320px;
-  height: 200px;
+.quiz-option {
+  background: rgba(255, 255, 255, 0.08);
+  padding: 10px 20px;
   border-radius: 10px;
-  background: linear-gradient(180deg, #0b2330, #04202a);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 2px dashed rgba(255, 255, 255, 0.05);
-}
-.cauldron-item {
-  background: rgba(255, 255, 255, 0.03);
-  padding: 6px 8px;
-  border-radius: 6px;
-  margin: 2px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s;
+  width: 80%;
+  max-width: 400px;
 }
 
-/* Responsive layout */
-@media (max-width: 900px) {
-  .game-top-row {
-    flex-direction: column;
-    align-items: center;
-  }
+.quiz-option:hover {
+  background: rgba(255, 255, 255, 0.15);
+  transform: scale(1.02);
+}
+
+.quiz-option.correct {
+  background: #4caf50;
+  color: white;
+}
+
+.quiz-option.wrong {
+  background: #f44336;
+  color: white;
 }
