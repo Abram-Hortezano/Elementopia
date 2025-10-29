@@ -18,8 +18,8 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import home from "../../assets/img/home.png";
 import room from "../../assets/img/room.png";
 import career from "../../assets/img/career.png";
-import sandBox from "../../assets/img/sandbox.png";
-import chemSimulation from "../../assets/img/chemSimulation.png"
+import sandBox from "../../assets/img/sandBox.png";
+import chemSimulation from "../../assets/img/chemSimulation.png";
 
 const drawerWidth = 180;
 const closedWidth = 60;
@@ -46,7 +46,11 @@ const menuItems = [
   { text: "Home", icon: home, path: "/teacher/analytics" },
   { text: "Room", icon: room, path: "/teacher/room" },
   { text: "Career", icon: career, path: "/teacher/career" },
-  { text: "Chem-Simulation", icon: chemSimulation, path: "/teacher/Chem-Simulation" },
+  {
+    text: "Chem-Simulation",
+    icon: chemSimulation,
+    path: "/teacher/Chem-Simulation",
+  },
   { text: "Sandbox", icon: sandBox, path: "/teacher/sandbox" },
 ];
 
@@ -55,10 +59,18 @@ const TeacherSidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {
 
   return (
     <Drawer variant="permanent" open={open}>
-      <Toolbar sx={{ display: "flex", justifyContent: open ? "space-between" : "center", paddingX: 2 }}>
+      <Toolbar
+        sx={{
+          display: "flex",
+          justifyContent: open ? "space-between" : "center",
+          paddingX: 2,
+        }}
+      >
         {open ? (
           <>
-            <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold" }}>Menu</Typography>
+            <Typography variant="h6" sx={{ color: "#fff", fontWeight: "bold" }}>
+              Menu
+            </Typography>
             <IconButton onClick={handleDrawerClose} sx={{ color: "#fff" }}>
               <ChevronLeftIcon />
             </IconButton>
@@ -86,10 +98,20 @@ const TeacherSidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {
                   backgroundColor: isActive ? "#444" : "transparent", // ✅ Highlight active
                 }}
               >
-                <ListItemIcon sx={{ minWidth: 0, justifyContent: "center", mr: open ? 2 : "auto", color: "#fff" }}>
+                <ListItemIcon
+                  sx={{
+                    minWidth: 0,
+                    justifyContent: "center",
+                    mr: open ? 2 : "auto",
+                    color: "#fff",
+                  }}
+                >
                   <img src={item.icon} alt={item.text} width={24} height={24} />
                 </ListItemIcon>
-                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0, color: "#fff" }} />
+                <ListItemText
+                  primary={item.text}
+                  sx={{ opacity: open ? 1 : 0, color: "#fff" }}
+                />
               </ListItemButton>
             </ListItem>
           );
