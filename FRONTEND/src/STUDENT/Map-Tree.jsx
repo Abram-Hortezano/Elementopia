@@ -23,6 +23,12 @@ import CovalentChallenge3 from "../components/Student Components/CovalentChallen
 import MolarMassChallenge1 from "../components/Student Components/MolarMassChallenge1";
 import MolarMassChallenge2 from "../components/Student Components/MolarMassChallenge2";
 import MolarMassChallenge3 from "../components/Student Components/MolarMassChallenge3";
+import MTGChallenge1 from "../components/Student Components/MTGChallenge1";
+import MTGChallenge2 from "../components/Student Components/MTGChallenge2";
+import MTGChallenge3 from "../components/Student Components/MTGChallenge3";
+import PCChallenge1 from "../components/Student Components/PCChallenge1";
+import PCChallenge2 from "../components/Student Components/PCChallenge2";
+import PCChallenge3 from "../components/Student Components/PCChallenge3";
 
 // --- DUMMY CHALLENGE ---
 const DummyChallenge = ({ onComplete }) => (
@@ -54,13 +60,13 @@ const nodes = [
   { id: 17, label: "★", position: { top: "53%", left: "54%" }, prerequisites: [16], lesson: "MolarMassChallenge2" },
   { id: 18, label: "★", position: { top: "60%", left: "56%" }, prerequisites: [17], lesson: "MolarMassChallenge3" },
   { id: 5, label: "Moles to Grams", position: { top: "64%", left: "61%" }, prerequisites: [18], lesson: "MolesToGrams" },
-  { id: 19, label: "★", position: { top: "69%", left: "66%" }, prerequisites: [5], lesson: "DummyChallenge" },
-  { id: 20, label: "★", position: { top: "74%", left: "71%" }, prerequisites: [19], lesson: "DummyChallenge" },
-  { id: 21, label: "★", position: { top: "79%", left: "75%" }, prerequisites: [20], lesson: "DummyChallenge" },
+  { id: 19, label: "★", position: { top: "69%", left: "66%" }, prerequisites: [5], lesson: "MTGChallenge1" },
+  { id: 20, label: "★", position: { top: "74%", left: "71%" }, prerequisites: [19], lesson: "MTGChallenge2" },
+  { id: 21, label: "★", position: { top: "79%", left: "75%" }, prerequisites: [20], lesson: "MTGChallenge3" },
   { id: 6, label: "% Composition", position: { top: "82%", left: "80%" }, prerequisites: [21], lesson: "PercentComposition" },
-  { id: 22, label: "★", position: { top: "74%", left: "84%" }, prerequisites: [6], lesson: "DummyChallenge" },
-  { id: 23, label: "★", position: { top: "68%", left: "86%" }, prerequisites: [22], lesson: "DummyChallenge" },
-  { id: 24, label: "★", position: { top: "62%", left: "88%" }, prerequisites: [23], lesson: "DummyChallenge" },
+  { id: 22, label: "★", position: { top: "74%", left: "84%" }, prerequisites: [6], lesson: "PCChallenge1" },
+  { id: 23, label: "★", position: { top: "68%", left: "86%" }, prerequisites: [22], lesson: "PCChallenge2" },
+  { id: 24, label: "★", position: { top: "62%", left: "88%" }, prerequisites: [23], lesson: "PCChallenge3" },
 ];
 
 
@@ -82,7 +88,13 @@ const lessonComponents = {
   MolarMassChallenge2,
   MolarMassChallenge3,
   MolesToGrams,
+  MTGChallenge1,
+  MTGChallenge2,
+  MTGChallenge3,
   PercentComposition,
+  PCChallenge1,
+  PCChallenge2,
+  PCChallenge3,
   DummyChallenge,
 };
 
