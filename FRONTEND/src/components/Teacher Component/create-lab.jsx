@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Copy, Check, User } from "lucide-react";
-import "../../assets/css/create-Lab.css";
+import "../../assets/css/create-lab.css";
 import UserService from "../../services/UserService";
 import LessonService from "../../services/LessonService";
 import LaboratoryService from "../../services/LabService";
@@ -43,7 +43,9 @@ export default function CreateLaboratory({ onClose }) {
       const users = await UserService.getAllUsers();
       // Assuming user objects have 'userId', 'firstName', and 'lastName' properties
       setCreatorId(currentUser?.userId || null); // Use userId from currentUser
-      setAllUsers(users.filter(user => user.userId !== currentUser?.userId) || []); // Filter by userId
+      setAllUsers(
+        users.filter((user) => user.userId !== currentUser?.userId) || []
+      ); // Filter by userId
       await fetchLessons(setLessons);
     } catch (error) {
       // Handle error fetching initial data, e.g., show a message to the user
@@ -55,7 +57,9 @@ export default function CreateLaboratory({ onClose }) {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let result = "";
     for (let i = 0; i < 6; i++) {
-      result += characters.charAt(Math.floor(Math.random() * characters.length));
+      result += characters.charAt(
+        Math.floor(Math.random() * characters.length)
+      );
     }
     setCode(result);
   };
@@ -107,9 +111,12 @@ export default function CreateLaboratory({ onClose }) {
   };
 
   // Filter users based on search term, using firstName and lastName
-  const filteredUsers = allUsers.filter(user =>
-    (user.firstName && user.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-    (user.lastName && user.lastName.toLowerCase().includes(searchTerm.toLowerCase()))
+  const filteredUsers = allUsers.filter(
+    (user) =>
+      (user.firstName &&
+        user.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (user.lastName &&
+        user.lastName.toLowerCase().includes(searchTerm.toLowerCase()))
   );
 
   return (
@@ -152,7 +159,9 @@ export default function CreateLaboratory({ onClose }) {
           value={selectedLessonIds}
           onChange={(e) => {
             // grab all selected <option> values
-            const values = Array.from(e.target.selectedOptions, o => parseInt(o.value));
+            const values = Array.from(e.target.selectedOptions, (o) =>
+              parseInt(o.value)
+            );
             setSelectedLessonIds(values);
           }}
         >
@@ -167,7 +176,6 @@ export default function CreateLaboratory({ onClose }) {
         </select>
       </div>
 
-
       <div className="input-group">
         <label>Select Students</label>
         <input
@@ -178,16 +186,28 @@ export default function CreateLaboratory({ onClose }) {
           className="search-bar"
         />
         <div className="student-list">
-          {filteredUsers.length === 0 && <p>No users found matching your search or no other users available.</p>}
+          {filteredUsers.length === 0 && (
+            <p>
+              No users found matching your search or no other users available.
+            </p>
+          )}
           {filteredUsers.map((user) => (
             <div
               key={user.userId} // Use userId from backend
-              className={`student-item ${selectedStudentIds.includes(user.userId) ? 'selected' : ''}`} // Check against userId
+              className={`student-item ${
+                selectedStudentIds.includes(user.userId) ? "selected" : ""
+              }`} // Check against userId
               onClick={() => toggleStudentSelection(user.userId)} // Toggle using userId
             >
               <User size={16} />
-              <span>{user.firstName} {user.lastName}</span> {/* Display firstName and lastName */}
-              {selectedStudentIds.includes(user.userId) && <Check size={16} />} {/* Check against userId */}
+              <span>
+                {user.firstName} {user.lastName}
+              </span>{" "}
+              {/* Display firstName and lastName */}
+              {selectedStudentIds.includes(user.userId) && (
+                <Check size={16} />
+              )}{" "}
+              {/* Check against userId */}
             </div>
           ))}
         </div>
