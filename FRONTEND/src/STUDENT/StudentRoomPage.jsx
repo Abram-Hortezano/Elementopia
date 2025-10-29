@@ -1,9 +1,20 @@
 import React, { useState } from "react";
 import { Box } from "@mui/material";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 import CustomRoom from "./custom-room";
-import { Users, BookOpen, Plus, Search, Beaker, Edit, Trash, Globe, Lock, X } from "lucide-react";
+import {
+  Users,
+  BookOpen,
+  Plus,
+  Search,
+  Beaker,
+  Edit,
+  Trash,
+  Globe,
+  Lock,
+  X,
+} from "lucide-react";
 import CreateLaboratory from "./create-lab";
 import "../assets/css/studentroompage.css";
 
@@ -15,16 +26,56 @@ export default function StudentRoomPage() {
 
   // Mock data for public laboratories
   const publicLaboratories = [
-    { id: 1, name: "Chemistry 101 Lab", creator: "Prof. Johnson", students: 24, experiments: 8, isPublic: true },
-    { id: 2, name: "Advanced Organic Chemistry Lab", creator: "Dr. Smith", students: 18, experiments: 12, isPublic: true },
-    { id: 3, name: "Biochemistry Fundamentals Lab", creator: "Prof. Williams", students: 22, experiments: 6, isPublic: true },
-    { id: 4, name: "Inorganic Chemistry Lab", creator: "Dr. Brown", students: 15, experiments: 10, isPublic: true },
+    {
+      id: 1,
+      name: "Chemistry 101 Lab",
+      creator: "Prof. Johnson",
+      students: 24,
+      experiments: 8,
+      isPublic: true,
+    },
+    {
+      id: 2,
+      name: "Advanced Organic Chemistry Lab",
+      creator: "Dr. Smith",
+      students: 18,
+      experiments: 12,
+      isPublic: true,
+    },
+    {
+      id: 3,
+      name: "Biochemistry Fundamentals Lab",
+      creator: "Prof. Williams",
+      students: 22,
+      experiments: 6,
+      isPublic: true,
+    },
+    {
+      id: 4,
+      name: "Inorganic Chemistry Lab",
+      creator: "Dr. Brown",
+      students: 15,
+      experiments: 10,
+      isPublic: true,
+    },
   ];
 
   // Mock data for user's laboratories
   const myLaboratories = [
-    { id: 101, name: "My Chemistry Class", students: 20, experiments: 5, isPublic: false },
-    { id: 102, name: "Chemistry Club", students: 12, experiments: 3, isPublic: true },
+    {
+      id: 101,
+      name: "My Chemistry Class",
+      students: 20,
+      experiments: 5,
+      isPublic: false,
+    },
+    {
+      id: 102,
+      name: "Chemistry Club",
+      students: 12,
+      experiments: 3,
+      isPublic: true,
+    },
   ];
 
   const filteredPublicLabs = searchQuery
@@ -76,7 +127,10 @@ export default function StudentRoomPage() {
           >
             <Plus className="button-icon" /> Create Laboratory
           </button>
-          <button onClick={() => setMyLabsModalOpen(true)} className="my-labs-button">
+          <button
+            onClick={() => setMyLabsModalOpen(true)}
+            className="my-labs-button"
+          >
             My Laboratories
           </button>
         </div>
@@ -118,7 +172,10 @@ export default function StudentRoomPage() {
             <div>
               <p className="card-label">Total Experiments</p>
               <p className="card-value">
-                {publicLaboratories.reduce((sum, lab) => sum + lab.experiments, 0)}
+                {publicLaboratories.reduce(
+                  (sum, lab) => sum + lab.experiments,
+                  0
+                )}
               </p>
             </div>
             <BookOpen className="card-icon yellow-icon" />
@@ -130,7 +187,9 @@ export default function StudentRoomPage() {
       <div className="labs-container">
         <div className="labs-header">
           <h2 className="labs-title">Public Laboratories</h2>
-          <p className="labs-subtitle">Browse and join public laboratories created by teachers</p>
+          <p className="labs-subtitle">
+            Browse and join public laboratories created by teachers
+          </p>
         </div>
         <div className="labs-content">
           <div className="labs-list">
@@ -147,11 +206,15 @@ export default function StudentRoomPage() {
                       <div className="lab-stats">
                         <div className="lab-stat">
                           <Users className="stat-icon" />
-                          <span className="stat-text">{lab.students} students</span>
+                          <span className="stat-text">
+                            {lab.students} students
+                          </span>
                         </div>
                         <div className="lab-stat">
                           <Beaker className="stat-icon" />
-                          <span className="stat-text">{lab.experiments} experiments</span>
+                          <span className="stat-text">
+                            {lab.experiments} experiments
+                          </span>
                         </div>
                         {lab.isPublic && (
                           <div className="lab-stat">
@@ -163,7 +226,10 @@ export default function StudentRoomPage() {
                     </div>
                   </div>
                   <div className="lab-actions">
-                    <button onClick={() => handleJoinLab(lab.id)} className="join-lab-button">
+                    <button
+                      onClick={() => handleJoinLab(lab.id)}
+                      className="join-lab-button"
+                    >
                       Join Laboratory
                     </button>
                   </div>
@@ -187,9 +253,14 @@ export default function StudentRoomPage() {
             <div className="modal-header">
               <div>
                 <h2 className="modal-title">My Laboratories</h2>
-                <p className="modal-subtitle">Laboratories you have created or joined</p>
+                <p className="modal-subtitle">
+                  Laboratories you have created or joined
+                </p>
               </div>
-              <button onClick={() => setMyLabsModalOpen(false)} className="close-button">
+              <button
+                onClick={() => setMyLabsModalOpen(false)}
+                className="close-button"
+              >
                 <X className="close-icon" />
               </button>
             </div>
@@ -216,11 +287,15 @@ export default function StudentRoomPage() {
                             <div className="lab-stats">
                               <div className="lab-stat">
                                 <Users className="stat-icon" />
-                                <span className="stat-text">{lab.students} students</span>
+                                <span className="stat-text">
+                                  {lab.students} students
+                                </span>
                               </div>
                               <div className="lab-stat">
                                 <Beaker className="stat-icon" />
-                                <span className="stat-text">{lab.experiments} experiments</span>
+                                <span className="stat-text">
+                                  {lab.experiments} experiments
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -229,7 +304,9 @@ export default function StudentRoomPage() {
                           <button
                             onClick={() => {
                               setMyLabsModalOpen(false);
-                              console.log(`Go to /dashboard/laboratory/${lab.id}`);
+                              console.log(
+                                `Go to /dashboard/laboratory/${lab.id}`
+                              );
                             }}
                             className="manage-button"
                           >
@@ -246,7 +323,9 @@ export default function StudentRoomPage() {
               ) : (
                 <div className="empty-state">
                   <Beaker className="empty-icon" />
-                  <p className="empty-text">You haven't created any laboratories yet</p>
+                  <p className="empty-text">
+                    You haven't created any laboratories yet
+                  </p>
                 </div>
               )}
             </div>
