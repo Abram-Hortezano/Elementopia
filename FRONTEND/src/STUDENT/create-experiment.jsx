@@ -74,7 +74,6 @@ export default function CreateExperimentModal({ isOpen, onClose, onSubmit }) {
                 <CalendarIcon size={16} />
                 {deadline ? format(deadline, "PPP") : "Select a date"}
               </button>
-              =======
               <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
                   className="date-picker"
