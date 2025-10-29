@@ -1,176 +1,201 @@
 import React, { useState } from "react";
-import { DndContext, DragOverlay, useDraggable, useDroppable } from "@dnd-kit/core";
 import "../assets/css/PercentComposition.css";
 
-export default function PercentComposition({ onComplete }) {
-  const [step, setStep] = useState(0);
-  const [activeId, setActiveId] = useState(null);
+const compounds = [
+  {
+    name: "Water (H₂O)",
+    elements: ["H", "H", "O"],
+    composition: { H: 11.1, O: 88.9 },
+    highest: "O",
+  },
+  {
+    name: "Carbon Dioxide (CO₂)",
+    elements: ["C", "O", "O"],
+    composition: { C: 27.3, O: 72.7 },
+    highest: "O",
+  },
+  {
+    name: "Glucose (C₆H₁₂O₆)",
+    elements: ["C", "H", "O"],
+    composition: { C: 40.0, H: 6.7, O: 53.3 },
+    highest: "O",
+  },
+];
+
+export default function PercentComposition() {
+  const [started, setStarted] = useState(false);
+  const [mission, setMission] = useState(1);
+  const [selectedCompound, setSelectedCompound] = useState(null);
   const [feedback, setFeedback] = useState("");
 
-  const [atoms, setAtoms] = useState({
-    h1: { type: "hydrogen", location: "bin" },
-    h2: { type: "hydrogen", location: "bin" },
-    o1: { type: "oxygen", location: "bin" },
-    c1: { type: "carbon", location: "bin" },
-    o2: { type: "oxygen", location: "bin" },
-    o3: { type: "oxygen", location: "bin" },
-  });
+  // --- Challenge 1: Build the Compound ---
+  const [droppedAtoms, setDroppedAtoms] = useState([]);
 
-  const prompts = [
-    {
-      title: "Lesson 6: Percent Composition",
-      description:
-        "In this lesson, you'll calculate the percent composition of a compound by dragging atoms into the molecule. Start with H₂O!",
-    },
-    {
-      title: "Example: Hydrogen in H₂O",
-      description: "Drag the Hydrogen (H) atoms into the H₂O molecule. Hint: H₂O has 2 H and 1 O.",
-      correct: { hydrogen: 2, oxygen: 1 },
-    },
-    {
-      title: "Final Challenge: Carbon in CO₂",
-      description: "Drag the atoms to build CO₂. Hint: CO₂ has 1 C and 2 O.",
-      correct: { carbon: 1, oxygen: 2 },
-    },
-  ];
-
-  // --- Drag events ---
-  const handleDragStart = (event) => setActiveId(event.active.id);
-
-  const handleDragEnd = (event) => {
-    const { over, active } = event;
-    setActiveId(null);
-    if (!over) return;
-
-    // Snap to the droppable zone
-    setAtoms((prev) => ({
-      ...prev,
-      [active.id]: { ...prev[active.id], location: over.id },
-    }));
+  const handleDropAtom = (atom) => {
+    if (droppedAtoms.length < selectedCompound.elements.length) {
+      setDroppedAtoms((prev) => [...prev, atom]);
+    }
   };
 
-  // --- Droppable zone ---
-  function MoleculeZone() {
-    const { isOver, setNodeRef } = useDroppable({ id: "molecule" });
-    const zoneClass = isOver ? "molecule-zone hovering" : "molecule-zone";
-    return (
-      <div ref={setNodeRef} className={zoneClass} id="molecule">
-        {Object.entries(atoms)
-          .filter(([, atom]) => atom.location === "molecule")
-          .map(([id, atom]) => (
-            <DraggableAtom key={id} id={id} type={atom.type} isHidden={activeId === id} />
-          ))}
-      </div>
-    );
-  }
+  // --- Challenge 2: Match % Composition ---
+  const [compositionAnswers, setCompositionAnswers] = useState({});
+  const handleDropPercent = (element, percent) => {
+    setCompositionAnswers((prev) => ({ ...prev, [element]: percent }));
+  };
 
-  const renderBinAtoms = () =>
-    Object.entries(atoms)
-      .filter(([, atom]) => atom.location === "bin")
-      .map(([id, atom]) => <DraggableAtom key={id} id={id} type={atom.type} isHidden={activeId === id} />);
-
-  // --- Check molecule correctness ---
-  const checkMolecule = () => {
-    const currentPrompt = prompts[step];
-    const moleculeCounts = Object.values(atoms)
-      .filter((a) => a.location === "molecule")
-      .reduce((acc, a) => {
-        acc[a.type] = (acc[a.type] || 0) + 1;
-        return acc;
-      }, {});
-
+  const checkCompositionAnswers = () => {
+    const correct = selectedCompound.composition;
     let allCorrect = true;
-    for (const key in currentPrompt.correct) {
-      if (moleculeCounts[key] !== currentPrompt.correct[key]) allCorrect = false;
+
+    for (const el in correct) {
+      if (compositionAnswers[el] !== correct[el]) {
+        allCorrect = false;
+        break;
+      }
     }
 
-    if (allCorrect) {
-      setFeedback(`✅ Correct! ${step === 1 ? "H₂O" : "CO₂"} is complete.`);
-      setTimeout(() => {
-        if (step === 2) onComplete();
-        else {
-          // Reset for next step
-          setAtoms((prev) => ({
-            ...prev,
-            c1: { ...prev.c1, location: "bin" },
-            o2: { ...prev.o2, location: "bin" },
-            o3: { ...prev.o3, location: "bin" },
-          }));
-          setFeedback("");
-          setStep((prev) => prev + 1);
-        }
-      }, 1200);
+    setFeedback(allCorrect ? "✅ Excellent! Correct composition!" : "❌ Check your values again.");
+    if (allCorrect) setTimeout(() => setMission(3), 1500);
+  };
+
+  // --- Challenge 3: Identify the Highest Contributor ---
+  const handleHighestSelect = (el) => {
+    if (el === selectedCompound.highest) {
+      setFeedback("🎉 Correct! You've completed the composition analysis!");
     } else {
-      setFeedback("❌ Try again!");
+      setFeedback("❌ Not quite! Try again.");
     }
   };
 
-  // --- Intro Screen ---
-  if (step === 0) {
-    return (
-      <div className="lesson-modal percent-composition">
-        <div className="intro-screen">
-          <h1 className="intro-pc-title">{prompts[0].title}</h1>
-          <p className="intro-text">{prompts[0].description}</p>
-          <button onClick={() => setStep(1)} className="intro-start-btn">
-            Start Lesson
-          </button>
-        </div>
-      </div>
-    );
-  }
-
-  return (
-    <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="lesson-modal percent-composition">
-        <div className="info-pc-box">
-          <h3>{prompts[step].title}</h3>
-          <p>{prompts[step].description}</p>
-        </div>
-
-        <MoleculeZone />
-
-        <div className="parts-bin" id="bin">
-          <h3>Atom Bin</h3>
-          <div className="particles-container">{renderBinAtoms()}</div>
-        </div>
-
-        <div className="controls-area">
-          <button
-            onClick={checkMolecule}
-            className={`check-btn ${feedback.includes("❌") ? "incorrect" : ""}`}
-          >
-            Check Molecule
-          </button>
-        </div>
-
-        {feedback && <p className="feedback">{feedback}</p>}
-
-        <DragOverlay>
-          {activeId && atoms[activeId] && (
-            <div className={`particle ${atoms[activeId].type} is-dragging`}></div>
-          )}
-        </DragOverlay>
-      </div>
-    </DndContext>
-  );
-}
-
-// --- Reusable Draggable Atom ---
-function DraggableAtom({ id, type, isHidden }) {
-  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
-  const style = {
-    visibility: isHidden ? "hidden" : "visible",
-    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+  const startLesson = () => {
+    setStarted(true);
+    setSelectedCompound(compounds[Math.floor(Math.random() * compounds.length)]);
   };
 
   return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      className={`particle ${type}`}
-      style={style}
-    ></div>
+    <div className="percentcomp-wrapper">
+      {!started ? (
+        <div className="intro-panel">
+          <h1>Lesson 6: Percent Composition</h1>
+          <p>
+            Welcome, chemist! Your mission: determine how much each element
+            contributes to a compound’s total mass. Analyze, calculate, and
+            identify the element with the highest mass composition.
+          </p>
+          <button className="start-btn" onClick={startLesson}>
+            Start Mission
+          </button>
+        </div>
+      ) : (
+        <div className="challenge-container">
+          <h2>{selectedCompound.name}</h2>
+
+          {/* Mission 1: Build the Molecule */}
+          {mission === 1 && (
+            <div className="challenge-panel">
+              <h3>Mission 1: Build the Molecule</h3>
+              <div className="compound-zone">
+                {droppedAtoms.map((a, i) => (
+                  <div key={i} className={`atom-tile ${a.toLowerCase()}`}>
+                    {a}
+                  </div>
+                ))}
+              </div>
+
+              <div className="atom-bin">
+                {["H", "C", "O", "N"].map((atom) => (
+                  <div
+                    key={atom}
+                    className="atom-draggable"
+                    draggable
+                    onDragStart={(e) => e.dataTransfer.setData("text/plain", atom)}
+                    onClick={() => handleDropAtom(atom)}
+                  >
+                    {atom}
+                  </div>
+                ))}
+              </div>
+
+              <button
+                className="complete-btn"
+                onClick={() => setMission(2)}
+                disabled={droppedAtoms.length < selectedCompound.elements.length}
+              >
+                Confirm Structure
+              </button>
+            </div>
+          )}
+
+          {/* Mission 2: Match % Composition */}
+          {mission === 2 && (
+            <div className="challenge-panel">
+              <h3>Mission 2: Match Each Element to its % Composition</h3>
+              <div className="composition-dropzone">
+                {Object.keys(selectedCompound.composition).map((el) => (
+                  <div key={el} className="composition-slot">
+                    <span className="el-symbol">{el}</span>
+                    <div
+                      className="drop-target"
+                      onDrop={(e) => {
+                        e.preventDefault();
+                        const percent = parseFloat(e.dataTransfer.getData("text"));
+                        handleDropPercent(el, percent);
+                      }}
+                      onDragOver={(e) => e.preventDefault()}
+                    >
+                      {compositionAnswers[el]
+                        ? `${compositionAnswers[el]}%`
+                        : "Drop % here"}
+                    </div>
+                  </div>
+                ))}
+              </div>
+
+              <div className="percent-bin">
+                {Object.values(selectedCompound.composition).map((p) => (
+                  <div
+                    key={p}
+                    className="percent-tile"
+                    draggable
+                    onDragStart={(e) => e.dataTransfer.setData("text", p)}
+                  >
+                    {p}%
+                  </div>
+                ))}
+              </div>
+
+              <button className="complete-btn" onClick={checkCompositionAnswers}>
+                Check Answers
+              </button>
+            </div>
+          )}
+
+          {/* Mission 3: Identify the Highest Contributor */}
+          {mission === 3 && (
+            <div className="challenge-panel">
+              <h3>Mission 3: Identify the Highest Contributor</h3>
+              <p>
+                Which element contributes the most to the total mass of{" "}
+                {selectedCompound.name}?
+              </p>
+              <div className="element-options">
+                {Object.keys(selectedCompound.composition).map((el) => (
+                  <button
+                    key={el}
+                    className="element-btn"
+                    onClick={() => handleHighestSelect(el)}
+                  >
+                    {el}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Feedback Message */}
+          {feedback && <div className="feedback-box">{feedback}</div>}
+        </div>
+      )}
+    </div>
   );
 }
