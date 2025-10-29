@@ -26,6 +26,8 @@ const MolesToGrams = ({ onComplete }) => {
            <p>
             Welcome! In this lesson, you will learn how to convert between moles and grams using the molar mass of compounds.
             This is a key skill in chemistry because it allows you to calculate the mass of a substance from the number of moles, and vice versa.
+            Every substance has a unique molar mass, which tells you how heavy one mole of that substance is. 
+            You can use it as a bridge between moles and grams multiply by it to go from moles → grams, or divide to go the other way.
           </p>
           <button onClick={() => setStep(1)}>Start Lesson</button>
         </div>

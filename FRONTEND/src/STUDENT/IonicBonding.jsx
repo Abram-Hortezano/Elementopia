@@ -36,7 +36,7 @@ export default function IonicBonding({ onComplete }) {
         { title: "Step 1: The Setup", description: "Here are Sodium (Na) and Chlorine (Cl). Experiment by dragging electrons between them. Click 'Next Step' when you're ready." },
         { title: "Step 2: The Transfer", description: "An ionic bond forms when Sodium gives its one outer electron to Chlorine. Place the electron on Chlorine and click 'Next Step'." },
         { title: "Step 3: Ions Form", description: "Perfect! By losing an electron, Sodium becomes a positive ion (Na⁺), and Chlorine becomes a negative ion (Cl⁻). Opposites attract!" },
-        { title: "Tutorial Complete!", description: "They snap together to form Sodium Chloride (NaCl), or table salt! You've made an ionic bond. Get ready for the challenge." },
+        { title: "Tutorial Complete!", description: "They snap together to form Sodium Chloride (NaCl), or table salt! That strong pull between the positive and negative ions is what we call electrostatic attraction. It’s what makes the ionic bond so strong just like magnets! Get ready for the challenge." },
         { title: "Challenge: Build MgO", description: "Form an ionic bond between Magnesium (Mg) and Oxygen (O). Drag electrons from Magnesium to Oxygen until Oxygen has 8 outer electrons." }
     ];
 
@@ -142,7 +142,8 @@ function IntroScreen({ onStart }) {
         <div className="intro-screen">
             <h1 className="intro-ib-title">Lesson 2: Ionic Bonding</h1>
             <p className="intro-text">
-                Some atoms are givers, and some are takers. In this lesson, you'll see how the transfer of electrons creates powerful attractions called ionic bonds, forming new compounds.
+                Some atoms are givers, and some are takers. In this lesson, you'll see how the transfer of electrons creates powerful attractions called ionic bonds, forming new compounds. Atoms want full outer shells, that's what makes them stable.
+                Some have extra electrons, some are missing a few. Let's see what happens when a giver meets a taker.
             </p>
             <button onClick={onStart} className="intro-start-btn">Start Lesson</button>
         </div>

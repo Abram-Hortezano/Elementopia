@@ -72,7 +72,13 @@ export default function MolarMassLesson({ onComplete }) {
         <div className="lesson-molemass-step">
           <h3>Example: H₂O</h3>
           <p>
+            To find molar mass, add up the atomic masses of all atoms in the formula:
+          </p>
+          <p>
             H₂O = (2 × 1.008) + (1 × 15.999) = <strong>18.015 g/mol</strong>
+          </p>
+          <p>
+            That means 1 mole of water weighs 18.015 grams.
           </p>
           <button onClick={nextStep}>Try Your Own ➡️</button>
         </div>
