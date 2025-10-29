@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import Sidebar from "../components/Sidebar";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavBar";
 import { useNavigate } from "react-router-dom";
 import UserService from "../services/UserService";
 import {
@@ -48,7 +48,7 @@ export default function ProfilePage() {
       name: "Molecule Builder",
       description: "Created 5 molecules",
       progress: 60,
-      
+
       icon: Beaker,
     },
     {

@@ -16,7 +16,7 @@ import {
   ArrowLeft,
   FileText,
 } from "lucide-react";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 import CreateExperiment from "../STUDENT/create-experiment";
 import AddStudentModal from "../STUDENT/add-student-modal";
@@ -153,9 +153,7 @@ export default function Laboratory({ laboratoryId }) {
         <div className="lab-actions-group">
           <button
             className="btn-create"
-            onClick={() =>
-              setCreateExperimentModalOpen((prev) => !prev)
-            }
+            onClick={() => setCreateExperimentModalOpen((prev) => !prev)}
           >
             <Plus size={16} /> Create Experiment
           </button>
@@ -247,17 +245,13 @@ export default function Laboratory({ laboratoryId }) {
 
         <div className="tabs">
           <button
-            className={`tab ${
-              activeTab === "experiments" ? "active" : ""
-            }`}
+            className={`tab ${activeTab === "experiments" ? "active" : ""}`}
             onClick={() => setActiveTab("experiments")}
           >
             Experiments
           </button>
           <button
-            className={`tab ${
-              activeTab === "students" ? "active" : ""
-            }`}
+            className={`tab ${activeTab === "students" ? "active" : ""}`}
             onClick={() => setActiveTab("students")}
           >
             Students
