@@ -26,7 +26,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import Navbar from "../components/NavBar";
+import Navbar from "../components/NavBar.jsx";
 import TeacherSidebar from "../components/Teacher Component/TeacherSidebar.jsx";
 
 // Sample data for charts
@@ -279,9 +279,21 @@ const TeacherAnalyticsPage = () => {
   const isMobile = window.innerWidth < 960;
 
   return (
-    <Box sx={{ display: "flex", bgcolor: "#121212", color: "white", minHeight: "100vh", width: "100vw" }}>
-    <Navbar open={open} />
-    <TeacherSidebar open={open} handleDrawerOpen={() => setOpen(true)} handleDrawerClose={() => setOpen(false)} />
+    <Box
+      sx={{
+        display: "flex",
+        bgcolor: "#121212",
+        color: "white",
+        minHeight: "100vh",
+        width: "100vw",
+      }}
+    >
+      <Navbar open={open} />
+      <TeacherSidebar
+        open={open}
+        handleDrawerOpen={() => setOpen(true)}
+        handleDrawerClose={() => setOpen(false)}
+      />
 
       {/* Main Content Area */}
       <Box
