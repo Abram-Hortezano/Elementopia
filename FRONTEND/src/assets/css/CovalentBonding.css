@@ -60,10 +60,14 @@
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 .intro-title {
 =======
 .intro-cb-title {
 >>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15
+=======
+.intro-cb-title {
+>>>>>>> dev-Dakay
     font-size: 2.5rem;
     color: #2ecc71;
     margin-bottom: 1rem;
@@ -90,9 +94,13 @@
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
     margin-top: 1rem;
 >>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15
+=======
+    margin-top: 1rem;
+>>>>>>> dev-Dakay
 }
 
 .intro-start-btn:hover {

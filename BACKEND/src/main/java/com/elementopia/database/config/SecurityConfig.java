@@ -1,7 +1,8 @@
 package com.elementopia.database.config;
 
-import java.util.List;
-
+import com.elementopia.database.filter.JwtAuthenticationFilter;
+import com.elementopia.database.service.CustomUserDetailsService;
+import com.elementopia.database.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,9 +19,7 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
-import com.elementopia.database.filter.JwtAuthenticationFilter;
-import com.elementopia.database.service.CustomUserDetailsService;
-import com.elementopia.database.util.JwtUtil;
+import java.util.List;
 
 @Configuration
 @EnableWebSecurity
@@ -55,7 +54,7 @@ public class SecurityConfig {
                 )
                 // Permit public endpoints for registration and login only
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/api/user/login", "/api/user/register", "/api/lessons/**").permitAll()
+                        .requestMatchers("/", "/api/user/login", "/api/user/register", "/api/lessons/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 // Add our JWT filter to validate tokens on each request
@@ -74,9 +73,7 @@ public class SecurityConfig {
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
         configuration.setAllowCredentials(true);
-        configuration.setAllowedOrigins(List.of("https://elementopia.netlify.app", "elementopia://"));
-        configuration.setAllowedOrigins(List.of("http://localhost:5173/", "elementopia://"));
-        configuration.setAllowedOrigins(List.of("https://elementopia.netlify.app", "elementopia://", "http://localhost:5173"));
+        configuration.setAllowedOrigins(List.of("https://elementopia.netlify.app", "elementopia://", "http://localhost:5173", "https://elementopia.onrender.com"));
         configuration.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(List.of("Authorization", "Content-Type"));
         configuration.setExposedHeaders(List.of("Authorization"));
