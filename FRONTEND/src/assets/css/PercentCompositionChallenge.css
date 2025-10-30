@@ -1,0 +1,175 @@
+/* --- MAIN WRAPPER --- */
+.pc-challenge-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-height: 100vh;
+  background: radial-gradient(circle at top, #190b2a, #0f081a);
+  color: white;
+  font-family: "Poppins", sans-serif;
+  padding: 20px;
+}
+
+/* --- CONTAINER --- */
+.pc-challenge-container {
+  background: rgba(45, 30, 65, 0.9);
+  border: 2px solid rgba(155, 89, 182, 0.5);
+  border-radius: 15px;
+  box-shadow: 0 0 25px rgba(155, 89, 182, 0.5);
+  padding: 25px;
+  width: 90%;
+  max-width: 800px;
+  text-align: center;
+}
+
+/* --- TITLE --- */
+.pc-challenge-container h2 {
+  color: #bb8fce;
+  text-shadow: 0 0 15px rgba(187, 143, 206, 0.6);
+  font-size: 1.8rem;
+  margin-bottom: 1rem;
+}
+
+/* --- DESCRIPTION --- */
+.pc-challenge-desc {
+  font-size: 1rem;
+  color: #e8daef;
+  margin-bottom: 1.5rem;
+}
+
+/* --- ELEMENT TILES --- */
+.pc-elements-pool {
+  display: flex;
+  justify-content: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.pc-element-tile {
+  background: #8e44ad;
+  color: white;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-weight: bold;
+  cursor: grab;
+  transition: transform 0.25s ease, background 0.3s ease;
+  box-shadow: 0 0 10px rgba(155, 89, 182, 0.6);
+}
+
+.pc-element-tile:hover {
+  transform: scale(1.15);
+  background: #a569bd;
+}
+
+/* --- DROP ZONE --- */
+.pc-drop-zone {
+  min-height: 100px;
+  margin: 20px auto;
+  width: 60%;
+  background: rgba(255, 255, 255, 0.1);
+  border: 2px dashed rgba(187, 143, 206, 0.5);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.pc-drop-hint {
+  color: #d2b4de;
+  font-size: 0.95rem;
+}
+
+.pc-placed-tile {
+  background: #a569bd;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+}
+
+/* --- INPUT GAME --- */
+.pc-answer-input {
+  padding: 10px;
+  width: 120px;
+  text-align: center;
+  border-radius: 8px;
+  border: 2px solid rgba(187, 143, 206, 0.5);
+  background: rgba(255, 255, 255, 0.1);
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.pc-submit-btn {
+  background: linear-gradient(135deg, #8e44ad, #9b59b6);
+  border: none;
+  padding: 10px 25px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.pc-submit-btn:hover {
+  background: linear-gradient(135deg, #732d91, #8e44ad);
+  transform: translateY(-2px);
+}
+
+/* --- MATCHING GAME --- */
+.pc-match-grid {
+  display: flex;
+  justify-content: space-around;
+  align-items: flex-start;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.pc-compound-card, .pc-percent-card {
+  width: 150px;
+  min-height: 70px;
+  background: rgba(187, 143, 206, 0.1);
+  border: 2px solid rgba(187, 143, 206, 0.4);
+  border-radius: 10px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  padding: 10px;
+  transition: all 0.3s ease;
+}
+
+.pc-compound-card:hover, .pc-percent-card:hover {
+  background: rgba(155, 89, 182, 0.3);
+  transform: scale(1.05);
+}
+
+.pc-matched {
+  color: #d7bde2;
+  font-weight: 600;
+}
+
+/* --- SUCCESS POPUP --- */
+.pc-success-popup {
+  margin-top: 1.5rem;
+  color: #d2b4de;
+  font-weight: 600;
+  text-shadow: 0 0 10px rgba(187, 143, 206, 0.8);
+  animation: pop 0.6s ease-in-out;
+}
+
+@keyframes pop {
+  0% { transform: scale(0.8); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+/* --- RESPONSIVE --- */
+@media (max-width: 600px) {
+  .pc-challenge-container { width: 95%; }
+  .pc-compound-card, .pc-percent-card { width: 120px; }
+}

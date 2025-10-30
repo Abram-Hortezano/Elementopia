@@ -11,9 +11,6 @@ import StudentHomePage from "./STUDENT/StudentHomePage";
 import TeacherRoomPage from "./TEACHER/TeacherRoomPage";
 import Laboratory from "./STUDENT/laboratory";
 import CreateExperimentModal from "./STUDENT/create-experiment";
-import AddStudentModal from "./STUDENT/add-student-modal";
-import StudentProgressModal from "./STUDENT/student-progress-modal";
-import PracticeSprite from "./STUDENT/practice-sprite";
 import LandingPage from "./STUDENT/LandingPage";
 import MapTree from "./STUDENT/Map-Tree";
 import AtomBuilder from "./STUDENT/AtomBuilder";
@@ -22,14 +19,14 @@ import IonicBonding from "./STUDENT/IonicBonding";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
-    {/* <App /> */}
-    <BrowserRouter>
+    <App />
+      {/*<BrowserRouter>*/}
     {/* <StudentRoomPage /> */}
     {/* <TeacherRoomPage /> */}
     {/* <Laboratory /> */}
     {/* <StudentProgressModal /> */}
     {/* <PracticeSprite /> */}
-    <MapTree />
+      {/*<MapTree />*/}
     {/* <IonicBonding /> */}
     {/* <CovalentBonding /> */}
     {/* <AtomBuilder /> */}
@@ -37,7 +34,7 @@ createRoot(document.getElementById("root")).render(
     {/* <LandingPage /> */}
      {/* <StudentHomePage /> */}
      {/* <CreateExperimentModal /> */}
-    </BrowserRouter>
+      {/*</BrowserRouter>*/}
     {/* <Buttons /> */}
     {/* <FeatureCard /> */}
   </StrictMode>

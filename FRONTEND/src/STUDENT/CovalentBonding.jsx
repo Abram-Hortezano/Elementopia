@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { DndContext, DragOverlay, useDraggable, useDroppable } from '@dnd-kit/core';
 import '../assets/css/CovalentBonding.css';
 
@@ -152,7 +152,7 @@ export default function CovalentBonding({ onComplete }) {
 function IntroScreen({ onStart }) {
     return (
         <div className="intro-screen">
-            <h1 className="intro-title">Lesson 3: Covalent Bonding</h1>
+            <h1 className="intro-cb-title">Lesson 3: Covalent Bonding</h1>
             <p className="intro-text">
                 Welcome to the world of sharing! Unlike the give-and-take of ionic bonds, covalent bonds are formed when atoms cooperate by sharing their electrons to become stable. Let's build some molecules.
             </p>

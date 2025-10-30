@@ -1,6 +1,8 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/user";
+// const API_URL = "http://localhost:8080/api/user";
+
+const API_URL = "https://elementopia.onrender.com/api/user";
 
 // Get token from localStorage
 const getAuthHeader = () => {
@@ -21,9 +23,11 @@ const UserService = {
         username,
         password,
       });
+      const { token, role } = response.data;
 
-      const { token } = response.data;
-      localStorage.setItem("token", token); // Store token securely
+      localStorage.setItem("token", token);
+      localStorage.setItem("role", role);
+
       return response.data;
     } catch (error) {
       console.error("Login failed:", error.response?.data || error.message);
@@ -43,6 +47,22 @@ const UserService = {
     } catch (error) {
       console.error(
         "Failed to fetch current user:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  // Get all users
+  getAllUsers: async () => {
+    try {
+      const response = await axios.get(`${API_URL}/getAllUsers`, {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Failed to fetch all users:",
         error.response?.data || error.message
       );
       throw error;
@@ -122,6 +142,10 @@ const UserService = {
       console.error("deletion failed:", error.response?.data || error.message);
       throw error;
     }
+  },
+
+  getUserRole: () => {
+    return localStorage.getItem("role");
   },
 };
 

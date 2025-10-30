@@ -1,13 +1,26 @@
-import { useState } from "react";
-import { Users, BookOpen, Plus, Search, Beaker, Edit, Trash, Globe, Lock, X } from "lucide-react";
+import React, { useState } from "react";
+import { Box } from "@mui/material";
+import Navbar from "../components/NavBar";
+import Sidebar from "../components/Sidebar";
+import CustomRoom from "./custom-room";
+import {
+  Users,
+  BookOpen,
+  Plus,
+  Search,
+  Beaker,
+  Edit,
+  Trash,
+  Globe,
+  Lock,
+  X,
+} from "lucide-react";
 import CreateLaboratory from "./create-lab";
 import "../assets/css/studentroompage.css";
-import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
 
 export default function StudentRoomPage() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [createLabModalOpen, setCreateLabModalOpen] = useState(false); // This controls the modal visibility
+  const [createLabModalOpen, setCreateLabModalOpen] = useState(false);
   const [myLabsModalOpen, setMyLabsModalOpen] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
 
@@ -75,24 +88,27 @@ export default function StudentRoomPage() {
 
   const handleCreateLab = (data) => {
     console.log("Laboratory created:", data);
-    // Send this data to your backend
-    // Then redirect to the laboratory details page
-    // router.push(`/dashboard/laboratory/${Date.now()}`); // Uncomment if using routing
   };
 
   const handleJoinLab = (labId) => {
-    // Join the laboratory
-    // router.push(`/dashboard/laboratory/${labId}`); // Uncomment if using routing
+    console.log("Joining lab:", labId);
   };
 
   return (
     <div className="custom-room-container">
-      <Sidebar open={drawerOpen} handleDrawerOpen={() => setDrawerOpen(true)} handleDrawerClose={() => setDrawerOpen(false)} />
+      <Sidebar
+        open={drawerOpen}
+        handleDrawerOpen={() => setDrawerOpen(true)}
+        handleDrawerClose={() => setDrawerOpen(false)}
+      />
       <Navbar />
+
       <div className="custom-room-header">
         <div className="custom-room-title-container">
           <h1 className="custom-room-title">Custom Laboratories</h1>
-          <p className="custom-room-subtitle">Explore and join public laboratories or create your own</p>
+          <p className="custom-room-subtitle">
+            Explore and join public laboratories or create your own
+          </p>
         </div>
         <div className="custom-room-actions">
           <div className="search-container">
@@ -105,10 +121,16 @@ export default function StudentRoomPage() {
               className="search-input"
             />
           </div>
-          <button onClick={() => setCreateLabModalOpen(prevState => !prevState)} className="create-lab-button">
+          <button
+            onClick={() => setCreateLabModalOpen((prevState) => !prevState)}
+            className="create-lab-button"
+          >
             <Plus className="button-icon" /> Create Laboratory
           </button>
-          <button onClick={() => setMyLabsModalOpen(true)} className="my-labs-button">
+          <button
+            onClick={() => setMyLabsModalOpen(true)}
+            className="my-labs-button"
+          >
             My Laboratories
           </button>
         </div>
@@ -125,7 +147,6 @@ export default function StudentRoomPage() {
 
       {/* Summary Cards */}
       <div className="summary-cards">
-        {/* Card 1 */}
         <div className="summary-card">
           <div className="card-content">
             <div>
@@ -136,7 +157,6 @@ export default function StudentRoomPage() {
           </div>
         </div>
 
-        {/* Card 2 */}
         <div className="summary-card my-labs-card">
           <div className="card-content">
             <div>
@@ -147,13 +167,15 @@ export default function StudentRoomPage() {
           </div>
         </div>
 
-        {/* Card 3 */}
         <div className="summary-card">
           <div className="card-content">
             <div>
               <p className="card-label">Total Experiments</p>
               <p className="card-value">
-                {publicLaboratories.reduce((sum, lab) => sum + lab.experiments, 0)}
+                {publicLaboratories.reduce(
+                  (sum, lab) => sum + lab.experiments,
+                  0
+                )}
               </p>
             </div>
             <BookOpen className="card-icon yellow-icon" />
@@ -165,7 +187,9 @@ export default function StudentRoomPage() {
       <div className="labs-container">
         <div className="labs-header">
           <h2 className="labs-title">Public Laboratories</h2>
-          <p className="labs-subtitle">Browse and join public laboratories created by teachers</p>
+          <p className="labs-subtitle">
+            Browse and join public laboratories created by teachers
+          </p>
         </div>
         <div className="labs-content">
           <div className="labs-list">
@@ -182,11 +206,15 @@ export default function StudentRoomPage() {
                       <div className="lab-stats">
                         <div className="lab-stat">
                           <Users className="stat-icon" />
-                          <span className="stat-text">{lab.students} students</span>
+                          <span className="stat-text">
+                            {lab.students} students
+                          </span>
                         </div>
                         <div className="lab-stat">
                           <Beaker className="stat-icon" />
-                          <span className="stat-text">{lab.experiments} experiments</span>
+                          <span className="stat-text">
+                            {lab.experiments} experiments
+                          </span>
                         </div>
                         {lab.isPublic && (
                           <div className="lab-stat">
@@ -198,7 +226,10 @@ export default function StudentRoomPage() {
                     </div>
                   </div>
                   <div className="lab-actions">
-                    <button onClick={() => handleJoinLab(lab.id)} className="join-lab-button">
+                    <button
+                      onClick={() => handleJoinLab(lab.id)}
+                      className="join-lab-button"
+                    >
                       Join Laboratory
                     </button>
                   </div>
@@ -222,9 +253,14 @@ export default function StudentRoomPage() {
             <div className="modal-header">
               <div>
                 <h2 className="modal-title">My Laboratories</h2>
-                <p className="modal-subtitle">Laboratories you have created or joined</p>
+                <p className="modal-subtitle">
+                  Laboratories you have created or joined
+                </p>
               </div>
-              <button onClick={() => setMyLabsModalOpen(false)} className="close-button">
+              <button
+                onClick={() => setMyLabsModalOpen(false)}
+                className="close-button"
+              >
                 <X className="close-icon" />
               </button>
             </div>
@@ -251,11 +287,15 @@ export default function StudentRoomPage() {
                             <div className="lab-stats">
                               <div className="lab-stat">
                                 <Users className="stat-icon" />
-                                <span className="stat-text">{lab.students} students</span>
+                                <span className="stat-text">
+                                  {lab.students} students
+                                </span>
                               </div>
                               <div className="lab-stat">
                                 <Beaker className="stat-icon" />
-                                <span className="stat-text">{lab.experiments} experiments</span>
+                                <span className="stat-text">
+                                  {lab.experiments} experiments
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -264,7 +304,9 @@ export default function StudentRoomPage() {
                           <button
                             onClick={() => {
                               setMyLabsModalOpen(false);
-                              router.push(`/dashboard/laboratory/${lab.id}`);
+                              console.log(
+                                `Go to /dashboard/laboratory/${lab.id}`
+                              );
                             }}
                             className="manage-button"
                           >
@@ -281,7 +323,9 @@ export default function StudentRoomPage() {
               ) : (
                 <div className="empty-state">
                   <Beaker className="empty-icon" />
-                  <p className="empty-text">You haven't created any laboratories yet</p>
+                  <p className="empty-text">
+                    You haven't created any laboratories yet
+                  </p>
                 </div>
               )}
             </div>

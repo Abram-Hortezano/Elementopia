@@ -26,8 +26,8 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import Navbar from "../components/Navbar";
-import Sidebar from "../components/Sidebar";
+import Navbar from "../components/NavBar.jsx";
+import TeacherSidebar from "../components/Teacher Component/TeacherSidebar.jsx";
 
 // Sample data for charts
 const lineData = [
@@ -279,15 +279,20 @@ const TeacherAnalyticsPage = () => {
   const isMobile = window.innerWidth < 960;
 
   return (
-    <Box sx={{ display: "flex" }}>
-      {/* Navbar with dynamic width */}
+    <Box
+      sx={{
+        display: "flex",
+        bgcolor: "#121212",
+        color: "white",
+        minHeight: "100vh",
+        width: "100vw",
+      }}
+    >
       <Navbar open={open} />
-
-      {/* Sidebar with control props */}
-      <Sidebar
+      <TeacherSidebar
         open={open}
-        handleDrawerOpen={handleDrawerOpen}
-        handleDrawerClose={handleDrawerClose}
+        handleDrawerOpen={() => setOpen(true)}
+        handleDrawerClose={() => setOpen(false)}
       />
 
       {/* Main Content Area */}
@@ -297,7 +302,7 @@ const TeacherAnalyticsPage = () => {
           flexGrow: 1,
           p: 3,
           transition: "margin 0.3s ease",
-          marginLeft: open ? "180px" : "60px",
+          marginLeft: open ? "20px" : "10px",
         }}
       >
         <div style={styles.drawerHeader} />

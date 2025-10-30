@@ -1,13 +1,21 @@
 import React from "react";
 import Typography from "@mui/material/Typography";
+import { useNavigate } from "react-router-dom";
 
 const AccessDenied = () => {
+const navigate = useNavigate();
+
+  const handleBackMenu = () =>{
+    navigate("/");
+  }
+
   return (
     <div
       style={{
         backgroundColor: "#0f0f0f",
         color: "#ffffff",
         height: "100vh",
+        width: "100vw",
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
@@ -38,6 +46,17 @@ const AccessDenied = () => {
       <p style={{ fontSize: "1rem", color: "#bbbbbb" }}>
         Please contact your administrator or return to a valid section.
       </p>
+      <button onClick={handleBackMenu}
+      style={{
+        marginTop: "20px",
+        padding: "10px 20px",
+        fontSize: "1rem",
+        backgroundColor: "#714dff",
+        color: "#fff",
+        border: "none",
+        borderRadius: "4px",
+        cursor: "pointer",
+      }}>Return Home</button>
     </div>
   );
 };

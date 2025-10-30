@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
-import ChemistrySimulation from "../components/Student Components/ChemistrySimulation";
+import ChemSim from "../components/Student Components/ChemSim";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
@@ -41,7 +41,7 @@ const StudentSandboxPage = () => {
           maxWidth: "100%;",
         }}
       >
-        <ChemistrySimulation />
+        <ChemSim />
       </Box>
     </Box>
   );

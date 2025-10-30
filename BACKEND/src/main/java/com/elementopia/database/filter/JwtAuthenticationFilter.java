@@ -28,16 +28,33 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             FilterChain filterChain
     ) throws ServletException, IOException {
         String token = extractToken(request);
+
         if (token != null && jwtUtil.validateToken(token)) {
             String username = jwtUtil.extractUsername(token);
+
+            System.out.println("[JWT Filter] Token valid. Username: " + username); // log #1
+
             UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     userDetails, null, userDetails.getAuthorities()
             );
+
+            // log #2 - show granted authorities
+            System.out.println("[JWT Filter] Authorities: " + userDetails.getAuthorities());
+
             SecurityContextHolder.getContext().setAuthentication(authentication);
+
+            // log #3 - confirm security context set
+            System.out.println("[JWT Filter] Security context authentication set for: " +
+                    SecurityContextHolder.getContext().getAuthentication().getName());
+        } else {
+            System.out.println("[JWT Filter] No valid token found. Skipping auth.");
         }
+
         filterChain.doFilter(request, response);
     }
+
 
     private String extractToken(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

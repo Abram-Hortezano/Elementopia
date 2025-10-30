@@ -12,15 +12,13 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom"; 
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import home from "../assets/home.png";
-import room from "../assets/room.png";
-import career from "../assets/career.png";
-import discovery from "../assets/discovery.png";
-import sandBox from "../assets/sandBox.png";
-import gameRoom from "../assets/gameRoom.png";
+import home from "../assets/img/home.png";
+import career from "../assets/img/career.png";
+import discovery from "../assets/img/discovery.png";
+import chemSimulation from "../assets/img/chemSimulation.png"
 
 const drawerWidth = 180;
 const closedWidth = 60;
@@ -45,14 +43,14 @@ const Drawer = styled(MuiDrawer)(({ theme, open }) => ({
 
 const menuItems = [
   { text: "Home", icon: home, path: "/student-home-page" },
-  { text: "Room", icon: room, path: "/student/room" },
   { text: "Career", icon: career, path: "/student/student-career-page" },
   { text: "Discovery", icon: discovery, path: "/student/discovery" },
-  { text: "Sandbox", icon: sandBox, path: "/student/sandbox" },
-  { text: "Game Room", icon: gameRoom, path: "/student/game-room" },
+  { text: "Chem-Simulation", icon: chemSimulation, path: "/student/Chem-Simulation" },
 ];
 
 const Sidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {
+  const location = useLocation(); // ✅ Get current route
+
   return (
     <Drawer variant="permanent" open={open}>
       <Toolbar sx={{ display: "flex", justifyContent: open ? "space-between" : "center", paddingX: 2 }}>
@@ -73,16 +71,27 @@ const Sidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {
       <Divider sx={{ borderColor: "#555" }} />
 
       <List>
-        {menuItems.map((item) => (
-          <ListItem key={item.text} disablePadding sx={{ display: "block" }}>
-            <ListItemButton component={Link} to={item.path} sx={{ justifyContent: open ? "initial" : "center", px: 2.5 }}>
-              <ListItemIcon sx={{ minWidth: 0, justifyContent: "center", mr: open ? 2 : "auto", color: "#fff" }}>
-                <img src={item.icon} alt={item.text} width={24} height={24} />
-              </ListItemIcon>
-              <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0, color: "#fff" }} />
-            </ListItemButton>
-          </ListItem>
-        ))}
+        {menuItems.map((item) => {
+          const isActive = location.pathname === item.path; // ✅ Check active
+          return (
+            <ListItem key={item.text} disablePadding sx={{ display: "block" }}>
+              <ListItemButton
+                component={Link}
+                to={item.path}
+                sx={{
+                  justifyContent: open ? "initial" : "center",
+                  px: 2.5,
+                  backgroundColor: isActive ? "#444" : "transparent", // ✅ Highlight active
+                }}
+              >
+                <ListItemIcon sx={{ minWidth: 0, justifyContent: "center", mr: open ? 2 : "auto", color: "#fff" }}>
+                  <img src={item.icon} alt={item.text} width={24} height={24} />
+                </ListItemIcon>
+                <ListItemText primary={item.text} sx={{ opacity: open ? 1 : 0, color: "#fff" }} />
+              </ListItemButton>
+            </ListItem>
+          );
+        })}
       </List>
     </Drawer>
   );

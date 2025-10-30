@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Menu } from "lucide-react";
-import "./navigation.css";
+import "../assets/css/navigation.css";
 import LoginCard from "../STUDENT/login-card";
 import SignupCard from "../STUDENT/register-card";
 
@@ -41,9 +41,9 @@ export default function Navigation() {
 
         {/* Center Navigation Links - Hidden when burger is used */}
         <div className="nav-links">
-          <a href="/about-us">About Us</a>
+          {/*<a href="/about-us">About Us</a>
           <a href="/career">Career</a>
-          <a href="/contact-us">Contact Us</a>
+          <a href="/contact-us">Contact Us</a> */}
         </div>
 
         {/* Right Side - Login & Sign Up */}

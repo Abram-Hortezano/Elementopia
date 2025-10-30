@@ -1,9 +1,51 @@
-import { useState } from "react";
-import { Users, BookOpen, Plus, Search, Beaker, Edit, Trash, Globe, Lock, X, Download } from "lucide-react";
-import CreateLaboratory from "../STUDENT/create-lab";
-import "../assets/css/teacherroompage.css";
-import Navbar from '../components/Navbar';
-import Sidebar from '../components/Sidebar';
+import React, { useState } from "react";
+import { Box, Typography } from "@mui/material";
+import { styled } from "@mui/material/styles";
+import { useLocation, Outlet } from "react-router-dom";
+import Navbar from "../components/NavBar.jsx";
+import TeacherSidebar from "../components/Teacher Component/TeacherSidebar.jsx";
+import CustomRoom from "../components/Teacher Component/custom-room.jsx";
+
+const DrawerHeader = styled("div")(({ theme }) => ({
+  ...theme.mixins.toolbar,
+}));
+
+const TeacherRoomPage = () => {
+  const [open, setOpen] = useState(false);
+  const location = useLocation();
+
+  return (
+    <Box
+      sx={{
+        display: "flex",
+        bgcolor: "#121212",
+        color: "white",
+        minHeight: "100vh",
+        width: "100vw",
+      }}
+    >
+      <Navbar open={open} />
+      <TeacherSidebar
+        open={open}
+        handleDrawerOpen={() => setOpen(true)}
+        handleDrawerClose={() => setOpen(false)}
+      />
+      <Box
+        component="main"
+        sx={{
+          flexGrow: 1,
+          p: 3,
+          marginLeft: open ? "180px" : "60px",
+          width: "100%",
+          marginTop: "80px",
+        }}
+      >
+        <CustomRoom />
+        <Outlet />
+      </Box>
+    </Box>
+  );
+};
 
 export default function StudentRoomPage() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -86,35 +128,53 @@ export default function StudentRoomPage() {
   };
   //change this into data from backend
   const mockData = [
-    ["Laboratory", "Student Name", "Email", "Experiments Completed", "Average Score"],
+    [
+      "Laboratory",
+      "Student Name",
+      "Email",
+      "Experiments Completed",
+      "Average Score",
+    ],
     ["Chemistry 101 Lab", "John Doe", "john.doe@example.com", "5", "92%"],
     ["Chemistry 101 Lab", "Jane Smith", "jane.smith@example.com", "4", "88%"],
     ["Chemistry Club", "Bob Johnson", "bob.johnson@example.com", "3", "76%"],
-    ["My Chemistry Class", "Alice Williams", "alice.williams@example.com", "6", "95%"],
+    [
+      "My Chemistry Class",
+      "Alice Williams",
+      "alice.williams@example.com",
+      "6",
+      "95%",
+    ],
   ];
 
-    const handleExportStudentData = () => {
-        const csvContent = mockData.map(row => row.join(",")).join("\n");
-        const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
-        const url = URL.createObjectURL(blob);
+  const handleExportStudentData = () => {
+    const csvContent = mockData.map((row) => row.join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
 
-        const link = document.createElement("a");
-        link.href = url;
-        link.setAttribute("download", "student_data.csv");
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-    };
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute("download", "student_data.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   return (
     <div className="custom-room-container">
-      <Sidebar open={drawerOpen} handleDrawerOpen={() => setDrawerOpen(true)} handleDrawerClose={() => setDrawerOpen(false)} />
+      <Sidebar
+        open={drawerOpen}
+        handleDrawerOpen={() => setDrawerOpen(true)}
+        handleDrawerClose={() => setDrawerOpen(false)}
+      />
       <Navbar />
       <div className="custom-room-header">
         <div className="custom-room-title-container">
           <h1 className="custom-room-title">Custom Laboratories</h1>
-          <p className="custom-room-subtitle">Explore and join public laboratories or create your own</p>
+          <p className="custom-room-subtitle">
+            Explore and join public laboratories or create your own
+          </p>
         </div>
         <div className="custom-room-actions">
           <div className="search-container">
@@ -127,15 +187,21 @@ export default function StudentRoomPage() {
               className="search-input"
             />
           </div>
-          <button onClick={() => setCreateLabModalOpen(prevState => !prevState)} className="create-lab-button">
+          <button
+            onClick={() => setCreateLabModalOpen((prevState) => !prevState)}
+            className="create-lab-button"
+          >
             <Plus className="button-icon" /> Create Laboratory
           </button>
-          <button onClick={() => setMyLabsModalOpen(true)} className="my-labs-button">
+          <button
+            onClick={() => setMyLabsModalOpen(true)}
+            className="my-labs-button"
+          >
             My Laboratories
           </button>
-            <button onClick={handleExportStudentData} className="export-button">
-                <Download className="button-icon" /> Export Scores
-            </button>
+          <button onClick={handleExportStudentData} className="export-button">
+            <Download className="button-icon" /> Export Scores
+          </button>
         </div>
       </div>
 
@@ -178,7 +244,10 @@ export default function StudentRoomPage() {
             <div>
               <p className="card-label">Total Experiments</p>
               <p className="card-value">
-                {publicLaboratories.reduce((sum, lab) => sum + lab.experiments, 0)}
+                {publicLaboratories.reduce(
+                  (sum, lab) => sum + lab.experiments,
+                  0
+                )}
               </p>
             </div>
             <BookOpen className="card-icon yellow-icon" />
@@ -190,7 +259,9 @@ export default function StudentRoomPage() {
       <div className="labs-container">
         <div className="labs-header">
           <h2 className="labs-title">Public Laboratories</h2>
-          <p className="labs-subtitle">Browse and join public laboratories created by teachers</p>
+          <p className="labs-subtitle">
+            Browse and join public laboratories created by teachers
+          </p>
         </div>
         <div className="labs-content">
           <div className="labs-list">
@@ -207,11 +278,15 @@ export default function StudentRoomPage() {
                       <div className="lab-stats">
                         <div className="lab-stat">
                           <Users className="stat-icon" />
-                          <span className="stat-text">{lab.students} students</span>
+                          <span className="stat-text">
+                            {lab.students} students
+                          </span>
                         </div>
                         <div className="lab-stat">
                           <Beaker className="stat-icon" />
-                          <span className="stat-text">{lab.experiments} experiments</span>
+                          <span className="stat-text">
+                            {lab.experiments} experiments
+                          </span>
                         </div>
                         {lab.isPublic && (
                           <div className="lab-stat">
@@ -223,7 +298,10 @@ export default function StudentRoomPage() {
                     </div>
                   </div>
                   <div className="lab-actions">
-                    <button onClick={() => handleJoinLab(lab.id)} className="join-lab-button">
+                    <button
+                      onClick={() => handleJoinLab(lab.id)}
+                      className="join-lab-button"
+                    >
                       Join Laboratory
                     </button>
                   </div>
@@ -247,9 +325,14 @@ export default function StudentRoomPage() {
             <div className="modal-header">
               <div>
                 <h2 className="modal-title">My Laboratories</h2>
-                <p className="modal-subtitle">Laboratories you have created or joined</p>
+                <p className="modal-subtitle">
+                  Laboratories you have created or joined
+                </p>
               </div>
-              <button onClick={() => setMyLabsModalOpen(false)} className="close-button">
+              <button
+                onClick={() => setMyLabsModalOpen(false)}
+                className="close-button"
+              >
                 <X className="close-icon" />
               </button>
             </div>
@@ -276,11 +359,15 @@ export default function StudentRoomPage() {
                             <div className="lab-stats">
                               <div className="lab-stat">
                                 <Users className="stat-icon" />
-                                <span className="stat-text">{lab.students} students</span>
+                                <span className="stat-text">
+                                  {lab.students} students
+                                </span>
                               </div>
                               <div className="lab-stat">
                                 <Beaker className="stat-icon" />
-                                <span className="stat-text">{lab.experiments} experiments</span>
+                                <span className="stat-text">
+                                  {lab.experiments} experiments
+                                </span>
                               </div>
                             </div>
                           </div>
@@ -306,7 +393,9 @@ export default function StudentRoomPage() {
               ) : (
                 <div className="empty-state">
                   <Beaker className="empty-icon" />
-                  <p className="empty-text">You haven't created any laboratories yet</p>
+                  <p className="empty-text">
+                    You haven't created any laboratories yet
+                  </p>
                 </div>
               )}
             </div>
