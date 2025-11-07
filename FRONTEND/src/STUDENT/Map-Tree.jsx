@@ -1,6 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../assets/css/Map-tree.css";
-// import "../../assets/css/ChallengeGames.css";
 
 // --- LESSON IMPORTS ---
 import AtomBuilder from "../STUDENT/AtomBuilder";
@@ -69,7 +68,6 @@ const nodes = [
   { id: 24, label: "★", position: { top: "62%", left: "88%" }, prerequisites: [23], lesson: "PCChallenge3" },
 ];
 
-
 const lessonComponents = {
   AtomBuilder,
   AtomChallenge1,
@@ -99,8 +97,17 @@ const lessonComponents = {
 };
 
 export default function MapTree() {
-  const [completedNodes, setCompletedNodes] = useState(new Set());
+  // ✅ Initialize directly from localStorage (before first render)
+  const [completedNodes, setCompletedNodes] = useState(() => {
+    const saved = localStorage.getItem("completedNodes");
+    return saved ? new Set(JSON.parse(saved)) : new Set();
+  });
+
   const [activeLesson, setActiveLesson] = useState(null);
+
+  useEffect(() => {
+    localStorage.setItem("completedNodes", JSON.stringify(Array.from(completedNodes)));
+  }, [completedNodes]);
 
   const handleNodeClick = (node, status) => {
     if ((status === "unlocked" || status === "completed") && node.lesson) {
@@ -110,12 +117,15 @@ export default function MapTree() {
 
   const handleLessonComplete = () => {
     if (activeLesson) {
-      setCompletedNodes((prev) => new Set(prev).add(activeLesson.id));
+      setCompletedNodes((prev) => {
+        const updated = new Set(prev);
+        updated.add(activeLesson.id);
+        return updated;
+      });
     }
     setActiveLesson(null);
   };
 
-  const allCompleted = false; // keep END dim until all lessons are done
   const CurrentLessonComponent = activeLesson ? lessonComponents[activeLesson.lesson] : null;
 
   return (
@@ -123,8 +133,11 @@ export default function MapTree() {
       <div className="Node-Container">
         {nodes.map((node) => {
           const isCompleted = completedNodes.has(node.id);
-          const isUnlocked = true;
-          const status = isCompleted ? "completed" : isUnlocked ? "unlocked" : "locked";
+          // 🔓 Unlock everything (commented out prerequisite logic)
+          // const prerequisites = node.prerequisites || [];
+          // const isUnlocked = prerequisites.every((p) => completedNodes.has(p)) || node.id === 1;
+          //const status = isCompleted ? "completed" : isUnlocked ? "unlocked" : "locked";
+          const status = isCompleted ? "completed" : "unlocked"; // Always unlocked
 
           return (
             <div
@@ -139,11 +152,15 @@ export default function MapTree() {
           );
         })}
 
-        {/* END Circle */}
-        <div className={`end-circle ${allCompleted ? "unlocked" : "locked"}`}>END</div>
+        <div
+          className={`end-circle ${
+            nodes.every((n) => completedNodes.has(n.id)) ? "unlocked" : "locked"
+          }`}
+        >
+          END
+        </div>
       </div>
 
-      {/* Fullscreen Modal */}
       {activeLesson && CurrentLessonComponent && (
         <div className="lesson-modal">
           <div className="lesson-inner">
@@ -161,3 +178,4 @@ export default function MapTree() {
     </div>
   );
 }
+
