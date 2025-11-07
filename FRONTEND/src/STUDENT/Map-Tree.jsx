@@ -16,6 +16,12 @@ import AtomChallenge3 from "../components/Student Components/AtomChallenge3";
 import IonicChallenge1 from "../components/Student Components/IonicChallenge1";
 import IonicChallenge2 from "../components/Student Components/IonicChallenge2";
 import IonicChallenge3 from "../components/Student Components/IonicChallenge3";
+import MoleMassChallenge1 from "../components/Student Components/MoleMassChallenge1";
+import MoleMassChallenge2 from "../components/Student Components/MoleMassChallenge2";
+import MoleMassChallenge3 from "../components/Student Components/MoleMassChallenge3";
+import MolesToGramsChallenge1 from "../components/Student Components/MolesToGramsChallenge1";
+import MolesToGramsChallenge2 from "../components/Student Components/MolesToGramsChallenge2";
+import MolesToGramsChallenge3 from "../components/Student Components/MolesToGramsChallenge3";
 
 // --- DUMMY CHALLENGE ---
 // Pass deductions (e.g., 0) when completing
@@ -44,13 +50,13 @@ const nodes = [
   { id: 14, label: "★", position: { top: "25%", left: "42%" }, prerequisites: [13], lesson: "DummyChallenge" },
   { id: 15, label: "★", position: { top: "31%", left: "44%" }, prerequisites: [14], lesson: "DummyChallenge" },
   { id: 4, label: "Molar Mass", position: { top: "39%", left: "49%" }, prerequisites: [15], lesson: "MoleMass" },
-  { id: 16, label: "★", position: { top: "46%", left: "52%" }, prerequisites: [4], lesson: "DummyChallenge" },
-  { id: 17, label: "★", position: { top: "53%", left: "54%" }, prerequisites: [16], lesson: "DummyChallenge" },
-  { id: 18, label: "★", position: { top: "60%", left: "56%" }, prerequisites: [17], lesson: "DummyChallenge" },
+  { id: 16, label: "★", position: { top: "46%", left: "52%" }, prerequisites: [4], lesson: "MoleMassChallenge1" },
+  { id: 17, label: "★", position: { top: "53%", left: "54%" }, prerequisites: [16], lesson: "MoleMassChallenge2" },
+  { id: 18, label: "★", position: { top: "60%", left: "56%" }, prerequisites: [17], lesson: "MoleMassChallenge3" },
   { id: 5, label: "Moles to Grams", position: { top: "64%", left: "61%" }, prerequisites: [18], lesson: "MolesToGrams" },
-  { id: 19, label: "★", position: { top: "69%", left: "66%" }, prerequisites: [5], lesson: "DummyChallenge" },
-  { id: 20, label: "★", position: { top: "74%", left: "71%" }, prerequisites: [19], lesson: "DummyChallenge" },
-  { id: 21, label: "★", position: { top: "79%", left: "75%" }, prerequisites: [20], lesson: "DummyChallenge" },
+  { id: 19, label: "★", position: { top: "69%", left: "66%" }, prerequisites: [5], lesson: "MolesToGramsChallenge1" },
+  { id: 20, label: "★", position: { top: "74%", left: "71%" }, prerequisites: [19], lesson: "MolesToGramsChallenge2" },
+  { id: 21, label: "★", position: { top: "79%", left: "75%" }, prerequisites: [20], lesson: "MolesToGramsChallenge3" },
   { id: 6, label: "% Composition", position: { top: "82%", left: "80%" }, prerequisites: [21], lesson: "PercentComposition" },
   { id: 22, label: "★", position: { top: "74%", left: "84%" }, prerequisites: [6], lesson: "DummyChallenge" },
   { id: 23, label: "★", position: { top: "68%", left: "86%" }, prerequisites: [22], lesson: "DummyChallenge" },
@@ -69,7 +75,13 @@ const lessonComponents = {
   IonicChallenge3,
   CovalentBonding,
   MoleMass,
+MoleMassChallenge1,
+MoleMassChallenge2,
+MoleMassChallenge3,
   MolesToGrams,
+MolesToGramsChallenge1,
+MolesToGramsChallenge2,
+MolesToGramsChallenge3,
   PercentComposition,
   DummyChallenge,
 };
