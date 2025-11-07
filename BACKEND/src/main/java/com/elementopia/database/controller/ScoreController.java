@@ -1,4 +1,4 @@
-package com.elementopia.database.controller;
+ package com.elementopia.database.controller;
 
 import com.elementopia.database.entity.ScoreEntity;
 import com.elementopia.database.service.ScoreService;

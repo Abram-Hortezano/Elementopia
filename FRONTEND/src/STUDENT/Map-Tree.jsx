@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import "../assets/css/Map-tree.css";
 
 // --- LESSON IMPORTS ---
@@ -62,7 +62,6 @@ const nodes = [
   { id: 23, label: "★", position: { top: "68%", left: "86%" }, prerequisites: [22], lesson: "DummyChallenge" },
   { id: 24, label: "★", position: { top: "62%", left: "88%" }, prerequisites: [23], lesson: "DummyChallenge" },
 ];
-
 
 const lessonComponents = {
   AtomBuilder,
@@ -183,3 +182,4 @@ export default function MapTree() {
     </div>
   );
 }
+

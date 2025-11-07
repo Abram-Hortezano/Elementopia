@@ -3,8 +3,7 @@ import "../assets/css/login-card.css";
 import FeatureCard from "../components/featurecard";
 import UserService from "../services/UserService";
 import { useNavigate } from "react-router-dom";
-import googleLogo from '../assets/google_Logo.png';
-import { Eye, EyeOff } from "lucide-react"
+import { Eye, EyeOff, User } from "lucide-react";
 
 export default function Login({ onLoginSuccess }) {
   const [username, setUsername] = useState("");
@@ -33,8 +32,7 @@ export default function Login({ onLoginSuccess }) {
   
         setTimeout(() => {
           if (onLoginSuccess) onLoginSuccess();
-  
-          // Role-based redirect
+
           if (response.role === "STUDENT") {
             navigate("/student-home-page");
           } else if (response.role === "TEACHER") {
@@ -55,35 +53,45 @@ export default function Login({ onLoginSuccess }) {
   return (
     <div className="login-container">
       <FeatureCard className="login" description="Sign In" gradient="mixed">
-        <input
-          type= "text"
-          placeholder="Username"
-          className="input-field username"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-        />
+        {/* Username Input (icon inside, same style as password) */}
+        <div className="input-wrapper">
+          <input
+            type="text"
+            placeholder="Username"
+            className="input-field"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+          />
+          <span className="input-icon">
+            <User size={18} />
+          </span>
+        </div>
+
+        {/* Password Input */}
         <div className="input-wrapper">
           <input
             type={showPassword ? "text" : "password"}
             placeholder="Password"
-            className="input-field password"
+            className="input-field"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
           />
-            <span
-              onClick={() => setShowPassword(!showPassword)}
-              className="password-toggle"
-            >
-              {showPassword ? <Eye size={18} /> : <EyeOff size={18} />}
-            </span>
+          <span
+            onClick={() => setShowPassword(!showPassword)}
+            className="input-icon"
+          >
+            {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+          </span>
         </div>
 
         <button className="input-field login-button" onClick={handleLogin}>
           Login
         </button>
+
         {message && <p className="status-message">{message}</p>}
+
         <p className="signup-msg">
-          Don’t have an account?{" "}
+          Don't have an account?{" "}
           <a href="/sign-up" className="signup-link popup">
             Sign Up
           </a>
