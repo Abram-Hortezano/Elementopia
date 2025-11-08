@@ -19,6 +19,9 @@ import IonicChallenge3 from "../components/Student Components/IonicChallenge3";
 import CovalentChallenge1 from "../components/Student Components/CovalentChallenge1";
 import CovalentChallenge2 from "../components/Student Components/CovalentChallenge2";
 import CovalentChallenge3 from "../components/Student Components/CovalentChallenge3";
+import MoleMassChallenge1 from "../components/Student Components/MoleMassChallenge1";
+import MoleMassChallenge2 from "../components/Student Components/MoleMassChallenge2";
+import MoleMassChallenge3 from "../components/Student Components/MoleMassChallenge3";
 import MolarMassChallenge1 from "../components/Student Components/MolarMassChallenge1";
 import MolarMassChallenge2 from "../components/Student Components/MolarMassChallenge2";
 import MolarMassChallenge3 from "../components/Student Components/MolarMassChallenge3";
@@ -55,9 +58,9 @@ const nodes = [
   { id: 14, label: "★", position: { top: "25%", left: "42%" }, prerequisites: [13], lesson: "CovalentChallenge2" },
   { id: 15, label: "★", position: { top: "31%", left: "44%" }, prerequisites: [14], lesson: "CovalentChallenge3" },
   { id: 4, label: "Molar Mass", position: { top: "39%", left: "49%" }, prerequisites: [15], lesson: "MoleMass" },
-  { id: 16, label: "★", position: { top: "46%", left: "52%" }, prerequisites: [4], lesson: "MolarMassChallenge1" },
-  { id: 17, label: "★", position: { top: "53%", left: "54%" }, prerequisites: [16], lesson: "MolarMassChallenge2" },
-  { id: 18, label: "★", position: { top: "60%", left: "56%" }, prerequisites: [17], lesson: "MolarMassChallenge3" },
+  { id: 16, label: "★", position: { top: "46%", left: "52%" }, prerequisites: [4], lesson: "MoleMassChallenge1" },
+  { id: 17, label: "★", position: { top: "53%", left: "54%" }, prerequisites: [16], lesson: "MoleMassChallenge1" },
+  { id: 18, label: "★", position: { top: "60%", left: "56%" }, prerequisites: [17], lesson: "MoleMassChallenge3" },
   { id: 5, label: "Moles to Grams", position: { top: "64%", left: "61%" }, prerequisites: [18], lesson: "MolesToGrams" },
   { id: 19, label: "★", position: { top: "69%", left: "66%" }, prerequisites: [5], lesson: "MTGChallenge1" },
   { id: 20, label: "★", position: { top: "74%", left: "71%" }, prerequisites: [19], lesson: "MTGChallenge2" },
@@ -82,6 +85,9 @@ const lessonComponents = {
   CovalentChallenge2,
   CovalentChallenge3,
   MoleMass,
+  MoleMassChallenge1,
+  MoleMassChallenge2,
+  MoleMassChallenge3,
   MolarMassChallenge1,
   MolarMassChallenge2,
   MolarMassChallenge3,
@@ -97,7 +103,6 @@ const lessonComponents = {
 };
 
 export default function MapTree() {
-  // ✅ Initialize directly from localStorage (before first render)
   const [completedNodes, setCompletedNodes] = useState(() => {
     const saved = localStorage.getItem("completedNodes");
     return saved ? new Set(JSON.parse(saved)) : new Set();
@@ -134,8 +139,8 @@ export default function MapTree() {
         {nodes.map((node) => {
           const isCompleted = completedNodes.has(node.id);
           // 🔓 Unlock everything (commented out prerequisite logic)
-          // const prerequisites = node.prerequisites || [];
-          // const isUnlocked = prerequisites.every((p) => completedNodes.has(p)) || node.id === 1;
+          const prerequisites = node.prerequisites || [];
+          const isUnlocked = prerequisites.every((p) => completedNodes.has(p)) || node.id === 1;
           //const status = isCompleted ? "completed" : isUnlocked ? "unlocked" : "locked";
           const status = isCompleted ? "completed" : "unlocked"; // Always unlocked
 
