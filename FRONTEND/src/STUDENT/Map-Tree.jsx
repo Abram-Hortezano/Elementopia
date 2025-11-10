@@ -22,24 +22,30 @@ import CovalentChallenge3 from "../components/Student Components/CovalentChallen
 import MoleMassChallenge1 from "../components/Student Components/MoleMassChallenge1";
 import MoleMassChallenge2 from "../components/Student Components/MoleMassChallenge2";
 import MoleMassChallenge3 from "../components/Student Components/MoleMassChallenge3";
-import MolarMassChallenge1 from "../components/Student Components/MolarMassChallenge1";
-import MolarMassChallenge2 from "../components/Student Components/MolarMassChallenge2";
-import MolarMassChallenge3 from "../components/Student Components/MolarMassChallenge3";
-import MTGChallenge1 from "../components/Student Components/MTGChallenge1";
-import MTGChallenge2 from "../components/Student Components/MTGChallenge2";
-import MTGChallenge3 from "../components/Student Components/MTGChallenge3";
-import PCChallenge1 from "../components/Student Components/PCChallenge1";
-import PCChallenge2 from "../components/Student Components/PCChallenge2";
-import PCChallenge3 from "../components/Student Components/PCChallenge3";
+// import MTGChallenge1 from "../components/Student Components/MTGChallenge1";
+// import MTGChallenge2 from "../components/Student Components/MTGChallenge2";
+// import MTGChallenge3 from "../components/Student Components/MTGChallenge3";
+// import PCChallenge1 from "../components/Student Components/PCChallenge1";
+// import PCChallenge2 from "../components/Student Components/PCChallenge2";
+// import PCChallenge3 from "../components/Student Components/PCChallenge3";
+
+// --- MODAL IMPORTS ---
+import TutorialModal from "../components/Student Components/TutorialModal";
+import WarningModal from "../components/Student Components/WarningModal";
+import StudentNavbar from "../components/Navbar";
 
 // --- DUMMY CHALLENGE ---
 const DummyChallenge = ({ onComplete }) => (
-  <div className="lesson-inner">
-    <h2>★ Dummy Challenge</h2>
-    <p>This is a placeholder challenge. You can replace it later.</p>
-    <button className="complete-btn" onClick={onComplete}>
-      Mark Complete
-    </button>
+  <div className="lesson-modal covalent-challenge">
+    <div className="info-box">
+      <h3>★ Challenge In Progress</h3>
+      <p>This challenge is still being built. Check back later!</p>
+    </div>
+    <div className="controls-area">
+        <button className="complete-btn" onClick={onComplete}>
+          Mark Complete (Debug)
+        </button>
+    </div>
   </div>
 );
 
@@ -59,7 +65,7 @@ const nodes = [
   { id: 15, label: "★", position: { top: "31%", left: "44%" }, prerequisites: [14], lesson: "CovalentChallenge3" },
   { id: 4, label: "Molar Mass", position: { top: "39%", left: "49%" }, prerequisites: [15], lesson: "MoleMass" },
   { id: 16, label: "★", position: { top: "46%", left: "52%" }, prerequisites: [4], lesson: "MoleMassChallenge1" },
-  { id: 17, label: "★", position: { top: "53%", left: "54%" }, prerequisites: [16], lesson: "MoleMassChallenge1" },
+  { id: 17, label: "★", position: { top: "53%", left: "54%" }, prerequisites: [16], lesson: "MoleMassChallenge2" },
   { id: 18, label: "★", position: { top: "60%", left: "56%" }, prerequisites: [17], lesson: "MoleMassChallenge3" },
   { id: 5, label: "Moles to Grams", position: { top: "64%", left: "61%" }, prerequisites: [18], lesson: "MolesToGrams" },
   { id: 19, label: "★", position: { top: "69%", left: "66%" }, prerequisites: [5], lesson: "MTGChallenge1" },
@@ -88,18 +94,16 @@ const lessonComponents = {
   MoleMassChallenge1,
   MoleMassChallenge2,
   MoleMassChallenge3,
-  MolarMassChallenge1,
-  MolarMassChallenge2,
-  MolarMassChallenge3,
   MolesToGrams,
-  MTGChallenge1,
-  MTGChallenge2,
-  MTGChallenge3,
   PercentComposition,
-  PCChallenge1,
-  PCChallenge2,
-  PCChallenge3,
-  DummyChallenge,
+  
+  // --- FIXED: Mapped missing challenges to DummyChallenge ---
+  MTGChallenge1: DummyChallenge,
+  MTGChallenge2: DummyChallenge,
+  MTGChallenge3: DummyChallenge,
+  PCChallenge1: DummyChallenge,
+  PCChallenge2: DummyChallenge,
+  PCChallenge3: DummyChallenge,
 };
 
 export default function MapTree() {
@@ -108,15 +112,39 @@ export default function MapTree() {
     return saved ? new Set(JSON.parse(saved)) : new Set();
   });
 
+  const [isTutorialVisible, setIsTutorialVisible] = useState(false);
+  
+
+  const [showWarning, setShowWarning] = useState(false);
+  
+  const [dontShowAgain, setDontShowAgain] = useState(() => {
+    return localStorage.getItem("dontShowWarning") === "true";
+  });
   const [activeLesson, setActiveLesson] = useState(null);
 
   useEffect(() => {
     localStorage.setItem("completedNodes", JSON.stringify(Array.from(completedNodes)));
   }, [completedNodes]);
 
+  useEffect(() => {
+    if (completedNodes.size === 0) {
+      setIsTutorialVisible(true);
+    }
+  }, [completedNodes]);
+
+  const handleSetDontShowWarning = () => {
+    localStorage.setItem('dontShowWarning', 'true');
+    setDontShowAgain(true);
+  };
+
   const handleNodeClick = (node, status) => {
-    if ((status === "unlocked" || status === "completed") && node.lesson) {
+    // Check if the lesson component actually exists before opening
+    if ((status === "unlocked" || status === "completed") && node.lesson && lessonComponents[node.lesson]) {
       setActiveLesson(node);
+    } else if ((status === "unlocked" || status === "completed") && node.lesson) {
+        // If the component is missing, log an error and open a dummy
+        console.error(`Missing lesson component for: ${node.lesson}. Loading DummyChallenge.`);
+        setActiveLesson({ ...node, lesson: 'DummyChallenge' });
     }
   };
 
@@ -131,56 +159,93 @@ export default function MapTree() {
     setActiveLesson(null);
   };
 
+  const handleCloseLesson = () => {
+    if (dontShowAgain) {
+      setActiveLesson(null);
+    } else {
+      setShowWarning(true);
+    }
+  };
+
+  const handleCancelClose = () => {
+    setShowWarning(false);
+  };
+
+  const handleConfirmClose = () => {
+    setShowWarning(false);
+    setActiveLesson(null);
+  };
+
   const CurrentLessonComponent = activeLesson ? lessonComponents[activeLesson.lesson] : null;
 
   return (
-    <div className="Map-Container">
-      <div className="Node-Container">
-        {nodes.map((node) => {
-          const isCompleted = completedNodes.has(node.id);
-          // 🔓 Unlock everything (commented out prerequisite logic)
-          const prerequisites = node.prerequisites || [];
-          const isUnlocked = prerequisites.every((p) => completedNodes.has(p)) || node.id === 1;
-          //const status = isCompleted ? "completed" : isUnlocked ? "unlocked" : "locked";
-          const status = isCompleted ? "completed" : "unlocked"; // Always unlocked
+  <>
+      <StudentNavbar />
+      
+      <div className="Map-Container">
+        <button
+          className="help-btn" 
+          onClick={() => setIsTutorialVisible(true)}
+          title="How to Play"
+          >?</button>
+        <div className="Node-Container">
 
-          return (
-            <div
-              key={node.id}
-              className={`node ${status}`}
-              data-type={node.label.includes("★") ? "★" : "lesson"}
-              style={{ top: node.position.top, left: node.position.left }}
-              onClick={() => handleNodeClick(node, status)}
-            >
-              <span className="node-label">{node.label.replace("★ ", "")}</span>
-            </div>
-          );
-        })}
+          {nodes.map((node) => {
+            const isCompleted = completedNodes.has(node.id);
+            const prerequisites = node.prerequisites || [];
+            const isUnlocked = prerequisites.every((p) => completedNodes.has(p)) || node.id === 1;
+            // const status = isCompleted ? "completed" : isUnlocked ? "unlocked" : "locked";
+            const status = isCompleted ? "completed" : "unlocked"; // Always unlocked
 
-        <div
-          className={`end-circle ${
-            nodes.every((n) => completedNodes.has(n.id)) ? "unlocked" : "locked"
-          }`}
-        >
-          END
-        </div>
-      </div>
+            return (
+              <div
+                key={node.id}
+                className={`node ${status}`}
+                data-type={node.label.includes("★") ? "★" : "lesson"}
+                style={{ top: node.position.top, left: node.position.left }}
+                onClick={() => handleNodeClick(node, status)}
+              >
+                <span className="node-label">{node.label.replace("★ ", "")}</span>
+              </div>
+            );
+          })}
 
-      {activeLesson && CurrentLessonComponent && (
-        <div className="lesson-modal">
-          <div className="lesson-inner">
-            <div className="lesson-header">
-              <button className="close-btn" onClick={() => setActiveLesson(null)}>
-                ✖
-              </button>
-            </div>
-            <div className="lesson-body">
-              <CurrentLessonComponent onComplete={handleLessonComplete} />
-            </div>
+          <div
+            className={`end-circle ${
+              nodes.every((n) => completedNodes.has(n.id)) ? "unlocked" : "locked"
+            }`}
+          >
+            END
           </div>
         </div>
-      )}
-    </div>
+
+        {activeLesson && CurrentLessonComponent && (
+          <div className="lesson-modal" onClick={handleCloseLesson}>
+
+            <div className="lesson-inner" onClick={(e) => e.stopPropagation()}>
+              <div className="lesson-header">
+              </div>
+              <div className="lesson-body">
+                <CurrentLessonComponent onComplete={handleLessonComplete} />
+              </div>
+            </div>
+          </div>
+        )}
+
+        {isTutorialVisible && (
+        <TutorialModal onClose={() => setIsTutorialVisible(false)} />
+        )}
+
+        {showWarning && (
+          <WarningModal
+          onConfirm={handleConfirmClose}
+          onCancel={handleCancelClose}
+          onDontShowAgain={handleSetDontShowWarning}
+          />
+        )}
+          
+      </div>
+      
+    </>
   );
 }
-

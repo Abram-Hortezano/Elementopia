@@ -253,3 +253,13 @@
     80% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
+
+.hack-box{
+  line-height: 30px;
+}
+.hack-box h4{
+  color: #9b59b6;
+}
+.hack-box b{
+  color: #64e07f;
+}

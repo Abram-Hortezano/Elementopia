@@ -43,7 +43,7 @@ export default function MoleMassChallenge1({ onComplete }) {
     <div className="lesson-modal mole-mass-challenge">
       <div className="info-box">
         <h3>Challenge 1: Molar Mass of NaCl</h3>
-        <p>Calculate the molar mass for **Sodium Chloride (NaCl)**. Use the calculator and periodic table reference. (Round mass to one or two decimal places).</p>
+        <p>Calculate the molar mass for **Sodium Chloride (NaCl)**. Use the calculator and periodic table reference. (Round mass to one decimal place).</p>
       </div>
 
       <div className="mole-mass-workspace">

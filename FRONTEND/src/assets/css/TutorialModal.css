@@ -1,0 +1,138 @@
+.tutorial-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 2000; /* Make sure it's on top of everything */
+  backdrop-filter: blur(5px);
+  animation: fadeIn 0.3s ease-out;
+}
+
+.tutorial-modal {
+  background: radial-gradient(circle, #2c3e50, #161e27);
+  border: 2px solid #3498db;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+  animation: slideIn 0.4s ease-out forwards;
+  transform: translateY(-50px);
+  opacity: 0;
+}
+
+.tutorial-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 25px;
+  border-bottom: 1px solid rgba(52, 152, 219, 0.5);
+}
+
+.tutorial-header h2 {
+  margin: 0;
+  color: #3498db;
+  font-size: 1.6rem;
+}
+
+.tutorial-header .close-btn {
+  background: none;
+  border: none;
+  color: #fff;
+  font-size: 2rem;
+  font-weight: bold;
+  cursor: pointer;
+  padding: 0 10px;
+}
+.tutorial-header .close-btn:hover {
+  color: #e74c3c;
+}
+
+.tutorial-body {
+  padding: 25px;
+  color: #ecf0f1;
+}
+
+.tutorial-body > p {
+  font-size: 1.1rem;
+  text-align: center;
+  margin-top: 0;
+}
+
+.tutorial-steps {
+  margin-top: 30px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.tutorial-step {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.2);
+  padding: 15px;
+  border-radius: 8px;
+  border-left: 4px solid #3498db;
+}
+
+.step-number {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: #3498db;
+  color: #161e27;
+  font-size: 1.5rem;
+  font-weight: bold;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.step-text h3 {
+  margin: 0 0 5px 0;
+  color: #fff;
+}
+.step-text p {
+  margin: 0;
+  color: #bdc3c7;
+  line-height: 1.4;
+}
+
+.start-btn {
+  display: block;
+  width: 100%;
+  padding: 12px 20px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  border-radius: 8px;
+  border: none;
+  cursor: pointer;
+  color: white;
+  background-color: #27ae60;
+  transition: all 0.3s;
+  margin-top: 30px;
+}
+.start-btn:hover {
+  background-color: #2ecc71;
+  transform: scale(1.02);
+}
+
+
+/* --- Animations --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideIn {
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
