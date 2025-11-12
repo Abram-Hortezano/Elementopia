@@ -8,14 +8,80 @@ import {
 import "../../assets/css/MolesToGramsChallenge.css";
 
 const TILE_DATA = [
+  { id: "H", label: "H", mass: 1.01 },
+  { id: "O", label: "O", mass: 16.0 },
+  { id: "C", label: "C", mass: 12.01 },
   { id: "Na", label: "Na", mass: 22.99 },
   { id: "Cl", label: "Cl", mass: 35.45 },
-  { id: "O", label: "O", mass: 16.0 },
-  { id: "H", label: "H", mass: 1.01 },
-  { id: "C", label: "C", mass: 12.01 },
+  { id: "Ca", label: "Ca", mass: 40.08 },
+];
+
+// Three sequential challenges
+const PROBLEMS = [
+  {
+    title: "Challenge 3-1: Water (H₂O)",
+    instruction: (
+      <>
+        Drag <b>2 H</b> tiles and <b>1 O</b> tile into the beaker to form water.
+      </>
+    ),
+    check: (tiles) => {
+      const hCount = tiles.filter((t) => t.id === "H").length;
+      const oCount = tiles.filter((t) => t.id === "O").length;
+      const totalMass = tiles.reduce((sum, t) => sum + t.mass, 0);
+      const target = 18.02; // g/mol
+      return hCount === 2 && oCount === 1 && Math.abs(totalMass - target) < 0.05;
+    },
+    molarMass: 18.02,
+    moles: 4,
+  },
+  {
+    title: "Challenge 3-2: Methane (CH₄)",
+    instruction: (
+      <>
+        Drag <b>1 C</b> tile and <b>4 H</b> tiles into the beaker to form methane.
+      </>
+    ),
+    check: (tiles) => {
+      const cCount = tiles.filter((t) => t.id === "C").length;
+      const hCount = tiles.filter((t) => t.id === "H").length;
+      const totalMass = tiles.reduce((sum, t) => sum + t.mass, 0);
+      const target = 16.05; // g/mol
+      return cCount === 1 && hCount === 4 && Math.abs(totalMass - target) < 0.05;
+    },
+    molarMass: 16.05,
+    moles: 3,
+  },
+  {
+    title: "Challenge 3-3: Calcium Carbonate (CaCO₃)",
+    instruction: (
+      <>
+        Drag <b>1 Ca</b> tile, <b>1 C</b> tile, and <b>3 O</b> tiles into the
+        beaker to form calcium carbonate.
+      </>
+    ),
+    check: (tiles) => {
+      const caCount = tiles.filter((t) => t.id === "Ca").length;
+      const cCount = tiles.filter((t) => t.id === "C").length;
+      const oCount = tiles.filter((t) => t.id === "O").length;
+      const totalMass = tiles.reduce((sum, t) => sum + t.mass, 0);
+      const target = 100.09; // g/mol
+      return (
+        caCount === 1 &&
+        cCount === 1 &&
+        oCount === 3 &&
+        Math.abs(totalMass - target) < 0.1
+      );
+    },
+    molarMass: 100.09,
+    moles: 2,
+  },
 ];
 
 export default function MolesToGrams3({ onComplete }) {
+  const [currentProblem, setCurrentProblem] = useState(0);
+  const problem = PROBLEMS[currentProblem];
+
   const [droppedTiles, setDroppedTiles] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [feedback, setFeedback] = useState("");
@@ -35,12 +101,8 @@ export default function MolesToGrams3({ onComplete }) {
   };
 
   const handleCheck = () => {
-    const naCount = droppedTiles.filter((t) => t.id === "Na").length;
-    const clCount = droppedTiles.filter((t) => t.id === "Cl").length;
-    const totalMass = droppedTiles.reduce((sum, t) => sum + t.mass, 0);
-    const target = 58.44; // NaCl molar mass
-
-    if (naCount === 1 && clCount === 1 && Math.abs(totalMass - target) < 0.05) {
+    const correct = problem.check(droppedTiles);
+    if (correct) {
       setFeedback("correct");
       setTimeout(() => {
         setFeedback("");
@@ -58,11 +120,22 @@ export default function MolesToGrams3({ onComplete }) {
   };
 
   const handleSubmitAnswer = () => {
-    const correctAnswer = 29.22; // 0.5 mol × 58.44 g/mol
+    const correctAnswer = problem.moles * problem.molarMass;
     const userValue = parseFloat(userAnswer);
     if (Math.abs(userValue - correctAnswer) < 0.1) {
       setAnswerFeedback("correct");
-      setTimeout(onComplete, 1500);
+      setTimeout(() => {
+        if (currentProblem < PROBLEMS.length - 1) {
+          // Go to next problem
+          setDroppedTiles([]);
+          setShowConversion(false);
+          setUserAnswer("");
+          setAnswerFeedback("");
+          setCurrentProblem((p) => p + 1);
+        } else if (onComplete) {
+          onComplete();
+        }
+      }, 1500);
     } else {
       setAnswerFeedback("wrong");
       setTimeout(() => setAnswerFeedback(""), 1000);
@@ -77,11 +150,8 @@ export default function MolesToGrams3({ onComplete }) {
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="lesson-mtg-step mtg-challenge-wrapper">
         <div className="mtg-builder">
-          <h2>Challenge 3: Sodium Chloride (NaCl)</h2>
-          <p>
-            Drag <b>1 Na</b> tile and <b>1 Cl</b> tile into the beaker to form
-            table salt (NaCl).
-          </p>
+          <h2>{problem.title}</h2>
+          <p>{problem.instruction}</p>
 
           <div className="element-bin">
             <h4>Available Elements</h4>
@@ -120,10 +190,11 @@ export default function MolesToGrams3({ onComplete }) {
             <div className="conversion-section slide-in">
               <h3>Now convert moles → grams!</h3>
               <p>
-                You’ve found that NaCl has a molar mass of <b>58.44 g/mol</b>.
+                {problem.title.split(": ")[1]} has a molar mass of{" "}
+                <b>{problem.molarMass} g/mol</b>.
               </p>
               <p>
-                If you have <b>0.5 moles</b> of NaCl, how many grams is that?
+                If you have <b>{problem.moles} moles</b>, how many grams is that?
               </p>
 
               <div className="conversion-input">
@@ -141,7 +212,8 @@ export default function MolesToGrams3({ onComplete }) {
 
               {answerFeedback === "correct" && (
                 <p className="feedback-text correct">
-                  ✅ Correct! 0.5 mol × 58.44 g/mol = 29.22 g
+                  ✅ Correct! {problem.moles} mol × {problem.molarMass} g/mol ={" "}
+                  {(problem.moles * problem.molarMass).toFixed(2)} g
                 </p>
               )}
               {answerFeedback === "wrong" && (
@@ -168,12 +240,7 @@ export default function MolesToGrams3({ onComplete }) {
 function DraggableTile({ tile }) {
   const { attributes, listeners, setNodeRef } = useDraggable({ id: tile.id });
   return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      className="element-tile"
-    >
+    <div ref={setNodeRef} {...listeners} {...attributes} className="element-tile">
       {tile.label}
     </div>
   );

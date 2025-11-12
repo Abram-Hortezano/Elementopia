@@ -18,7 +18,12 @@ function DraggableParticle({ id, type, isHidden, index, total, location }) {
   };
 
   // ✅ Position electrons in orbit only when inside the shell
-  if (location === "shell" && type === "electron" && index !== undefined && total !== undefined) {
+  if (
+    location === "shell" &&
+    type === "electron" &&
+    index !== undefined &&
+    total !== undefined
+  ) {
     const angle = (index / total) * 360;
     const radius = 140;
     const x = radius * Math.cos((angle * Math.PI) / 180);
@@ -54,7 +59,10 @@ function DraggableParticle({ id, type, isHidden, index, total, location }) {
 function DropZone({ id, children, className }) {
   const { setNodeRef, isOver } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={`${className} ${isOver ? "hovering" : ""}`}>
+    <div
+      ref={setNodeRef}
+      className={`${className} ${isOver ? "hovering" : ""}`}
+    >
       {children}
     </div>
   );
@@ -89,8 +97,13 @@ export default function AtomChallengeCore({ challenge, onChallengeComplete }) {
     // ✅ Add two random extra particles
     const particleTypes = ["proton", "neutron", "electron"];
     for (let i = 0; i < 2; i++) {
-      const randomType = particleTypes[Math.floor(Math.random() * particleTypes.length)];
-      generatedParticles[`extra${i + 1}`] = { type: randomType, location: "bin", isExtra: true };
+      const randomType =
+        particleTypes[Math.floor(Math.random() * particleTypes.length)];
+      generatedParticles[`extra${i + 1}`] = {
+        type: randomType,
+        location: "bin",
+        isExtra: true,
+      };
     }
 
     setParticles(generatedParticles);
@@ -168,7 +181,9 @@ export default function AtomChallengeCore({ challenge, onChallengeComplete }) {
 
           <DropZone id="bin" className="parts-bin">
             <h4>Available Parts</h4>
-            <div className="particles-container">{renderParticlesIn("bin")}</div>
+            <div className="particles-container">
+              {renderParticlesIn("bin")}
+            </div>
           </DropZone>
 
           <div className="controls-area">
@@ -180,7 +195,9 @@ export default function AtomChallengeCore({ challenge, onChallengeComplete }) {
       </div>
 
       <DragOverlay>
-        {activeId && <div className={`particle ${activeParticleType} is-dragging`} />}
+        {activeId && (
+          <div className={`particle ${activeParticleType} is-dragging`} />
+        )}
       </DragOverlay>
     </DndContext>
   );

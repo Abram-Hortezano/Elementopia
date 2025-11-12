@@ -15,7 +15,50 @@ const TILE_DATA = [
   { id: "Cl", label: "Cl", mass: 35.45 },
 ];
 
+// Two sequential challenges
+const PROBLEMS = [
+  {
+    title: "Challenge 2-1: Carbon Dioxide (CO₂)",
+    instruction: (
+      <>
+        Drag <b>1 C</b> tile and <b>2 O</b> tiles into the beaker to form
+        carbon dioxide.
+      </>
+    ),
+    check: (tiles) => {
+      const cCount = tiles.filter((t) => t.id === "C").length;
+      const oCount = tiles.filter((t) => t.id === "O").length;
+      const totalMass = tiles.reduce((sum, t) => sum + t.mass, 0);
+      const target = 44.01; // g/mol
+      return cCount === 1 && oCount === 2 && Math.abs(totalMass - target) < 0.05;
+    },
+    molarMass: 44.01,
+    moles: 2,
+  },
+  {
+    title: "Challenge 2-2: Sodium Chloride (NaCl)",
+    instruction: (
+      <>
+        Drag <b>1 Na</b> tile and <b>1 Cl</b> tile into the beaker to form
+        sodium chloride.
+      </>
+    ),
+    check: (tiles) => {
+      const naCount = tiles.filter((t) => t.id === "Na").length;
+      const clCount = tiles.filter((t) => t.id === "Cl").length;
+      const totalMass = tiles.reduce((sum, t) => sum + t.mass, 0);
+      const target = 58.44; // g/mol
+      return naCount === 1 && clCount === 1 && Math.abs(totalMass - target) < 0.05;
+    },
+    molarMass: 58.44,
+    moles: 3,
+  },
+];
+
 export default function MolesToGrams2({ onComplete }) {
+  const [currentProblem, setCurrentProblem] = useState(0);
+  const problem = PROBLEMS[currentProblem];
+
   const [droppedTiles, setDroppedTiles] = useState([]);
   const [activeId, setActiveId] = useState(null);
   const [feedback, setFeedback] = useState("");
@@ -35,12 +78,8 @@ export default function MolesToGrams2({ onComplete }) {
   };
 
   const handleCheck = () => {
-    const cCount = droppedTiles.filter((t) => t.id === "C").length;
-    const oCount = droppedTiles.filter((t) => t.id === "O").length;
-    const totalMass = droppedTiles.reduce((sum, t) => sum + t.mass, 0);
-    const target = 44.01; // CO₂ molar mass
-
-    if (cCount === 1 && oCount === 2 && Math.abs(totalMass - target) < 0.05) {
+    const correct = problem.check(droppedTiles);
+    if (correct) {
       setFeedback("correct");
       setTimeout(() => {
         setFeedback("");
@@ -58,11 +97,22 @@ export default function MolesToGrams2({ onComplete }) {
   };
 
   const handleSubmitAnswer = () => {
-    const correctAnswer = 88.02; // 2 mol × 44.01 g/mol
+    const correctAnswer = problem.moles * problem.molarMass;
     const userValue = parseFloat(userAnswer);
     if (Math.abs(userValue - correctAnswer) < 0.1) {
       setAnswerFeedback("correct");
-      setTimeout(onComplete, 1500);
+      setTimeout(() => {
+        if (currentProblem < PROBLEMS.length - 1) {
+          // Move to next problem
+          setDroppedTiles([]);
+          setShowConversion(false);
+          setUserAnswer("");
+          setAnswerFeedback("");
+          setCurrentProblem((p) => p + 1);
+        } else if (onComplete) {
+          onComplete();
+        }
+      }, 1500);
     } else {
       setAnswerFeedback("wrong");
       setTimeout(() => setAnswerFeedback(""), 1000);
@@ -77,11 +127,8 @@ export default function MolesToGrams2({ onComplete }) {
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="lesson-mtg-step mtg-challenge-wrapper">
         <div className="mtg-builder">
-          <h2>Challenge 2: Carbon Dioxide (CO₂)</h2>
-          <p>
-            Drag <b>1 C</b> tile and <b>2 O</b> tiles into the beaker to form
-            carbon dioxide.
-          </p>
+          <h2>{problem.title}</h2>
+          <p>{problem.instruction}</p>
 
           <div className="element-bin">
             <h4>Available Elements</h4>
@@ -120,10 +167,11 @@ export default function MolesToGrams2({ onComplete }) {
             <div className="conversion-section slide-in">
               <h3>Now convert moles → grams!</h3>
               <p>
-                CO₂ has a molar mass of <b>44.01 g/mol</b>.
+                {problem.title.split(": ")[1]} has a molar mass of{" "}
+                <b>{problem.molarMass} g/mol</b>.
               </p>
               <p>
-                If you have <b>2 moles</b> of CO₂, how many grams is that?
+                If you have <b>{problem.moles} moles</b>, how many grams is that?
               </p>
 
               <div className="conversion-input">
@@ -141,7 +189,8 @@ export default function MolesToGrams2({ onComplete }) {
 
               {answerFeedback === "correct" && (
                 <p className="feedback-text correct">
-                  ✅ Correct! 2 mol × 44.01 g/mol = 88.02 g
+                  ✅ Correct! {problem.moles} mol × {problem.molarMass} g/mol ={" "}
+                  {(problem.moles * problem.molarMass).toFixed(2)} g
                 </p>
               )}
               {answerFeedback === "wrong" && (

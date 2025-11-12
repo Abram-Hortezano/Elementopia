@@ -59,15 +59,7 @@
     animation: fade-in-text 1s ease-out;
 }
 
-<<<<<<< HEAD
-<<<<<<< HEAD
-.intro-title {
-=======
 .intro-cb-title {
->>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15
-=======
-.intro-cb-title {
->>>>>>> dev-Dakay
     font-size: 2.5rem;
     color: #2ecc71;
     margin-bottom: 1rem;
@@ -93,14 +85,7 @@
     color: white;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
     margin-top: 1rem;
->>>>>>> 452962dd8f3e113f23cebcf2fc5e4b9ac0f81e15
-=======
-    margin-top: 1rem;
->>>>>>> dev-Dakay
 }
 
 .intro-start-btn:hover {
@@ -146,6 +131,9 @@
     gap: -20px; /* Negative gap for overlap */
     transition: border-color 0.3s ease;
 }
+.workspace .atom-wrapper{
+    margin: 0 -70px;
+}
 
 .workspace.hovering {
     border-color: #2ecc71;
@@ -169,6 +157,20 @@
 }
 
 /* --- Atom Styling --- */
+
+/* NEW: Wrapper for Drag and Hover Transformations */
+.atom-wrapper {
+    position: relative;
+    display: flex; /* Ensures wrapper can align content if needed */
+    justify-content: center;
+    align-items: center;
+    transition: transform 0.2s ease;
+}
+
+.atom-wrapper:hover {
+    transform: scale(1.1); /* Hover applied to wrapper */
+}
+
 .atom {
     border-radius: 50%;
     cursor: grab;
@@ -180,12 +182,20 @@
     font-weight: bold;
     color: white;
     font-size: 1.5rem;
-    transition: transform 0.2s ease;
+    /* REMOVED: transition: transform 0.2s ease; */
     position: relative;
+    /* Reset hover on atom itself */
+    transform: none !important;
 }
 
-.atom:hover {
-    transform: scale(1.1);
+/* FIX: Rule to hide the original atom circle but keep the label visible on drag */
+.atom.is-hidden {
+    visibility: hidden;
+}
+
+/* Ensure the symbol content is styled */
+.atom-label-content {
+    z-index: 2;
 }
 
 .atom::before {
@@ -201,7 +211,6 @@
     height: 80px;
     background-color: #e74c3c;
 }
-.atom.oxygen::after { content: 'O'; }
 .atom.oxygen::before { width: 130px; height: 130px; }
 
 
@@ -209,9 +218,9 @@
     width: 50px;
     height: 50px;
     background-color: #ecf0f1;
-    color: #34495e;
+    /* FIX: Hydrogen needs dark text for visibility */
+    color: #34495e; 
 }
-.atom.hydrogen::after { content: 'H'; }
 .atom.hydrogen::before { width: 80px; height: 80px; }
 
 .atom.carbon {
@@ -219,7 +228,6 @@
     height: 70px;
     background-color: #34495e;
 }
-.atom.carbon::after { content: 'C'; }
 .atom.carbon::before { width: 140px; height: 140px; }
 
 
@@ -274,6 +282,7 @@
 }
 
 /* --- Drag Overlay Style --- */
+/* The drag overlay itself is styled by the base .atom and .is-dragging */
 .atom.is-dragging {
     cursor: grabbing;
     z-index: 9999;

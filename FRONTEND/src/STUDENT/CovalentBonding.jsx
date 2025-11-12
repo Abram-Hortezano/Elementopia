@@ -143,7 +143,14 @@ export default function CovalentBonding({ onComplete }) {
                     )}
                 </div>
             </div>
-            <DragOverlay>{activeId ? (<div className={`atom ${activeAtomType} is-dragging`}></div>) : null}</DragOverlay>
+            {/* The DragOverlay should show the symbol */}
+            <DragOverlay>
+                {activeId ? (
+                    <div className={`atom ${activeAtomType} is-dragging`}>
+                        {activeAtomType === 'oxygen' ? 'O' : activeAtomType === 'hydrogen' ? 'H' : 'C'}
+                    </div>
+                ) : null}
+            </DragOverlay>
         </DndContext>
     );
 }
@@ -172,12 +179,32 @@ function InfoBox({ title, description }) {
 
 function DraggableAtom({ id, type, isHidden }) {
     const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
-    const style = {
+    
+    // Determine the symbol
+    let symbol = '';
+    if (type === 'oxygen') symbol = 'O';
+    else if (type === 'hydrogen') symbol = 'H';
+    else if (type === 'carbon') symbol = 'C';
+
+    const dragStyle = {
         transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
-        visibility: isHidden ? 'hidden' : 'visible',
     };
+    
+    // FIX: Use an outer wrapper for drag ref and an inner div for hiding the circle
     return (
-        <div ref={setNodeRef} style={style} {...listeners} {...attributes} className={`atom ${type}`}></div>
+        <div 
+            ref={setNodeRef} 
+            style={dragStyle} 
+            {...listeners} 
+            {...attributes} 
+            className={`atom-wrapper`} // New wrapper class for drag/hover
+        >
+            <div 
+                className={`atom ${type} ${isHidden ? 'is-hidden' : ''}`} // Inner atom with hide logic
+            >
+                <span className="atom-label-content">{symbol}</span> 
+            </div>
+        </div>
     );
 }
 

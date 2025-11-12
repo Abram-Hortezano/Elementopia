@@ -1,12 +1,42 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { useState, useEffect } from "react";
 import "../assets/css/MolesToGrams.css";
 
 export default function MolesToGrams({ onContinue = () => {} }) {
-  const [step, setStep] = useState(0); // 0 = Intro, 1 = Intro example text, 2 = Build example, 3 = Calculation & finish
+  const [step, setStep] = useState(0);
+  const [showAnimation, setShowAnimation] = useState(false);
+  const [animationDone, setAnimationDone] = useState(false);
+  const [count, setCount] = useState(0);
 
   const nextStep = () => setStep((s) => Math.min(s + 1, 3));
   const prevStep = () => setStep((s) => Math.max(s - 1, 0));
+
+  useEffect(() => {
+    if (showAnimation) {
+      let c = 0;
+      let timeoutId1, timeoutId2;
+      
+      const interval = setInterval(() => {
+        c += 2;
+        setCount(c);
+        if (c >= 32) {
+          clearInterval(interval);
+          timeoutId1 = setTimeout(() => {
+            setAnimationDone(true);
+            // Auto-close after animation completes
+            timeoutId2 = setTimeout(() => {
+              onContinue();
+            }, 2000);
+          }, 800);
+        }
+      }, 200);
+      
+      return () => {
+        clearInterval(interval);
+        if (timeoutId1) clearTimeout(timeoutId1);
+        if (timeoutId2) clearTimeout(timeoutId2);
+      };
+    }
+  }, [showAnimation]);
 
   return (
     <div className="lesson-mtg-container">
@@ -34,9 +64,9 @@ export default function MolesToGrams({ onContinue = () => {} }) {
         <div className="lesson-mtg-step mtg-card">
           <h3>Example: Methane (CH₄)</h3>
           <p>
-            In this guided example, we’ll determine the molar mass of methane
+            In this guided example, we'll determine the molar mass of methane
             and then convert moles to grams. Methane has the formula{" "}
-            <strong>CH₄</strong> — that’s 1 Carbon atom and 4 Hydrogen atoms.
+            <strong>CH₄</strong> — that's 1 Carbon atom and 4 Hydrogen atoms.
           </p>
 
           <div className="step-controls">
@@ -54,7 +84,7 @@ export default function MolesToGrams({ onContinue = () => {} }) {
       {step === 2 && (
         <div className="lesson-mtg-step mtg-card">
           <h3>Step 1 — Build CH₄ (Visual Breakdown)</h3>
-          <p>We’ll list each atom and calculate its contribution to molar mass.</p>
+          <p>We'll list each atom and calculate its contribution to molar mass.</p>
 
           <div className="example-beaker">
             <div className="example-elements">
@@ -109,35 +139,73 @@ export default function MolesToGrams({ onContinue = () => {} }) {
         </div>
       )}
 
-      {/* ---------- Step 3: Conversion and finish ---------- */}
+      {/* ---------- Step 3: Conversion + Animation ---------- */}
       {step === 3 && (
         <div className="lesson-mtg-step mtg-card">
           <h3>Step 2 — Convert Moles → Grams</h3>
-          <p>
-            Use the formula: <code>mass = moles × molar mass</code>
-          </p>
+          {!showAnimation && (
+            <>
+              <p>
+                Use the formula: <code>mass = moles × molar mass</code>
+              </p>
+              <div className="calculation">
+                <p>
+                  Example: <strong>2.00 moles</strong> of CH₄ ×{" "}
+                  <strong>16.042 g/mol</strong> ={" "}
+                  <strong>{(2 * 16.042).toFixed(2)} g</strong>
+                </p>
+              </div>
 
-          <div className="calculation">
-            <p>
-              Example: <strong>2.00 moles</strong> of CH₄ ×{" "}
-              <strong>16.042 g/mol</strong> ={" "}
-              <strong>{(2 * 16.042).toFixed(2)} g</strong>
-            </p>
-          </div>
+              <div className="step-controls">
+                <button className="nav-btn" onClick={prevStep}>
+                  Back
+                </button>
+                <button
+                  className="nav-btn"
+                  onClick={() => setShowAnimation(true)}
+                >
+                  Show Animation
+                </button>
+              </div>
+            </>
+          )}
 
-          <div className="step-controls">
-            <button className="nav-btn" onClick={prevStep}>
-              Back
-            </button>
-            <button
-              className="continue-btn"
-              onClick={() => {
-                onContinue(); // move to next challenge or page
-              }}
-            >
-              Continue to Challenge
-            </button>
-          </div>
+          {showAnimation && (
+            <div className="animation-section fade-in">
+              <div className="compound-display">
+                <span className="compound-label">Compound: </span>
+                <span className="compound-formula">CH₄</span>
+                <span className="compound-mass"> (Molar Mass: 16.042 g/mol)</span>
+              </div>
+              
+              <div className="beaker-row">
+                <div className="beaker moles">
+                  <div className="beaker-label">Moles</div>
+                  <div className="moles-display">2.00 mol</div>
+                  <div className="liquid-level"></div>
+                </div>
+
+                <div className="transfer-arrow">
+                  <div className="arrow-head">→</div>
+                  <div className="flowing-dots">
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                    <span className="dot"></span>
+                  </div>
+                </div>
+
+                <div className="beaker grams">
+                  <div className="beaker-label">Grams</div>
+                  <div className="grams-display">
+                    {count.toFixed(1)} g
+                  </div>
+                  <div className="liquid-level filling"></div>
+                </div>
+              </div>
+
+              <p className="formula-float">mass = moles × molar mass</p>
+            </div>
+          )}
         </div>
       )}
     </div>
