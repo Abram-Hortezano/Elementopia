@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/lessons";
+// const API_URL = "https://elementopia.onrender.com/api/lessons";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
@@ -12,7 +13,6 @@ const getAuthHeader = () => {
   return { Authorization: `Bearer ${token}` };
 };
 
-
 const LessonService = {
   // Fetch all Lessons
   getAllLessons: async () => {
@@ -22,7 +22,10 @@ const LessonService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch all lessons:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch all lessons:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -35,7 +38,10 @@ const LessonService = {
       });
       return response.data;
     } catch (error) {
-      console.error(`Failed to fetch lesson with ID ${id}:`, error.response?.data || error.message);
+      console.error(
+        `Failed to fetch lesson with ID ${id}:`,
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -48,7 +54,10 @@ const LessonService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to create lesson:", error.response?.data || error.message);
+      console.error(
+        "Failed to create lesson:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -56,12 +65,19 @@ const LessonService = {
   // Add Topic to Lesson
   addTopic: async (lessonId, topicData) => {
     try {
-      const response = await axios.post(`${API_URL}/${lessonId}/addTopic`, topicData, {
-        headers: getAuthHeader(),
-      });
+      const response = await axios.post(
+        `${API_URL}/${lessonId}/addTopic`,
+        topicData,
+        {
+          headers: getAuthHeader(),
+        }
+      );
       return response.data;
     } catch (error) {
-      console.error("Failed to add topic:", error.response?.data || error.message);
+      console.error(
+        "Failed to add topic:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -69,14 +85,19 @@ const LessonService = {
   // Add Subtopic to Topic in a Lesson
   addSubtopic: async (lessonId, topicId, subtopicData) => {
     try {
-      const response = await axios.post(`${API_URL}/${lessonId}/topic/${topicId}/add-subtopic`,subtopicData,
+      const response = await axios.post(
+        `${API_URL}/${lessonId}/topic/${topicId}/add-subtopic`,
+        subtopicData,
         {
           headers: getAuthHeader(),
         }
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to add subtopic:", error.response?.data || error.message);
+      console.error(
+        "Failed to add subtopic:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -93,7 +114,10 @@ const LessonService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to update topic:", error.response?.data || error.message);
+      console.error(
+        "Failed to update topic:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -109,13 +133,21 @@ const LessonService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to delete topic:", error.response?.data || error.message);
+      console.error(
+        "Failed to delete topic:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
 
   // Update Subtopic in a Topic
-  updateSubtopic: async (lessonId, topicId, subtopicId, updatedSubtopicData) => {
+  updateSubtopic: async (
+    lessonId,
+    topicId,
+    subtopicId,
+    updatedSubtopicData
+  ) => {
     try {
       const response = await axios.put(
         `${API_URL}/${lessonId}/topic/${topicId}/subtopic/${subtopicId}/update`,
@@ -126,7 +158,10 @@ const LessonService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to update subtopic:", error.response?.data || error.message);
+      console.error(
+        "Failed to update subtopic:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -142,7 +177,10 @@ const LessonService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to delete subtopic:", error.response?.data || error.message);
+      console.error(
+        "Failed to delete subtopic:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },

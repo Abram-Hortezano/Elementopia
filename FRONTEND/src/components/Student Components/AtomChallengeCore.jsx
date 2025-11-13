@@ -60,6 +60,117 @@ function DropZone({ id, children, className }) {
   );
 }
 
+// --- Particle Orb ---
+function ParticleOrb({ type, count, size = "small" }) {
+  const orbSize = {
+    tiny: "35px",
+    small: "45px",
+    medium: "55px"
+  }[size];
+
+  const orbStyle = {
+    width: orbSize,
+    height: orbSize,
+    background: type === "proton" 
+      ? "radial-gradient(circle, #ff6b6b, #e74c3c)"
+      : "radial-gradient(circle, #bdc3c7, #95a5a6)",
+    borderRadius: "50%",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    alignItems: "center",
+    color: "white",
+    fontWeight: "bold",
+    boxShadow: type === "proton"
+      ? "0 0 15px rgba(231, 76, 60, 0.6)"
+      : "0 0 15px rgba(149, 165, 166, 0.6)",
+    border: `2px solid ${type === "proton" ? "#ff7979" : "#ecf0f1"}`,
+    margin: "3px",
+    position: "relative"
+  };
+
+  return (
+    <div className="particle-orb" style={orbStyle}>
+      <div className="orb-count" style={{ 
+        fontSize: size === "tiny" ? "1rem" : "1.2rem",
+        lineHeight: "1.1"
+      }}>
+        {count}
+      </div>
+      <div className="orb-label" style={{ 
+        fontSize: size === "tiny" ? "0.5rem" : "0.6rem",
+        opacity: 0.9,
+        marginTop: "1px"
+      }}>
+        {type === "proton" ? "p" : "n"}
+      </div>
+    </div>
+  );
+}
+
+// --- Combined Nucleus Display ---
+function CombinedNucleusDisplay({ protons, neutrons }) {
+  // Create separate orbs for protons and neutrons
+  const protonOrbs = [];
+  const neutronOrbs = [];
+  
+  // Split protons into groups of max 10
+  let remainingProtons = protons;
+  while (remainingProtons > 0) {
+    const groupCount = Math.min(remainingProtons, 10);
+    protonOrbs.push(groupCount);
+    remainingProtons -= groupCount;
+  }
+  
+  // Split neutrons into groups of max 10
+  let remainingNeutrons = neutrons;
+  while (remainingNeutrons > 0) {
+    const groupCount = Math.min(remainingNeutrons, 10);
+    neutronOrbs.push(groupCount);
+    remainingNeutrons -= groupCount;
+  }
+
+  const getOrbSize = (count, index, total) => {
+    if (total === 1 && count <= 5) return "small";
+    if (count >= 8) return "small";
+    return "tiny";
+  };
+
+  return (
+    <div className="combined-nucleus">
+      <div className="nucleus-orbs-container">
+        {/* Proton Orbs */}
+        {protonOrbs.length > 0 && (
+          <div className="proton-orbs-group">
+            {protonOrbs.map((count, index) => (
+              <ParticleOrb
+                key={`proton-${index}`}
+                type="proton"
+                count={count}
+                size={getOrbSize(count, index, protonOrbs.length)}
+              />
+            ))}
+          </div>
+        )}
+        
+        {/* Neutron Orbs */}
+        {neutronOrbs.length > 0 && (
+          <div className="neutron-orbs-group">
+            {neutronOrbs.map((count, index) => (
+              <ParticleOrb
+                key={`neutron-${index}`}
+                type="neutron"
+                count={count}
+                size={getOrbSize(count, index, neutronOrbs.length)}
+              />
+            ))}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // --- Main Challenge Component ---
 export default function AtomChallengeCore({ challenge, onChallengeComplete }) {
   const [particles, setParticles] = useState({});
@@ -134,10 +245,37 @@ export default function AtomChallengeCore({ challenge, onChallengeComplete }) {
     }
   };
 
+  // ✅ Function to count particles in nucleus
+  const getNucleusParticles = () => {
+    const nucleusParticles = Object.values(particles).filter(p => p.location === "nucleus");
+    const protons = nucleusParticles.filter(p => p.type === "proton").length;
+    const neutrons = nucleusParticles.filter(p => p.type === "neutron").length;
+    const electrons = nucleusParticles.filter(p => p.type === "electron").length;
+    
+    return { protons, neutrons, electrons, total: protons + neutrons + electrons };
+  };
+
   const renderParticlesIn = (location) => {
+    // ✅ For nucleus, check if we should show combined view
+    if (location === "nucleus") {
+      const nucleusStats = getNucleusParticles();
+      
+      // Show combined view when total particles exceed 3
+      if (nucleusStats.total > 3) {
+        return (
+          <CombinedNucleusDisplay 
+            protons={nucleusStats.protons} 
+            neutrons={nucleusStats.neutrons} 
+          />
+        );
+      }
+    }
+
+    // ✅ Regular rendering for other locations or when nucleus has 3 or fewer particles
     const particlesInLocation = Object.entries(particles).filter(
       ([, p]) => p.location === location
     );
+    
     return particlesInLocation.map(([id, p], index) => (
       <DraggableParticle
         key={id}

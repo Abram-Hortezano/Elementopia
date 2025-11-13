@@ -34,37 +34,34 @@ export default function CovalentBonding({ onComplete }) {
         const { over, active } = event;
         setActiveId(null);
         if (!over) return;
-        
+
         const atomId = active.id;
         const targetZone = over.id;
-    
-        // Use callbacks for both state setters to avoid stale state issues
+
         setAtoms(prevAtoms => {
             const updatedAtoms = { ...prevAtoms, [atomId]: { ...prevAtoms[atomId], location: targetZone } };
-    
-            // Check for progress based on the freshly updated atoms state
+
             setPromptStep(currentStep => {
                 const placedOxygen = Object.values(updatedAtoms).some(a => a.type === 'oxygen' && a.location === 'workspace');
-                // Switched to Object.entries to get the atom's ID for the check
-                const placedHydrogens = Object.entries(updatedAtoms).filter(([id, atom]) => 
-                    atom.type === 'hydrogen' && 
-                    atom.location === 'workspace' && 
+                const placedHydrogens = Object.entries(updatedAtoms).filter(([id, atom]) =>
+                    atom.type === 'hydrogen' &&
+                    atom.location === 'workspace' &&
                     (id === 'h1' || id === 'h2')
                 ).length;
-    
+
                 if (currentStep === 1 && placedOxygen) return 2;
                 if (currentStep === 2 && placedHydrogens === 1) return 3;
                 if (currentStep === 3 && placedHydrogens === 2) return 4;
-                
-                return currentStep; // No change
+
+                return currentStep;
             });
-    
+
             return updatedAtoms;
         });
     }
 
     const advanceStep = () => setPromptStep(prev => prev + 1);
-    
+
     const beginChallenge = () => {
         setPromptStep(5);
         setAtoms(prev => {
@@ -93,12 +90,11 @@ export default function CovalentBonding({ onComplete }) {
             .filter(([, a]) => a.location === location)
             .map(([id, a]) => <DraggableAtom key={id} id={id} type={a.type} isHidden={id === activeId} />);
     };
-    
+
     const activeAtomType = activeId ? atoms[activeId].type : null;
     const isChallenge = promptStep >= 5;
     const tutorialComplete = promptStep === 4;
 
-    // Filter atoms in the workspace to control their render order
     const workspaceAtoms = Object.entries(atoms).filter(([, a]) => a.location === 'workspace');
     const workspaceOxygen = workspaceAtoms.find(([id, a]) => a.type === 'oxygen' && (id === 'o1'));
     const workspaceHydrogens = workspaceAtoms.filter(([id, a]) => a.type === 'hydrogen' && (id === 'h1' || id === 'h2'));
@@ -110,18 +106,27 @@ export default function CovalentBonding({ onComplete }) {
     return (
         <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
             <div className="lesson-modal covalent-bonding">
-                <InfoBox key={promptStep} title={prompts[promptStep].title} description={prompts[promptStep].description}/>
-                
-                <DropZone id="workspace" className={`workspace ${isChallenge ? 'challenge-grid' : ''}`}>
-                    {/* Explicitly render Hydrogens first, then Oxygen, then the other Hydrogen to force H-O-H structure */}
-                    {!isChallenge && workspaceHydrogens[0] && <DraggableAtom key={workspaceHydrogens[0][0]} id={workspaceHydrogens[0][0]} type='hydrogen' isHidden={workspaceHydrogens[0][0] === activeId} />}
-                    {!isChallenge && workspaceOxygen && <DraggableAtom key={workspaceOxygen[0]} id={workspaceOxygen[0]} type='oxygen' isHidden={workspaceOxygen[0] === activeId} />}
-                    {!isChallenge && workspaceHydrogens[1] && <DraggableAtom key={workspaceHydrogens[1][0]} id={workspaceHydrogens[1][0]} type='hydrogen' isHidden={workspaceHydrogens[1][0] === activeId} />}
-                    
-                    {/* Render challenge atoms normally into the grid */}
-                    {isChallenge && renderAtomsIn('workspace')}
+                <InfoBox key={promptStep} title={prompts[promptStep].title} description={prompts[promptStep].description} />
+
+                {/* --- WORKSPACE --- */}
+                <DropZone id="workspace" className="workspace">
+                    {Object.entries(atoms)
+                        .filter(([, atom]) => atom.location === "workspace")
+                        .map(([id, atom], index) => {
+                            const isCentral = atom.type === "carbon";
+                            return (
+                                <div
+                                    key={id}
+                                    className={`atom ${atom.type} ${isCentral ? "central-atom" : "surround-atom"
+                                        }`}
+                                >
+                                    {atom.type === "carbon" && "C"}
+                                    {atom.type === "hydrogen" && "H"}
+                                    {atom.type === "oxygen" && "O"}
+                                </div>
+                            );
+                        })}
                 </DropZone>
-                
                 <DropZone id={isChallenge ? 'challenge-bin' : 'bin'} className="parts-bin">
                     <h3>{isChallenge ? 'Challenge Parts' : 'Tutorial Parts'}</h3>
                     {promptStep > 0 && (
@@ -143,10 +148,11 @@ export default function CovalentBonding({ onComplete }) {
                     )}
                 </div>
             </div>
-            <DragOverlay>{activeId ? (<div className={`atom ${activeAtomType} is-dragging`}></div>) : null}</DragOverlay>
+            <DragOverlay>{activeId ? (<div className={`atom ${activeAtomType} is-dragging`}>{activeAtomType === 'oxygen' ? 'O' : activeAtomType === 'hydrogen' ? 'H' : 'C'}</div>) : null}</DragOverlay>
         </DndContext>
     );
 }
+
 // --- Reusable Components ---
 
 function IntroScreen({ onStart }) {
@@ -177,7 +183,17 @@ function DraggableAtom({ id, type, isHidden }) {
         visibility: isHidden ? 'hidden' : 'visible',
     };
     return (
-        <div ref={setNodeRef} style={style} {...listeners} {...attributes} className={`atom ${type}`}></div>
+        <div
+            ref={setNodeRef}
+            style={style}
+            {...listeners}
+            {...attributes}
+            className={`atom ${type}`}
+        >
+            {type === 'oxygen' && 'O'}
+            {type === 'hydrogen' && 'H'}
+            {type === 'carbon' && 'C'}
+        </div>
     );
 }
 

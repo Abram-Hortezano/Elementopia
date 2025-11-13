@@ -33,16 +33,32 @@ export default function StudentProgressModal({ isOpen, onClose, student }) {
   ];
 
   const achievements = [
-    { id: 1, name: "First Experiment", description: "Completed first experiment", date: "2023-11-25" },
-    { id: 2, name: "Perfect Score", description: "Achieved 100% on a quiz", date: "2023-12-01" },
-    { id: 3, name: "Quick Learner", description: "Completed 3 experiments in a week", date: "2023-12-08" },
+    {
+      id: 1,
+      name: "First Experiment",
+      description: "Completed first experiment",
+      date: "2023-11-25",
+    },
+    {
+      id: 2,
+      name: "Perfect Score",
+      description: "Achieved 100% on a quiz",
+      date: "2023-12-01",
+    },
+    {
+      id: 3,
+      name: "Quick Learner",
+      description: "Completed 3 experiments in a week",
+      date: "2023-12-08",
+    },
   ];
 
   const overallProgress = Math.round(
-    experiments.reduce((sum, exp) => sum + exp.score, 0) / (experiments.length || 1)
+    experiments.reduce((sum, exp) => sum + exp.score, 0) /
+      (experiments.length || 1)
   );
 
-//   if (!isOpen) return null;
+  //   if (!isOpen) return null;
 
   return (
     <div className="modal-overlay">
@@ -59,19 +75,26 @@ export default function StudentProgressModal({ isOpen, onClose, student }) {
               <span>{overallProgress}%</span>
             </div>
             <div className="progress-bar">
-              <div className="progress-fill" style={{ width: `${overallProgress}%` }}></div>
+              <div
+                className="progress-fill"
+                style={{ width: `${overallProgress}%` }}
+              ></div>
             </div>
           </div>
 
           <div className="tabs-list">
             <button
-              className={`tab-trigger ${activeTab === "experiments" ? "active-experiments" : ""}`}
+              className={`tab-trigger ${
+                activeTab === "experiments" ? "active-experiments" : ""
+              }`}
               onClick={() => setActiveTab("experiments")}
             >
               Experiments
             </button>
             <button
-              className={`tab-trigger ${activeTab === "achievements" ? "active-achievements" : ""}`}
+              className={`tab-trigger ${
+                activeTab === "achievements" ? "active-achievements" : ""
+              }`}
               onClick={() => setActiveTab("achievements")}
             >
               Achievements
@@ -96,7 +119,10 @@ export default function StudentProgressModal({ isOpen, onClose, student }) {
                       <div className="score-badge">Score: {exp.score}%</div>
                     </div>
                     <div className="score-bar">
-                      <div className="score-fill" style={{ width: `${exp.score}%` }}></div>
+                      <div
+                        className="score-fill"
+                        style={{ width: `${exp.score}%` }}
+                      ></div>
                     </div>
                   </div>
                 ))}
@@ -137,7 +163,9 @@ export default function StudentProgressModal({ isOpen, onClose, student }) {
         </div>
 
         <div className="modal-footer">
-          <button onClick={onClose} className="close-btn">Close</button>
+          <button onClick={onClose} className="close-btn">
+            Close
+          </button>
         </div>
       </div>
     </div>

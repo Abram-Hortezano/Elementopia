@@ -1,4 +1,3 @@
-/* --- Keyframe Animations --- */
 @keyframes fadeIn {
     from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
     to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
@@ -21,7 +20,7 @@
     75% { transform: translateX(5px); }
 }
 
-/* --- Main Modal Styling --- */
+/* --- Main Modal --- */
 .lesson-modal.covalent-bonding {
     position: fixed;
     top: 50%;
@@ -36,6 +35,7 @@
     border-radius: 15px;
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
     backdrop-filter: blur(5px);
+    -webkit-backdrop-filter: blur(5px);
     display: flex;
     flex-direction: column;
     justify-content: space-between;
@@ -43,11 +43,11 @@
     padding: 20px;
     color: white;
     font-family: sans-serif;
-    z-index: 100;
+    z-index: 1000;
     animation: fadeIn 0.5s ease-out;
 }
 
-/* --- Intro Screen Styling --- */
+/* --- Intro Screen --- */
 .intro-screen {
     display: flex;
     flex-direction: column;
@@ -88,15 +88,18 @@
     margin-top: 1rem;
 }
 
-.intro-start-btn:hover {
+.intro-start-btn:hover,
+.intro-start-btn:focus {
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6);
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
 }
 
-/* --- Info Box Styling --- */
+/* --- Info Box --- */
 .info-box {
     width: 100%;
-    height: 20%;
+    min-height: 20%;
     text-align: center;
     padding: 10px 20px;
     background-color: rgba(0, 0, 0, 0.2);
@@ -118,18 +121,59 @@
     color: #ecf0f1;
 }
 
-/* --- Workspace and Bin Styling --- */
+/* --- Workspace and Bin --- */
 .workspace {
+    position: relative;
     width: 100%;
-    height: 50%;
-    background-color: rgba(0, 0, 0, 0.1);
+    height: 300px;
+    background-color: rgba(0, 0, 0, 0.15);
     border: 2px dashed #7f8c8d;
-    border-radius: 10px;
+    border-radius: 12px;
+    margin: 20px 0;
     display: flex;
     justify-content: center;
     align-items: center;
-    gap: -20px; /* Negative gap for overlap */
-    transition: border-color 0.3s ease;
+    flex-wrap: wrap;
+    gap: 4px;
+    padding: 10px;
+    overflow: hidden;
+}
+
+/* Center unique atom (like Carbon) */
+.workspace .central-atom {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+/* Hydrogen atoms positioned around Carbon */
+.workspace .surround-atom {
+    position: absolute;
+}
+
+.workspace .surround-atom:nth-child(2) {
+    top: 15%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.workspace .surround-atom:nth-child(3) {
+    top: 85%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.workspace .surround-atom:nth-child(4) {
+    top: 50%;
+    left: 40%;
+    transform: translate(-50%, -50%);
+}
+
+.workspace .surround-atom:nth-child(5) {
+    top: 50%;
+    left: 60%;
+    transform: translate(-50%, -50%);
 }
 
 .workspace.hovering {
@@ -138,7 +182,7 @@
 
 .parts-bin {
     width: 95%;
-    height: 20%;
+    min-height: 20%;
     background-color: #2c3e50;
     border-radius: 10px;
     padding: 10px;
@@ -153,7 +197,7 @@
     height: 70%;
 }
 
-/* --- Atom Styling --- */
+/* --- Atom --- */
 .atom {
     border-radius: 50%;
     cursor: grab;
@@ -163,52 +207,35 @@
     justify-content: center;
     align-items: center;
     font-weight: bold;
-    color: white;
     font-size: 1.5rem;
     transition: transform 0.2s ease;
     position: relative;
-}
-
-.atom:hover {
-    transform: scale(1.1);
-}
-
-.atom::before {
-    content: '';
-    position: absolute;
-    border: 2px dashed rgba(255, 255, 255, 0.3);
-    border-radius: 50%;
-    pointer-events: none;
+    color: white;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
 }
 
 .atom.oxygen {
-    width: 80px;
-    height: 80px;
+    width: clamp(60px, 8vw, 80px);
+    height: clamp(60px, 8vw, 80px);
     background-color: #e74c3c;
 }
-.atom.oxygen::after { content: 'O'; }
-.atom.oxygen::before { width: 130px; height: 130px; }
-
 
 .atom.hydrogen {
-    width: 50px;
-    height: 50px;
+    width: clamp(40px, 6vw, 50px);
+    height: clamp(40px, 6vw, 50px);
     background-color: #ecf0f1;
     color: #34495e;
 }
-.atom.hydrogen::after { content: 'H'; }
-.atom.hydrogen::before { width: 80px; height: 80px; }
 
 .atom.carbon {
-    width: 70px;
-    height: 70px;
+    width: clamp(50px, 7vw, 70px);
+    height: clamp(50px, 7vw, 70px);
     background-color: #34495e;
 }
-.atom.carbon::after { content: 'C'; }
-.atom.carbon::before { width: 140px; height: 140px; }
 
-
-/* --- Controls & Feedback --- */
+/* --- Controls --- */
 .controls-area {
     height: 15%;
     display: flex;
@@ -235,17 +262,20 @@
     animation: success-pop 0.5s ease-out;
 }
 
-.check-btn:hover, .complete-btn:hover, .begin-challenge-btn:hover {
-    transform: scale(1.05);
-}
-
-.begin-challenge-btn:hover {
-    background-color: #2980b9;
-}
-
 .check-btn.incorrect {
     background-color: #e74c3c;
     animation: shake 0.5s;
+}
+
+.check-btn:hover,
+.check-btn:focus,
+.complete-btn:hover,
+.complete-btn:focus,
+.begin-challenge-btn:hover,
+.begin-challenge-btn:focus {
+    transform: translateY(-2px);
+    outline: 2px solid #3498db;
+    outline-offset: 2px;
 }
 
 .success-message {
@@ -258,10 +288,70 @@
     margin-bottom: 10px;
 }
 
-/* --- Drag Overlay Style --- */
+/* --- Drag Overlay --- */
 .atom.is-dragging {
     cursor: grabbing;
     z-index: 9999;
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
     transform: scale(1.1);
+    will-change: transform;
+}
+
+/* --- Responsive Design --- */
+@media (max-width: 768px) {
+    .lesson-modal.covalent-bonding {
+        width: 95vw;
+        height: 95vh;
+        padding: 15px;
+    }
+    
+    .intro-cb-title {
+        font-size: 2rem;
+    }
+    
+    .intro-text {
+        font-size: 1rem;
+        padding: 0 1rem;
+    }
+    
+    .workspace {
+        height: 250px;
+    }
+    
+    .info-box h3 {
+        font-size: 1.2rem;
+    }
+    
+    .info-box p {
+        font-size: 0.9rem;
+    }
+    
+    .check-btn, .complete-btn, .begin-challenge-btn {
+        font-size: 1rem;
+        padding: 8px 16px;
+    }
+}
+
+@media (max-width: 480px) {
+    .intro-cb-title {
+        font-size: 1.8rem;
+    }
+    
+    .intro-start-btn {
+        font-size: 1.2rem;
+        padding: 10px 20px;
+    }
+    
+    .workspace {
+        height: 200px;
+        gap: 2px;
+    }
+    
+    .atoms-container {
+        gap: 10px;
+    }
+    
+    .atom {
+        font-size: 1.2rem;
+    }
 }

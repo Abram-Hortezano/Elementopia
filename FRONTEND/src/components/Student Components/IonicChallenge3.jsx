@@ -1,45 +1,58 @@
 import React, { useState, useEffect } from "react";
 import { DndContext, useDroppable, useDraggable, DragOverlay } from "@dnd-kit/core";
-import "../../assets/css/ChallengeOne.css"; // Use same CSS as others
+import "../../assets/css/ChallengeOne.css";
 
-export default function IonicChallenge3() {
+export default function IonicChallenge3({ onComplete }) {
   const [challenge, setChallenge] = useState(1);
   const [items, setItems] = useState({});
   const [activeId, setActiveId] = useState(null);
   const [status, setStatus] = useState("pending");
   const [bondFormed, setBondFormed] = useState(false);
+  const [showCongrats, setShowCongrats] = useState(false);
 
-  // 🧩 Challenge List
+  // --- Challenge Data ---
   const challenges = [
     {
       id: 1,
-      title: "Potassium Bromide (KBr)",
-      atom1: "potassium",
-      atom2: "bromine",
-      symbol1: "K",
-      symbol2: "Br",
+      title: "Sodium Fluoride (NaF)",
+      atom1: "sodium",
+      atom2: "fluorine",
+      symbol1: "Na",
+      symbol2: "F",
+      atom1Start: 11,
+      atom2Start: 9,
+      atom1Target: 10,
+      atom2Target: 10,
       targetTransfer: 1,
-      message: "✅ Nice! K⁺ and Br⁻ form Potassium Bromide!",
+      message: "✅ Nice! Na⁺ and F⁻ form Sodium Fluoride!",
     },
     {
       id: 2,
-      title: "Calcium Fluoride (CaF₂)",
-      atom1: "calcium",
-      atom2: "fluorine",
-      symbol1: "Ca",
-      symbol2: "F",
+      title: "Magnesium Oxide (MgO)",
+      atom1: "magnesium",
+      atom2: "oxy",
+      symbol1: "Mg",
+      symbol2: "O",
+      atom1Start: 12,
+      atom2Start: 8,
+      atom1Target: 10,
+      atom2Target: 10,
       targetTransfer: 2,
-      message: "✅ Excellent! Ca²⁺ and F⁻ form Calcium Fluoride!",
+      message: "✅ Excellent! Mg²⁺ and O²⁻ form Magnesium Oxide!",
     },
     {
       id: 3,
-      title: "Lithium Iodide (LiI)",
+      title: "Lithium Chloride (LiCl)",
       atom1: "lithium",
-      atom2: "iodine",
+      atom2: "chlorine",
       symbol1: "Li",
-      symbol2: "I",
+      symbol2: "Cl",
+      atom1Start: 3,
+      atom2Start: 17,
+      atom1Target: 2,
+      atom2Target: 18,
       targetTransfer: 1,
-      message: "✅ Great! Li⁺ and I⁻ form Lithium Iodide!",
+      message: "✅ Great! Li⁺ and Cl⁻ form Lithium Chloride!",
     },
   ];
 
@@ -49,19 +62,28 @@ export default function IonicChallenge3() {
     if (current) resetChallenge(current);
   }, [challenge]);
 
+  // --- Reset Challenge ---
   const resetChallenge = (data) => {
-    const { atom1, atom2, targetTransfer } = data;
-    const totalElectrons = targetTransfer + Math.floor(Math.random() * 3);
-    const newItems = {
-      [atom1]: { type: atom1 },
-      [atom2]: { type: atom2 },
-    };
-    for (let i = 1; i <= totalElectrons; i++) {
+    const { atom1, atom2, atom1Start, atom2Start } = data;
+    const newItems = { [atom1]: { type: atom1 }, [atom2]: { type: atom2 } };
+
+    const atom1Extras = Math.floor(Math.random() * 2);
+    const atom2Extras = Math.floor(Math.random() * 2);
+
+    const totalAtom1Electrons = atom1Start + atom1Extras;
+    const totalAtom2Electrons = atom2Start + atom2Extras;
+
+    for (let i = 1; i <= totalAtom1Electrons; i++) {
       newItems[`e${i}`] = { type: "electron", location: atom1 };
     }
+    for (let i = totalAtom1Electrons + 1; i <= totalAtom1Electrons + totalAtom2Electrons; i++) {
+      newItems[`e${i}`] = { type: "electron", location: atom2 };
+    }
+
     setItems(newItems);
     setStatus("pending");
     setBondFormed(false);
+    setShowCongrats(false);
   };
 
   const handleDragStart = (event) => {
@@ -72,26 +94,42 @@ export default function IonicChallenge3() {
     const { active, over } = event;
     setActiveId(null);
     if (!over || !items[active.id]) return;
-    setItems((prev) => ({
-      ...prev,
-      [active.id]: { ...prev[active.id], location: over.id },
-    }));
+
+    if (over.id === "trash") {
+      setItems((prev) => {
+        const newItems = { ...prev };
+        delete newItems[active.id];
+        return newItems;
+      });
+    } else {
+      setItems((prev) => ({
+        ...prev,
+        [active.id]: { ...prev[active.id], location: over.id },
+      }));
+    }
   };
 
-  const checkBond = () => {
-    const eOnAtom2 = Object.values(items).filter(
-      (i) => i.type === "electron" && i.location === current.atom2
-    ).length;
-    const eOnAtom1 = Object.values(items).filter(
-      (i) => i.type === "electron" && i.location === current.atom1
-    ).length;
+  const countElectronsOn = (atomId) =>
+    Object.values(items).filter((item) => item.type === "electron" && item.location === atomId).length;
 
-    if (eOnAtom2 === current.targetTransfer && eOnAtom1 < current.targetTransfer) {
+  // --- Bond Checking ---
+  const checkBond = () => {
+    const atom1Electrons = countElectronsOn(current.atom1);
+    const atom2Electrons = countElectronsOn(current.atom2);
+
+    const correct = atom1Electrons === current.atom1Target && atom2Electrons === current.atom2Target;
+
+    if (correct) {
       setStatus("correct");
       setBondFormed(true);
+      setShowCongrats(true);
+
       setTimeout(() => {
         if (challenge < challenges.length) {
-          setChallenge(challenge + 1);
+          setChallenge((prev) => prev + 1);
+        } else {
+          // ✅ Notify parent (MapTree unlock)
+          if (onComplete) onComplete();
         }
       }, 2500);
     } else {
@@ -100,61 +138,82 @@ export default function IonicChallenge3() {
     }
   };
 
+  // --- When all challenges done ---
   if (challenge > challenges.length) {
     return (
-      <div className="lesson-modal ionic-bonding completed">
+      <div className="ionic-lesson-modal ionic-bonding-challenge ionic-completed">
         <h2>🎉 All Challenges Completed!</h2>
         <p>Excellent work forming all ionic bonds!</p>
       </div>
     );
   }
 
+  const atom1Count = countElectronsOn(current.atom1);
+  const atom2Count = countElectronsOn(current.atom2);
+
+  const instruction = `Drag electrons until ${capitalize(current.atom1)} has ${current.atom1Target} and ${capitalize(
+    current.atom2
+  )} has ${current.atom2Target} electrons. Remove extras in the trash.`;
+
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="lesson-modal ionic-bonding">
-        <div className={`challenge-box ${bondFormed ? "bonded" : ""}`}>
+      <div className="ionic-lesson-modal ionic-bonding-challenge">
+        <div className={`ionic-challenge-box ${bondFormed ? "ionic-bonded" : ""}`}>
           <h3>
             Challenge {challenge}: {current.title}
           </h3>
-          <p>
-            Transfer electron
-            {current.targetTransfer > 1 ? "s" : ""} from{" "}
-            {capitalize(current.atom1)} to {capitalize(current.atom2)}.
-          </p>
+          <p>{instruction}</p>
 
-          <div className={`workspace ${bondFormed ? "bonded" : ""}`}>
-            <DropZone
-              id={current.atom1}
-              className={`atom left-atom ${current.atom1} ${
-                bondFormed ? "final-state" : ""
-              }`}
+          <div className="ionic-electron-counters">
+            <div className="ionic-counter">
+              {current.symbol1}: {atom1Count} electrons
+            </div>
+            <div className="ionic-counter">
+              {current.symbol2}: {atom2Count} electrons
+            </div>
+          </div>
+
+          {showCongrats && <div className="ionic-congrats-banner">🎉 {current.message}</div>}
+
+          <div className={`ionic-workspace ${bondFormed ? "ionic-bonded" : ""}`}>
+            <DropZone 
+              id={current.atom1} 
+              className={`ionic-atom ionic-left-atom ionic-${current.atom1} ${bondFormed ? "ionic-final-state" : ""}`}
             >
-              <span className="atom-symbol">{current.symbol1}</span>
+              <span className="ionic-atom-symbol">{current.symbol1}</span>
               {renderElectronsOn(current.atom1, items, activeId)}
             </DropZone>
 
-            <DropZone
-              id={current.atom2}
-               className={`atom right-atom ${current.atom2} ${bondFormed ? "final-state opposite" : ""}`}
+            <DropZone 
+              id={current.atom2} 
+              className={`ionic-atom ionic-right-atom ionic-${current.atom2} ${bondFormed ? "ionic-final-state ionic-opposite" : ""}`}
             >
-              <span className="atom-symbol">{current.symbol2}</span>
+              <span className="ionic-atom-symbol">{current.symbol2}</span>
               {renderElectronsOn(current.atom2, items, activeId)}
             </DropZone>
+
+            <TrashBin />
           </div>
 
-          {status === "correct" ? (
-            <div className="success-message">{current.message}</div>
-          ) : (
-            <button onClick={checkBond} className={`check-btn ${status}`}>
+          <div className="ionic-button-group">
+            <button
+              onClick={() => resetChallenge(current)}
+              className="ionic-reset-btn"
+            >
+              Reset
+            </button>
+
+            <button
+              onClick={checkBond}
+              className={`ionic-check-btn ionic-${status}`}
+            >
               Check
             </button>
-          )}
+          </div>
         </div>
       </div>
 
-      <DragOverlay>
-        {activeId ? <div className="electron is-dragging"></div> : null}
-      </DragOverlay>
+      <DragOverlay>{activeId ? <div className="ionic-electron ionic-is-dragging"></div> : null}</DragOverlay>
     </DndContext>
   );
 }
@@ -162,9 +221,18 @@ export default function IonicChallenge3() {
 /* --- Drop Zone --- */
 function DropZone({ id, children, className }) {
   const { setNodeRef, isOver } = useDroppable({ id });
+  return <div ref={setNodeRef} className={`${className} ${isOver ? "ionic-hovering" : ""}`}>{children}</div>;
+}
+
+/* --- Trash Bin --- */
+function TrashBin() {
+  const { setNodeRef, isOver } = useDroppable({ id: "trash" });
   return (
-    <div ref={setNodeRef} className={`${className} ${isOver ? "hovering" : ""}`}>
-      {children}
+    <div
+      ref={setNodeRef}
+      className={`ionic-trash-bin ${isOver ? "ionic-hovering" : ""}`}
+    >
+      🗑️
     </div>
   );
 }
@@ -179,21 +247,13 @@ function Electron({ id, isHidden, angle }) {
     visibility: isHidden ? "hidden" : "visible",
   };
   return (
-    <div
-      ref={setNodeRef}
-      {...listeners}
-      {...attributes}
-      className="electron"
-      style={style}
-    />
+    <div ref={setNodeRef} {...listeners} {...attributes} className="ionic-electron" style={style} />
   );
 }
 
-/* --- Helper --- */
+/* --- Render Electrons Helper --- */
 function renderElectronsOn(atomId, items, activeId) {
-  const electrons = Object.entries(items).filter(
-    ([, item]) => item.type === "electron" && item.location === atomId
-  );
+  const electrons = Object.entries(items).filter(([_, item]) => item.type === "electron" && item.location === atomId);
   const total = electrons.length;
   return electrons.map(([id], i) => {
     const angle = total > 0 ? (i / total) * 360 : 0;

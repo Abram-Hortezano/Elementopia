@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/achievement";
+// const API_URL = "https://elementopia.onrender.com/api/achievement";
 
 const getAuthHeader = () => {
   try {
@@ -24,7 +25,10 @@ const AchievementService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to get all achievements:", error.response?.data || error.message);
+      console.error(
+        "Failed to get all achievements:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -39,7 +43,10 @@ const AchievementService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to get achievement by ID:", error.response?.data || error.message);
+      console.error(
+        "Failed to get achievement by ID:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -54,7 +61,10 @@ const AchievementService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to get user achievements:", error.response?.data || error.message);
+      console.error(
+        "Failed to get user achievements:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -63,19 +73,18 @@ const AchievementService = {
   createAchievement: async (userId, data) => {
     console.log("Creating Achievement for user:", userId);
     try {
-      const response = await axios.post(
-        `${API_URL}/create/${userId}`,
-        data,
-       {
-          headers: {
-            ...getAuthHeader(),
-          },
-        }
-      );
+      const response = await axios.post(`${API_URL}/create/${userId}`, data, {
+        headers: {
+          ...getAuthHeader(),
+        },
+      });
 
       return response.data;
     } catch (error) {
-      console.error("Failed to create achievement:", error.response?.data || error.message || error);
+      console.error(
+        "Failed to create achievement:",
+        error.response?.data || error.message || error
+      );
       throw error;
     }
   },
@@ -83,15 +92,22 @@ const AchievementService = {
   // Update Achievement
   updateAchievement: async (id, achievementData) => {
     try {
-      const response = await axios.put(`${API_URL}/update/${id}`, achievementData, {
-        headers: {
-          ...getAuthHeader(),
-          "Content-Type": "application/json",
-        },
-      });
+      const response = await axios.put(
+        `${API_URL}/update/${id}`,
+        achievementData,
+        {
+          headers: {
+            ...getAuthHeader(),
+            "Content-Type": "application/json",
+          },
+        }
+      );
       return response.data;
     } catch (error) {
-      console.error("Failed to update achievement:", error.response?.data || error.message);
+      console.error(
+        "Failed to update achievement:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -106,7 +122,10 @@ const AchievementService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to delete achievement:", error.response?.data || error.message);
+      console.error(
+        "Failed to delete achievement:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },

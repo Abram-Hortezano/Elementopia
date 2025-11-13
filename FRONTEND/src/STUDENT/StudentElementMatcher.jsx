@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import Navbar from "../components/Navbar";
+import Navbar from "../components/NavBar";
 import Sidebar from "../components/Sidebar";
 import "./StudentElementMatcher.css"; // Import the CSS file
 

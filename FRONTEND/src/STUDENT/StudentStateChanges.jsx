@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from 'react';
-import Navbar from '../components/NavBar';
-import Sidebar from '../components/Sidebar';
-import '../assets/css/StudentStateChanges.css';
+import React, { useState, useEffect } from "react";
+import Navbar from "../components/NavBar";
+import Sidebar from "../components/Sidebar";
+import "../assets/css/StudentStateChanges.css";
 import {
   Box,
   Typography,

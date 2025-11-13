@@ -1,23 +1,21 @@
-import { useState } from "react"
-import { CalendarIcon } from "lucide-react"
-import { Switch } from "@mui/material"
-import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-// import { format } from "date-fns"
-import "../assets/css/create-experiment.css"
+import { useState } from "react";
+import { CalendarIcon } from "lucide-react";
+import { Switch } from "@mui/material";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { DatePicker } from "@mui/x-date-pickers/DatePicker";
+import "../assets/css/create-experiment.css";
 
 export default function CreateExperimentModal({ isOpen, onClose, onSubmit }) {
-  const [title, setTitle] = useState("")
-  const [deadline, setDeadline] = useState()
-  const [experimentType, setExperimentType] = useState("quiz")
-  const [accessType, setAccessType] = useState("public")
-  const [multipleAttempts, setMultipleAttempts] = useState(false)
-  const [instructions, setInstructions] = useState("")
+  const [title, setTitle] = useState("");
+  const [deadline, setDeadline] = useState();
+  const [experimentType, setExperimentType] = useState("quiz");
+  const [accessType, setAccessType] = useState("public");
+  const [multipleAttempts, setMultipleAttempts] = useState(false);
+  const [instructions, setInstructions] = useState("");
   // const [value, setValue] = React.useState(dayjs('2022-04-17'));
 
-console.log("It is loaded");
+  console.log("It is loaded");
   const handleSubmit = () => {
     if (title && experimentType && accessType) {
       onSubmit?.({
@@ -27,28 +25,30 @@ console.log("It is loaded");
         accessType,
         multipleAttempts,
         instructions,
-      })
-      onClose()
+      });
+      onClose();
     }
-  }
+  };
 
   const resetForm = () => {
-    setTitle("")
-    setDeadline(undefined)
-    setExperimentType("quiz")
-    setAccessType("public")
-    setMultipleAttempts(false)
-    setInstructions("")
-  }
+    setTitle("");
+    setDeadline(undefined);
+    setExperimentType("quiz");
+    setAccessType("public");
+    setMultipleAttempts(false);
+    setInstructions("");
+  };
 
-//   if (!isOpen) return null
+  //   if (!isOpen) return null
 
   return (
     <div className="modal-overlay">
-        {/* <div className="square">HELLO</div> */}
+      {/* <div className="square">HELLO</div> */}
       <div className="modal">
         <h2 className="modal-title">Create New Experiment</h2>
-        <p className="modal-subtitle">Set up a new experiment for your students</p>
+        <p className="modal-subtitle">
+          Set up a new experiment for your students
+        </p>
 
         <div className="modal-body">
           <div className="form-group">
@@ -66,26 +66,31 @@ console.log("It is loaded");
             <div className="date-picker">
               <button
                 onClick={() => {
-                  const today = new Date()
-                  setDeadline(today)
+                  const today = new Date();
+                  setDeadline(today);
                 }}
               >
                 <CalendarIcon size={16} />
                 {deadline ? format(deadline, "PPP") : "Select a date"}
               </button>
-=======
-            <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DemoContainer components={['DatePicker', 'DatePicker']}>
+              <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <DatePicker
-                className="date-picker"
-                  // label="Controlled picker"
-                //value={value}
-                
-                sx={{width: 500, backgroundColor: '#1f2937', borderRadius: '10px', color: 'white', border: '1px solid #838383'}}
-                  onChange={(newValue) => setValue(newValue)}
+                  className="date-picker"
+                  value={deadline}
+                  onChange={(newValue) => setDeadline(newValue)}
+                  slotProps={{
+                    textField: {
+                      sx: {
+                        width: 500,
+                        backgroundColor: "#1f2937",
+                        borderRadius: "10px",
+                        color: "white",
+                        border: "1px solid #838383",
+                      },
+                    },
+                  }}
                 />
-              </DemoContainer>
-            </LocalizationProvider>
+              </LocalizationProvider>
             </div>
           </div>
 
@@ -131,43 +136,44 @@ console.log("It is loaded");
           </div>
 
           <div className="form-group switch-group">
-            <label htmlFor="multipleAttempts">Allow Multiple Attempts
-                <p>Students can retry the experiment multiple times</p>
+            <label htmlFor="multipleAttempts">
+              Allow Multiple Attempts
+              <p>Students can retry the experiment multiple times</p>
             </label>
-          <Switch
-            id="attempt-switch"
-            checked={multipleAttempts}
-            onChange={() => setMultipleAttempts(!multipleAttempts)}
-            color="secondary"
-                sx={{
-                    width: 45,
-                    height: 25,
-                    padding: 0,
-                        "& .MuiSwitch-switchBase": {
-                                paddingTop: 0.4,
-                                color: "black",
-                                transform: "translateX(-8px)",
-                            "&.Mui-checked": {
-                                transform: "translateX(15px)",
-                                color: "black",
-                                "& + .MuiSwitch-track": {
-                                    backgroundColor: "#8e4cff",
-                                    opacity: 1,
-                                },
-                            },
-                        },
-                                "& .MuiSwitch-thumb": {
-                                    width: 20,
-                                    height: 20,
-                                    boxShadow: "none",
-                                },
-                                    "& .MuiSwitch-track": {
-                                        borderRadius: 24 / 2,
-                                        backgroundColor: "#27272a",
-                                        opacity: 1,
-                                    },
-                    }}
-                />
+            <Switch
+              id="attempt-switch"
+              checked={multipleAttempts}
+              onChange={() => setMultipleAttempts(!multipleAttempts)}
+              color="secondary"
+              sx={{
+                width: 45,
+                height: 25,
+                padding: 0,
+                "& .MuiSwitch-switchBase": {
+                  paddingTop: 0.4,
+                  color: "black",
+                  transform: "translateX(-8px)",
+                  "&.Mui-checked": {
+                    transform: "translateX(15px)",
+                    color: "black",
+                    "& + .MuiSwitch-track": {
+                      backgroundColor: "#8e4cff",
+                      opacity: 1,
+                    },
+                  },
+                },
+                "& .MuiSwitch-thumb": {
+                  width: 20,
+                  height: 20,
+                  boxShadow: "none",
+                },
+                "& .MuiSwitch-track": {
+                  borderRadius: 24 / 2,
+                  backgroundColor: "#27272a",
+                  opacity: 1,
+                },
+              }}
+            />
           </div>
 
           <div className="form-group">
@@ -182,10 +188,20 @@ console.log("It is loaded");
         </div>
 
         <div className="modal-footer">
-          <button className="btn-outline" onClick={() => { onClose(); resetForm(); }}>Cancel</button>
-          <button className="btn-primary" onClick={handleSubmit}>Save Settings</button>
+          <button
+            className="btn-outline"
+            onClick={() => {
+              onClose();
+              resetForm();
+            }}
+          >
+            Cancel
+          </button>
+          <button className="btn-primary" onClick={handleSubmit}>
+            Save Settings
+          </button>
         </div>
       </div>
     </div>
-  )
+  );
 }

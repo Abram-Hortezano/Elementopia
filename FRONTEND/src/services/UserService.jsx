@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/user";
-// const API_URL = "https://elementopia.onrender.com/api/user"; if not using localhost
+
 // const API_URL = "https://elementopia.onrender.com/api/user";
 
 // Get token from localStorage
@@ -19,7 +19,10 @@ const UserService = {
   // Login and get token
   loginUser: async (username, password) => {
     try {
-      const response = await axios.post(`${API_URL}/login`, { username, password });
+      const response = await axios.post(`${API_URL}/login`, {
+        username,
+        password,
+      });
       const { token, role } = response.data;
 
       localStorage.setItem("token", token);
@@ -58,7 +61,10 @@ const UserService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch all users:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch all users:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
