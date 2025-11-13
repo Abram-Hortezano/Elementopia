@@ -2,7 +2,6 @@
 .lesson-modal.ionic-bonding {
   background: radial-gradient(circle at center, #050513 0%, #000010 100%);
   color: #fff;
-  padding: 2.5rem;
   border-radius: 1.2rem;
   box-shadow: 0 0 40px rgba(0, 255, 255, 0.15);
   text-align: center;
@@ -17,22 +16,16 @@
   position: absolute;
   top: -100px;
   left: -100px;
-  width: 400px;
-  height: 400px;
+  width: 600px;
+  height: 600px;
   background: radial-gradient(circle, rgba(0, 255, 255, 0.15), transparent 70%);
   animation: float-glow 8s infinite alternate;
   z-index: 0;
 }
 
 @keyframes float-glow {
-  0% {
-    transform: translate(0, 0);
-    opacity: 0.5;
-  }
-  100% {
-    transform: translate(100px, 100px);
-    opacity: 0.9;
-  }
+  0% { transform: translate(0, 0); opacity: 0.5; }
+  100% { transform: translate(100px, 100px); opacity: 0.9; }
 }
 
 .challenge-box {
@@ -72,8 +65,7 @@
   height: 140px;
   border-radius: 50%;
   border: 3px solid rgba(0, 255, 255, 0.7);
-  box-shadow: 0 0 40px rgba(0, 255, 255, 0.2),
-    inset 0 0 15px rgba(255, 255, 255, 0.15);
+  box-shadow: 0 0 40px rgba(0, 255, 255, 0.2), inset 0 0 15px rgba(255, 255, 255, 0.15);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,8 +84,7 @@
 }
 
 .atom.hovering {
-  box-shadow: 0 0 35px rgba(0, 255, 150, 0.7),
-    inset 0 0 20px rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 35px rgba(0, 255, 150, 0.7), inset 0 0 20px rgba(255, 255, 255, 0.2);
   transform: scale(1.05);
 }
 
@@ -114,7 +105,7 @@
   background: radial-gradient(circle, #f9f871 0%, #b59f00 100%);
 }
 
-.right-atom.oxygen {
+.right-atom.oxy {
   background: radial-gradient(circle, #ff6b6b 0%, #a30000 100%);
 }
 
@@ -144,12 +135,8 @@
 
 /* === Bond Animation === */
 @keyframes attract {
-  0% {
-    transform: translateX(0) scale(1);
-  }
-  100% {
-    transform: translateX(165px) scale(0.98);
-  }
+  0% { transform: translateX(0) scale(1); }
+  100% { transform: translateX(165px) scale(0.98); }
 }
 
 .atom.final-state {
@@ -167,6 +154,7 @@
   pointer-events: none;
 }
 
+
 /* === Spark Effect === */
 .workspace.bonded::after {
   content: "";
@@ -183,18 +171,9 @@
 }
 
 @keyframes bond-spark {
-  0% {
-    transform: translate(-50%, -50%) scale(0);
-    opacity: 0.8;
-  }
-  40% {
-    transform: translate(-50%, -50%) scale(2);
-    opacity: 1;
-  }
-  100% {
-    transform: translate(-50%, -50%) scale(0.5);
-    opacity: 0;
-  }
+  0% { transform: translate(-50%, -50%) scale(0); opacity: 0.8; }
+  40% { transform: translate(-50%, -50%) scale(2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.5); opacity: 0; }
 }
 
 /* === Buttons === */
@@ -237,12 +216,17 @@
 }
 
 @keyframes pulse {
-  from {
-    opacity: 0.8;
-    transform: scale(1);
-  }
-  to {
-    opacity: 1;
-    transform: scale(1.07);
-  }
+  from { opacity: 0.8; transform: scale(1); }
+  to { opacity: 1; transform: scale(1.07); }
+}
+
+/* === Atom Attraction Animation (when bond forms) === */
+.workspace.bonded .left-atom {
+  transform: translateX(80px) scale(1.05);
+  transition: transform 1.2s ease-in-out;
+}
+
+.workspace.bonded .right-atom {
+  transform: translateX(-80px) scale(1.05);
+  transition: transform 1.2s ease-in-out;
 }

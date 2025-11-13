@@ -1,5 +1,10 @@
 import React, { useState, useEffect } from "react";
-import { DndContext, useDroppable, useDraggable, DragOverlay } from "@dnd-kit/core";
+import {
+  DndContext,
+  useDroppable,
+  useDraggable,
+  DragOverlay,
+} from "@dnd-kit/core";
 import "../../assets/css/ChallengeOne.css";
 
 export default function ChallengeOne({ onComplete }) {
@@ -8,23 +13,65 @@ export default function ChallengeOne({ onComplete }) {
   const [activeId, setActiveId] = useState(null);
   const [status, setStatus] = useState("pending");
   const [bondFormed, setBondFormed] = useState(false);
+  const [showCongrats, setShowCongrats] = useState(false);
 
   useEffect(() => {
     resetChallenge(challenge);
   }, [challenge]);
 
   const handleDragStart = (event) => {
-    if (items[event.active.id]?.type === "electron") setActiveId(event.active.id);
+    if (items[event.active.id]?.type === "electron")
+      setActiveId(event.active.id);
   };
 
   const handleDragEnd = (event) => {
     const { active, over } = event;
     setActiveId(null);
+    
     if (!over || !items[active.id]) return;
-    setItems((prev) => ({
-      ...prev,
-      [active.id]: { ...prev[active.id], location: over.id },
-    }));
+    
+    // If dropped in trash bin, remove the electron
+    if (over.id === "trash") {
+      setItems((prev) => {
+        const newItems = { ...prev };
+        delete newItems[active.id];
+        return newItems;
+      });
+    } else {
+      // Otherwise, move electron to the new location
+      setItems((prev) => ({
+        ...prev,
+        [active.id]: { ...prev[active.id], location: over.id },
+      }));
+    }
+  };
+
+  // --- Count electrons on specific atom ---
+  const countElectronsOn = (atomId) =>
+    Object.values(items).filter(
+      (item) => item.type === "electron" && item.location === atomId
+    ).length;
+
+  // --- SCIENTIFICALLY ACCURATE bond checks ---
+  const checkNaCl = () => {
+    const naElectrons = countElectronsOn("na");
+    const clElectrons = countElectronsOn("cl");
+    // Na should lose 1 electron (have 10 total), Cl should gain 1 (have 18 total)
+    return naElectrons === 10 && clElectrons === 18;
+  };
+
+  const checkMgCl2 = () => {
+    const mgElectrons = countElectronsOn("mg");
+    const clElectrons = countElectronsOn("cl");
+    // Mg should lose 2 electrons (have 10 total), each Cl should gain 1 (have 18 each)
+    return mgElectrons === 10 && clElectrons === 18;
+  };
+
+  const checkCaO = () => {
+    const caElectrons = countElectronsOn("ca");
+    const oElectrons = countElectronsOn("o");
+    // Ca should lose 2 electrons (have 18 total), O should gain 2 (have 10 total)
+    return caElectrons === 18 && oElectrons === 10;
   };
 
   const checkBond = () => {
@@ -36,68 +83,85 @@ export default function ChallengeOne({ onComplete }) {
     if (correct) {
       setStatus("correct");
       setBondFormed(true);
+      setShowCongrats(true);
+
       setTimeout(() => {
         if (challenge < 3) {
-          setChallenge(challenge + 1);
-          setBondFormed(false);
-          setStatus("pending");
+          setChallenge((prev) => prev + 1);
         } else {
-          onComplete?.();
+          if (onComplete) onComplete();
         }
-      }, 1500);
+      }, 2500);
     } else {
       setStatus("incorrect");
       setTimeout(() => setStatus("pending"), 1000);
     }
   };
 
-  // --- Bond correctness check ---
-  const countElectronsOn = (atomId) =>
-    Object.values(items).filter((item) => item.type === "electron" && item.location === atomId)
-      .length;
-
-  const checkNaCl = () => countElectronsOn("cl") === 1;
-  const checkMgCl2 = () => countElectronsOn("cl") === 2;
-  const checkCaO = () => countElectronsOn("o") === 2;
-
-  // --- Randomize challenge setup ---
+  // --- SCIENTIFICALLY ACCURATE starting electron counts with random extras ---
   const resetChallenge = (num) => {
     let atoms = {};
-    let electrons = {};
     let leftId, rightId;
+    let leftStartElectrons, rightStartElectrons;
 
     if (num === 1) {
+      // Sodium: 11 electrons total, Chlorine: 17 electrons total
       leftId = "na";
       rightId = "cl";
-      atoms = { [leftId]: { type: "sodium" }, [rightId]: { type: "chlorine" } };
+      leftStartElectrons = 11;
+      rightStartElectrons = 17;
+      atoms = {
+        [leftId]: { type: "sodium" },
+        [rightId]: { type: "chlorine" },
+      };
     } else if (num === 2) {
+      // Magnesium: 12 electrons total, Chlorine: 17 electrons total
       leftId = "mg";
       rightId = "cl";
-      atoms = { [leftId]: { type: "magnesium" }, [rightId]: { type: "chlorine" } };
+      leftStartElectrons = 12;
+      rightStartElectrons = 17;
+      atoms = {
+        [leftId]: { type: "magnesium" },
+        [rightId]: { type: "chlorine" },
+      };
     } else {
+      // Calcium: 20 electrons total, Oxygen: 8 electrons total
       leftId = "ca";
       rightId = "o";
-      atoms = { [leftId]: { type: "calcium" }, [rightId]: { type: "oxygen" } };
+      leftStartElectrons = 20;
+      rightStartElectrons = 8;
+      atoms = {
+        [leftId]: { type: "calcium" },
+        [rightId]: { type: "oxy" },
+      };
     }
 
-    // 🎲 Random number of electrons on left atom (2–5)
-    const numElectrons = Math.floor(Math.random() * 4) + 2;
     const newElectrons = {};
-    for (let i = 1; i <= numElectrons; i++) {
+
+    // 🎲 Add correct starting electrons PLUS random extras for challenge
+    // Left atom: correct count + 0-2 random extra electrons
+    const leftExtras = Math.floor(Math.random() * 3);
+    const totalLeftElectrons = leftStartElectrons + leftExtras;
+    
+    for (let i = 1; i <= totalLeftElectrons; i++) {
       newElectrons[`e${i}`] = { type: "electron", location: leftId };
     }
 
-    // 🎲 Possibly 0–2 electrons already on right atom
-    const extraRight = Math.floor(Math.random() * 3);
-    for (let i = numElectrons + 1; i <= numElectrons + extraRight; i++) {
+    // Right atom: correct count + 0-2 random extra electrons
+    const rightExtras = Math.floor(Math.random() * 3);
+    const totalRightElectrons = rightStartElectrons + rightExtras;
+    
+    for (let i = totalLeftElectrons + 1; i <= totalLeftElectrons + totalRightElectrons; i++) {
       newElectrons[`e${i}`] = { type: "electron", location: rightId };
     }
 
     setItems({ ...atoms, ...newElectrons });
     setStatus("pending");
+    setBondFormed(false);
+    setShowCongrats(false);
   };
 
-  // --- Dynamic labels ---
+  // --- Dynamic labels with SCIENTIFICALLY ACCURATE instructions ---
   const atomLeft = challenge === 1 ? "na" : challenge === 2 ? "mg" : "ca";
   const atomRight = challenge === 1 ? "cl" : challenge === 2 ? "cl" : "o";
   const symbolLeft = challenge === 1 ? "Na" : challenge === 2 ? "Mg" : "Ca";
@@ -107,15 +171,19 @@ export default function ChallengeOne({ onComplete }) {
     challenge === 1
       ? "Challenge 1: Form Sodium Chloride (NaCl)"
       : challenge === 2
-      ? "Challenge 2: Form Magnesium Chloride (MgCl₂)"
-      : "Challenge 3: Form Calcium Oxide (CaO)";
+        ? "Challenge 2: Form Magnesium Chloride (MgCl₂)"
+        : "Challenge 3: Form Calcium Oxide (CaO)";
 
   const instruction =
     challenge === 1
-      ? "Drag electron from Sodium (Na) to Chlorine (Cl)."
+      ? "Drag electrons until Sodium has 10 and Chlorine has 18 electrons. Remove excess electrons in the trash."
       : challenge === 2
-      ? "Drag electrons from Magnesium (Mg) to Chlorine (Cl)."
-      : "Drag electrons from Calcium (Ca) to Oxygen (O).";
+        ? "Drag electrons until Magnesium has 10 and Chlorine has 18 electrons. Remove excess electrons in the trash."
+        : "Drag electrons until Calcium has 18 and Oxygen has 10 electrons. Remove excess electrons in the trash.";
+
+  // Calculate current electron counts for display
+  const leftElectronCount = countElectronsOn(atomLeft);
+  const rightElectronCount = countElectronsOn(atomRight);
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
@@ -124,12 +192,27 @@ export default function ChallengeOne({ onComplete }) {
           <h3>{title}</h3>
           <p>{instruction}</p>
 
+          {/* Electron counters */}
+          <div className="electron-counters">
+            <div className="counter">
+              {symbolLeft}: {leftElectronCount} electrons
+            </div>
+            <div className="counter">
+              {symbolRight}: {rightElectronCount} electrons
+            </div>
+          </div>
+
+          {showCongrats && (
+            <div className="congrats-banner">
+              🎉 Congratulations! You formed the correct ionic bond!
+            </div>
+          )}
+
           <div className={`workspace ${bondFormed ? "bonded" : ""}`}>
             <DropZone
               id={atomLeft}
-              className={`atom left-atom ${items[atomLeft]?.type} ${
-                bondFormed ? "final-state" : ""
-              }`}
+              className={`atom left-atom ${items[atomLeft]?.type} ${bondFormed ? "final-state" : ""
+                }`}
             >
               <span className="atom-symbol">{symbolLeft}</span>
               {renderElectronsOn(atomLeft, items, activeId)}
@@ -137,24 +220,49 @@ export default function ChallengeOne({ onComplete }) {
 
             <DropZone
               id={atomRight}
-              className={`atom right-atom ${items[atomRight]?.type} ${
-                bondFormed ? "final-state opposite" : ""
-              }`}
+              className={`atom right-atom ${items[atomRight]?.type} ${bondFormed ? "final-state opposite" : ""
+                }`}
             >
               <span className="atom-symbol">{symbolRight}</span>
               {renderElectronsOn(atomRight, items, activeId)}
             </DropZone>
+
+            {/* Trash Bin for excess electrons */}
+            <TrashBin />
           </div>
 
-          {status === "correct" ? (
-            <div className="success-message">
-              <p>✅ Great! Bond formed correctly!</p>
-            </div>
-          ) : (
-            <button onClick={checkBond} className={`check-btn ${status}`}>
+          <div className="button-group" style={{ display: "flex", justifyContent: "center", marginTop: "15px" }}>
+            <button
+              onClick={() => resetChallenge(challenge)}
+              className="reset-btn"
+              style={{
+                backgroundColor: "#e74c3c",
+                color: "#fff",
+                padding: "10px 20px",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+            >
+              Reset
+            </button>
+
+            <button
+              onClick={checkBond}
+              className={`check-btn ${status}`}
+              style={{
+                backgroundColor: "#2ecc71",
+                color: "#fff",
+                padding: "10px 20px",
+                border: "none",
+                borderRadius: "6px",
+                cursor: "pointer",
+              }}
+            >
               Check
             </button>
-          )}
+          </div>
+
         </div>
       </div>
 
@@ -171,6 +279,38 @@ function DropZone({ id, children, className }) {
   return (
     <div ref={setNodeRef} className={`${className} ${isOver ? "hovering" : ""}`}>
       {children}
+    </div>
+  );
+}
+
+/* --- Trash Bin Component --- */
+function TrashBin() {
+  const { setNodeRef, isOver } = useDroppable({ id: "trash" });
+  
+  return (
+    <div 
+      ref={setNodeRef}
+      className={`trash-bin ${isOver ? "hovering" : ""}`}
+      style={{
+        position: "absolute",
+        bottom: "20px",
+        right: "20px",
+        width: "60px",
+        height: "60px",
+        backgroundColor: isOver ? "#e74c3c" : "#95a5a6",
+        borderRadius: "8px",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        color: "white",
+        fontSize: "24px",
+        transition: "background-color 0.2s ease",
+        cursor: "pointer",
+        border: isOver ? "2px solid #c0392b" : "2px solid #7f8c8d",
+        boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
+      }}
+    >
+      🗑️
     </div>
   );
 }
@@ -201,7 +341,6 @@ function renderElectronsOn(atomId, items, activeId) {
     ([, item]) => item.type === "electron" && item.location === atomId
   );
   const total = electrons.length;
-
   return electrons.map(([id], i) => {
     const angle = total > 0 ? (i / total) * 360 : 0;
     return <Electron key={id} id={id} angle={angle} isHidden={id === activeId} />;
