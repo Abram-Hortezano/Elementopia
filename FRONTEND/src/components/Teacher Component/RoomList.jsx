@@ -1,12 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/RoomList.css'; 
 import CreateLaboratory from './create-lab';
+import StudentList from './StudentList';
 
 const RoomList = () => {
   const [rooms, setRooms] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
 
   // Sample data - replace with actual API call
   const sampleRooms = [
@@ -71,7 +73,7 @@ const RoomList = () => {
   const handleView = (room) => {
     console.log('View room:', room);
     setActiveDropdown(null);
-    // Navigate to room details or show modal
+    setSelectedRoom(room);
   };
 
   const handleEdit = (room) => {
@@ -108,11 +110,18 @@ const RoomList = () => {
     // For now, we'll add it to the local state
     const newRoom = {
       id: rooms.length + 1,
-      ...newRoomData,
+      className: newRoomData.laboratoryName,
+      roomCode: newRoomData.labCode,
+      studentCount: newRoomData.studentIds ? newRoomData.studentIds.length : 0,
+      instructor: 'You', // Since you're the creator
       status: 'Active'
     };
     setRooms([...rooms, newRoom]);
     setShowCreateModal(false);
+  };
+
+  const handleBackToList = () => {
+    setSelectedRoom(null);
   };
 
   const getStatusBadge = (status) => {
@@ -131,93 +140,103 @@ const RoomList = () => {
 
   return (
     <div className="room-list-container">
-      <div className="room-list-header">
-        <h2>Laboratory</h2>
-        <button className="btn-primary" onClick={handleAddNewRoom}>
-          Add New Room
-        </button>
-      </div>
-
-      <div className="table-container">
-        <table className="rooms-table">
-          <thead>
-            <tr>
-              <th>Class Name</th>
-              <th>Room Code</th>
-              <th>Instructor</th>
-              <th>No. Of Students</th>
-              <th>Status</th>
-              <th>Actions</th>
-            </tr>
-          </thead>
-          <tbody>
-            {rooms.map(room => (
-              <tr key={room.id}>
-                <td>
-                  <div className="class-info">
-                    <div className="class-name">{room.className}</div>
-                  </div>
-                </td>
-                <td>
-                  <span className="room-code">{room.roomCode}</span>
-                </td>
-                <td>
-                  <span className="instructor">{room.instructor}</span>
-                </td>
-                <td>
-                  <span className="student-count">{room.studentCount}</span>
-                </td>
-                <td>
-                  {getStatusBadge(room.status)}
-                </td>
-                <td>
-                  <div className="dropdown-container">
-                    <button 
-                      className="dropdown-trigger"
-                      onClick={(e) => toggleDropdown(room.id, e)}
-                      title="Actions"
-                    >
-                      ⋮
-                    </button>
-                    
-                    {activeDropdown === room.id && (
-                      <div className={`dropdown-menu ${getDropdownPosition(room.id)}`}>
-                        <button 
-                          className="dropdown-item view"
-                          onClick={() => handleView(room)}
-                        >
-                          <span className="icon">👁️</span>
-                          View Details
-                        </button>
-                        <button 
-                          className="dropdown-item edit"
-                          onClick={() => handleEdit(room)}
-                        >
-                          <span className="icon">✏️</span>
-                          Edit Room
-                        </button>
-                        <button 
-                          className="dropdown-item delete"
-                          onClick={() => handleDelete(room)}
-                        >
-                          <span className="icon">🗑️</span>
-                          Delete Room
-                        </button>
-                      </div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-
-        {rooms.length === 0 && (
-          <div className="no-rooms">
-            No rooms found. Create your first room!
+      {selectedRoom ? (
+        <StudentList 
+          room={selectedRoom} 
+          onBack={handleBackToList}
+          onClose={handleBackToList}
+        />
+      ) : (
+        <>
+          <div className="room-list-header">
+            <h2>Laboratory</h2>
+            <button className="btn-primary" onClick={handleAddNewRoom}>
+              Add New Room
+            </button>
           </div>
-        )}
-      </div>
+
+          <div className="table-container">
+            <table className="rooms-table">
+              <thead>
+                <tr>
+                  <th>Class Name</th>
+                  <th>Room Code</th>
+                  <th>Instructor</th>
+                  <th>No. Of Students</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                {rooms.map(room => (
+                  <tr key={room.id}>
+                    <td>
+                      <div className="class-info">
+                        <div className="class-name">{room.className}</div>
+                      </div>
+                    </td>
+                    <td>
+                      <span className="room-code">{room.roomCode}</span>
+                    </td>
+                    <td>
+                      <span className="instructor">{room.instructor}</span>
+                    </td>
+                    <td>
+                      <span className="student-count">{room.studentCount}</span>
+                    </td>
+                    <td>
+                      {getStatusBadge(room.status)}
+                    </td>
+                    <td>
+                      <div className="dropdown-container">
+                        <button 
+                          className="dropdown-trigger"
+                          onClick={(e) => toggleDropdown(room.id, e)}
+                          title="Actions"
+                        >
+                          ⋮
+                        </button>
+                        
+                        {activeDropdown === room.id && (
+                          <div className={`dropdown-menu ${getDropdownPosition(room.id)}`}>
+                            <button 
+                              className="dropdown-item view"
+                              onClick={() => handleView(room)}
+                            >
+                              <span className="icon">👁️</span>
+                              View Students
+                            </button>
+                            <button 
+                              className="dropdown-item edit"
+                              onClick={() => handleEdit(room)}
+                            >
+                              <span className="icon">✏️</span>
+                              Edit Room
+                            </button>
+                            <button 
+                              className="dropdown-item delete"
+                              onClick={() => handleDelete(room)}
+                            >
+                              <span className="icon">🗑️</span>
+                              Delete Room
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+
+            {rooms.length === 0 && (
+              <div className="no-rooms">
+                No rooms found. Create your first room!
+              </div>
+            )}
+          </div>
+        </>
+      )}
 
       {/* Create Laboratory Modal */}
       {showCreateModal && (
