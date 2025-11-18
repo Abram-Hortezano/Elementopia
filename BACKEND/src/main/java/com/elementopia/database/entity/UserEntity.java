@@ -65,4 +65,8 @@ public class UserEntity {
     @JsonManagedReference
     private ScoreEntity score;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<LessonCompletionEntity> lessonCompletions;
+
 }

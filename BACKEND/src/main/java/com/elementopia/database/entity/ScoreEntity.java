@@ -15,7 +15,10 @@ public class ScoreEntity {
     private Long id;
 
     @Column(name = "career_score", nullable = false)
-    private Integer careerScore;
+    private Integer careerScore = 0;
+
+    @Column(name = "percentage", nullable = false)
+    private String percentage;
 
     @OneToOne
     @JoinColumn(name = "user_id", referencedColumnName = "userId", unique = true, nullable = false)
