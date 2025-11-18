@@ -133,7 +133,7 @@ export default function IonicBonding({ onComplete }) {
       <div className="ionic-bonding">
         <InfoBox key={promptStep} title={prompts[promptStep].title} description={prompts[promptStep].description} />
 
-        <div className={`workspace ${(promptStep >= 2 || challengeStatus === 'correct') ? 'bonded' : ''}`}>
+        <div className={`ionicworkspace ${(promptStep >= 2 || challengeStatus === 'correct') ? 'bonded' : ''}`}>
           {!isChallenge && renderAtomsIn('workspace')}
           {isChallenge && renderAtomsIn('challenge-space')}
         </div>

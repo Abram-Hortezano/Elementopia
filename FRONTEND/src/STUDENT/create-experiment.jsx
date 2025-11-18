@@ -4,7 +4,6 @@ import { Switch } from "@mui/material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { DatePicker } from "@mui/x-date-pickers/DatePicker";
-import { format } from "date-fns";
 import "../assets/css/create-experiment.css";
 
 export default function CreateExperimentModal({ isOpen, onClose, onSubmit }) {

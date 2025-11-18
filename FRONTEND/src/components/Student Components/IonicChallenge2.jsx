@@ -159,7 +159,7 @@ export default function IonicChallenge2({ onComplete }) {
 
   if (challenge > challenges.length) {
     return (
-      <div className="lesson-modal ionic-bonding completed">
+      <div className="ionic-lesson-modal ionic-bonding-challenge ionic-completed">
         <h2>🎉 All Challenges Completed!</h2>
         <p>Excellent work forming all ionic bonds!</p>
       </div>
@@ -178,45 +178,45 @@ export default function IonicChallenge2({ onComplete }) {
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="lesson-modal ionic-bonding">
-        <div className={`challenge-box ${bondFormed ? "bonded" : ""}`}>
+      <div className="ionic-lesson-modal ionic-bonding-challenge">
+        <div className={`ionic-challenge-box ${bondFormed ? "ionic-bonded" : ""}`}>
           <h3>
             Challenge {challenge}: {current.title}
           </h3>
           <p>{instruction}</p>
 
           {/* Electron counters */}
-          <div className="electron-counters">
-            <div className="counter">
+          <div className="ionic-electron-counters">
+            <div className="ionic-counter">
               {getSymbol(current.atom1)}: {atom1ElectronCount} electrons
             </div>
-            <div className="counter">
+            <div className="ionic-counter">
               {getSymbol(current.atom2)}: {atom2ElectronCount} electrons
             </div>
           </div>
 
           {showCongrats && (
-            <div className="congrats-banner">🎉 {current.message}</div>
+            <div className="ionic-congrats-banner">🎉 {current.message}</div>
           )}
 
-          <div className={`workspace ${bondFormed ? "bonded" : ""}`}>
+          <div className={`ionic-workspace ${bondFormed ? "ionic-bonded" : ""}`}>
             <DropZone
               id={current.atom1}
-              className={`atom left-atom ${current.atom1} ${
-                bondFormed ? "final-state" : ""
+              className={`ionic-atom ionic-left-atom ionic-${current.atom1} ${
+                bondFormed ? "ionic-final-state" : ""
               }`}
             >
-              <div className="atom-symbol">{getSymbol(current.atom1)}</div>
+              <div className="ionic-atom-symbol">{getSymbol(current.atom1)}</div>
               {renderElectronsOn(current.atom1, items, activeId)}
             </DropZone>
 
             <DropZone
               id={current.atom2}
-              className={`atom right-atom ${current.atom2} ${
-                bondFormed ? "final-state opposite" : ""
+              className={`ionic-atom ionic-right-atom ionic-${current.atom2} ${
+                bondFormed ? "ionic-final-state ionic-opposite" : ""
               }`}
             >
-              <div className="atom-symbol">{getSymbol(current.atom2)}</div>
+              <div className="ionic-atom-symbol">{getSymbol(current.atom2)}</div>
               {renderElectronsOn(current.atom2, items, activeId)}
             </DropZone>
 
@@ -224,35 +224,18 @@ export default function IonicChallenge2({ onComplete }) {
           </div>
 
           {status === "correct" ? (
-            <div className="success-message">{current.message}</div>
+            <div className="ionic-success-message">{current.message}</div>
           ) : (
-            <div className="button-group">
+            <div className="ionic-button-group">
               <button
                 onClick={() => resetChallenge(current)}
-                className="reset-btn"
-                style={{
-                  backgroundColor: "#e74c3c",
-                  color: "#fff",
-                  padding: "10px 20px",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                  marginRight: "10px",
-                }}
+                className="ionic-reset-btn"
               >
                 Reset
               </button>
               <button
                 onClick={checkBond}
-                className={`check-btn ${status}`}
-                style={{
-                  backgroundColor: "#2ecc71",
-                  color: "#fff",
-                  padding: "10px 20px",
-                  border: "none",
-                  borderRadius: "6px",
-                  cursor: "pointer",
-                }}
+                className={`ionic-check-btn ionic-${status}`}
               >
                 Check
               </button>
@@ -262,7 +245,7 @@ export default function IonicChallenge2({ onComplete }) {
       </div>
 
       <DragOverlay>
-        {activeId ? <div className="electron is-dragging"></div> : null}
+        {activeId ? <div className="ionic-electron ionic-is-dragging"></div> : null}
       </DragOverlay>
     </DndContext>
   );
@@ -272,7 +255,7 @@ export default function IonicChallenge2({ onComplete }) {
 function DropZone({ id, children, className }) {
   const { setNodeRef, isOver } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={`${className} ${isOver ? "hovering" : ""}`}>
+    <div ref={setNodeRef} className={`${className} ${isOver ? "ionic-hovering" : ""}`}>
       {children}
     </div>
   );
@@ -284,24 +267,7 @@ function TrashBin() {
   return (
     <div
       ref={setNodeRef}
-      className={`trash-bin ${isOver ? "hovering" : ""}`}
-      style={{
-        position: "absolute",
-        bottom: "20px",
-        right: "20px",
-        width: "60px",
-        height: "60px",
-        backgroundColor: isOver ? "#e74c3c" : "#95a5a6",
-        borderRadius: "8px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "white",
-        fontSize: "24px",
-        transition: "background-color 0.2s ease",
-        cursor: "pointer",
-        border: isOver ? "2px solid #c0392b" : "2px solid #7f8c8d",
-      }}
+      className={`ionic-trash-bin ${isOver ? "ionic-hovering" : ""}`}
     >
       🗑️
     </div>
@@ -322,7 +288,7 @@ function Electron({ id, isHidden, angle }) {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className="electron"
+      className="ionic-electron"
       style={style}
     />
   );

@@ -187,43 +187,43 @@ export default function ChallengeOne({ onComplete }) {
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="lesson-modal ionic-bonding">
-        <div className="challenge-box">
+      <div className="ionic-lesson-modal ionic-bonding-challenge">
+        <div className="ionic-challenge-box">
           <h3>{title}</h3>
           <p>{instruction}</p>
 
           {/* Electron counters */}
-          <div className="electron-counters">
-            <div className="counter">
+          <div className="ionic-electron-counters">
+            <div className="ionic-counter">
               {symbolLeft}: {leftElectronCount} electrons
             </div>
-            <div className="counter">
+            <div className="ionic-counter">
               {symbolRight}: {rightElectronCount} electrons
             </div>
           </div>
 
           {showCongrats && (
-            <div className="congrats-banner">
+            <div className="ionic-congrats-banner">
               🎉 Congratulations! You formed the correct ionic bond!
             </div>
           )}
 
-          <div className={`workspace ${bondFormed ? "bonded" : ""}`}>
+          <div className={`ionic-workspace ${bondFormed ? "ionic-bonded" : ""}`}>
             <DropZone
               id={atomLeft}
-              className={`atom left-atom ${items[atomLeft]?.type} ${bondFormed ? "final-state" : ""
+              className={`ionic-atom ionic-left-atom ionic-${items[atomLeft]?.type} ${bondFormed ? "ionic-final-state" : ""
                 }`}
             >
-              <span className="atom-symbol">{symbolLeft}</span>
+              <span className="ionic-atom-symbol">{symbolLeft}</span>
               {renderElectronsOn(atomLeft, items, activeId)}
             </DropZone>
 
             <DropZone
               id={atomRight}
-              className={`atom right-atom ${items[atomRight]?.type} ${bondFormed ? "final-state opposite" : ""
+              className={`ionic-atom ionic-right-atom ionic-${items[atomRight]?.type} ${bondFormed ? "ionic-final-state ionic-opposite" : ""
                 }`}
             >
-              <span className="atom-symbol">{symbolRight}</span>
+              <span className="ionic-atom-symbol">{symbolRight}</span>
               {renderElectronsOn(atomRight, items, activeId)}
             </DropZone>
 
@@ -231,33 +231,17 @@ export default function ChallengeOne({ onComplete }) {
             <TrashBin />
           </div>
 
-          <div className="button-group" style={{ display: "flex", justifyContent: "center", marginTop: "15px" }}>
+          <div className="ionic-button-group">
             <button
               onClick={() => resetChallenge(challenge)}
-              className="reset-btn"
-              style={{
-                backgroundColor: "#e74c3c",
-                color: "#fff",
-                padding: "10px 20px",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
+              className="ionic-reset-btn"
             >
               Reset
             </button>
 
             <button
               onClick={checkBond}
-              className={`check-btn ${status}`}
-              style={{
-                backgroundColor: "#2ecc71",
-                color: "#fff",
-                padding: "10px 20px",
-                border: "none",
-                borderRadius: "6px",
-                cursor: "pointer",
-              }}
+              className={`ionic-check-btn ionic-${status}`}
             >
               Check
             </button>
@@ -267,7 +251,7 @@ export default function ChallengeOne({ onComplete }) {
       </div>
 
       <DragOverlay>
-        {activeId ? <div className="electron is-dragging"></div> : null}
+        {activeId ? <div className="ionic-electron ionic-is-dragging"></div> : null}
       </DragOverlay>
     </DndContext>
   );
@@ -277,7 +261,7 @@ export default function ChallengeOne({ onComplete }) {
 function DropZone({ id, children, className }) {
   const { setNodeRef, isOver } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={`${className} ${isOver ? "hovering" : ""}`}>
+    <div ref={setNodeRef} className={`${className} ${isOver ? "ionic-hovering" : ""}`}>
       {children}
     </div>
   );
@@ -290,25 +274,7 @@ function TrashBin() {
   return (
     <div 
       ref={setNodeRef}
-      className={`trash-bin ${isOver ? "hovering" : ""}`}
-      style={{
-        position: "absolute",
-        bottom: "20px",
-        right: "20px",
-        width: "60px",
-        height: "60px",
-        backgroundColor: isOver ? "#e74c3c" : "#95a5a6",
-        borderRadius: "8px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        color: "white",
-        fontSize: "24px",
-        transition: "background-color 0.2s ease",
-        cursor: "pointer",
-        border: isOver ? "2px solid #c0392b" : "2px solid #7f8c8d",
-        boxShadow: "0 2px 4px rgba(0,0,0,0.2)"
-      }}
+      className={`ionic-trash-bin ${isOver ? "ionic-hovering" : ""}`}
     >
       🗑️
     </div>
@@ -329,7 +295,7 @@ function Electron({ id, isHidden, angle }) {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className="electron"
+      className="ionic-electron"
       style={style}
     ></div>
   );
