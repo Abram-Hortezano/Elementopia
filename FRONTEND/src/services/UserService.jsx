@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/user";
-// const API_URL = "https://elementopia.onrender.com/api/user";
+// const API_URL = "http://localhost:8080/api/user";
+const API_URL = "https://elementopia.onrender.com/api/user";
 
 // Get token from localStorage
 const getAuthHeader = () => {
@@ -48,6 +48,30 @@ const UserService = {
         "Failed to fetch current user:",
         error.response?.data || error.message
       );
+      throw error;
+    }
+  },
+
+  // Join Section (With Test Code)
+  joinSection: async (sectionCode) => {
+    // --- 🚧 TEMP: TEST CODE BACKDOOR 🚧 ---
+    // Enter "TEST-123" in the modal to unlock immediately.
+    // This is NOT saved, so a refresh will lock you out again.
+    if (sectionCode === "TEST-123") {
+      console.log("🔓 Test Code Accepted: Unlocking Map (Temporary)");
+      return Promise.resolve({ message: "Test Section Joined Successfully" });
+    }
+    // ---------------------------------------
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/join-section`, 
+        { sectionCode }, 
+        { headers: getAuthHeader() }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Failed to join section:", error.response?.data || error.message);
       throw error;
     }
   },
@@ -115,7 +139,6 @@ const UserService = {
   // Register new user
   registerUser: async (userData) => {
     try {
-      console.log(userData);
       const response = await axios.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (error) {
