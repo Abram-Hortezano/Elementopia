@@ -95,14 +95,19 @@ public class UserController {
 
     // Register User (JWT-compatible; returns DTO)
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody UserEntity user) {
-        try {
-            UserEntity newUser = uServ.registerUser(user);
-            return ResponseEntity.ok(uServ.toDTO(newUser));
-        } catch (RuntimeException e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
+    public ResponseEntity<?> registerUser(@RequestBody RegisterRequest req) {
+        UserEntity user = new UserEntity();
+        user.setUsername(req.getUsername());
+        user.setPassword(req.getPassword());
+        user.setEmail(req.getEmail());
+        user.setFirstName(req.getFirstName());
+        user.setLastName(req.getLastName());
+        user.setRole(req.getRole());
+
+        UserEntity newUser = uServ.registerUser(user);
+        return ResponseEntity.ok(uServ.toDTO(newUser));
     }
+
 
     // Login User (JWT)
     @PostMapping("/login")

@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://elementopia.onrender.com/api/discoveries";
-// const API_URL = "http://localhost:8080/api/discoveries";
+// const API_URL = "https://elementopia.onrender.com/api/discoveries";
+const API_URL = "http://localhost:8080/api/discoveries";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");

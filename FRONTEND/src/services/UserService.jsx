@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const API_URL = "http://localhost:8080/api/user";
-const API_URL = "https://elementopia.onrender.com/api/user";
+const API_URL = "http://localhost:8080/api/user";
+// const API_URL = "https://elementopia.onrender.com/api/user";
 
 // Get token from localStorage
 const getAuthHeader = () => {
@@ -115,6 +115,7 @@ const UserService = {
   // Register new user
   registerUser: async (userData) => {
     try {
+      console.log(userData);
       const response = await axios.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (error) {
