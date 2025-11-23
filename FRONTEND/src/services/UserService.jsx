@@ -115,6 +115,7 @@ const UserService = {
   // Register new user
   registerUser: async (userData) => {
     try {
+      console.log(userData);
       const response = await axios.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (error) {

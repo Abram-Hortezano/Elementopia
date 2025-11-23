@@ -1,5 +1,6 @@
 package com.elementopia.database.controller;
 
+import com.elementopia.database.dto.ScoreDTO;
 import com.elementopia.database.entity.ScoreEntity;
 import com.elementopia.database.service.ScoreService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,42 +16,43 @@ public class ScoreController {
     @Autowired
     private ScoreService scoreService;
 
-    // Create (initialize) score record for a user
+    /** Create a score record for a user */
     @PostMapping("/create/{userId}")
     public ResponseEntity<ScoreEntity> createScore(@PathVariable Long userId) {
         return ResponseEntity.ok(scoreService.createScore(userId));
     }
 
-    // Read: get score by user
+    /** Get score by userId */
     @GetMapping("/{userId}")
     public ResponseEntity<ScoreEntity> getScore(@PathVariable Long userId) {
         return ResponseEntity.ok(scoreService.getByUserId(userId));
     }
 
+    /** Get all scores */
     @GetMapping("/all")
     public ResponseEntity<List<ScoreEntity>> getAllScores() {
         return ResponseEntity.ok(scoreService.getAllScores());
     }
 
-    // Update: overwrite careerScore
+    /** Replace a user's score using ScoreDTO */
     @PutMapping("/update/{userId}")
-    public ResponseEntity<ScoreEntity> updateScore(
+    public ResponseEntity<ScoreEntity> updateScoreWithLesson(
             @PathVariable Long userId,
-            @RequestParam Integer newScore
+            @RequestBody ScoreDTO request
     ) {
-        return ResponseEntity.ok(scoreService.updateScore(userId, newScore));
+        return ResponseEntity.ok(scoreService.updateScoreWithLesson(userId, request));
     }
 
-    // Add: increment careerScore by delta
+    /** Increment score using ScoreDTO */
     @PostMapping("/add/{userId}")
     public ResponseEntity<ScoreEntity> addScore(
             @PathVariable Long userId,
-            @RequestParam Integer delta
+            @RequestBody ScoreDTO request
     ) {
-        return ResponseEntity.ok(scoreService.addScore(userId, delta));
+        return ResponseEntity.ok(scoreService.addScore(userId, request.getScore()));
     }
 
-    // Delete: remove score record
+    /** Delete score record */
     @DeleteMapping("/delete/{userId}")
     public ResponseEntity<String> deleteScore(@PathVariable Long userId) {
         scoreService.deleteScore(userId);
