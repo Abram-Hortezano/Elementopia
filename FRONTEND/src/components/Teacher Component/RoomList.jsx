@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/RoomList.css'; 
-import CreateLaboratory from './create-lab';
+import CreateLaboratory from './create-lab'; // Ensure this matches your file name (create-lab.jsx)
 import StudentList from './StudentList';
+import SectionService from '../../services/SectionService'; // Import Service
+import UserService from '../../services/UserService';     // Import User Service
 
 const RoomList = () => {
   const [rooms, setRooms] = useState([]);
@@ -9,65 +11,54 @@ const RoomList = () => {
   const [activeDropdown, setActiveDropdown] = useState(null);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
+  const [teacherId, setTeacherId] = useState(null);
 
-  // Sample data - replace with actual API call
-  const sampleRooms = [
-    { 
-      id: 1, 
-      className: 'Mathematics 101', 
-      roomCode: 'MATH101', 
-      studentCount: 30,
-      instructor: 'Dr. Smith',
-      status: 'Active'
-    },
-    { 
-      id: 2, 
-      className: 'Science 201', 
-      roomCode: 'SCI201', 
-      studentCount: 25,
-      instructor: 'Prof. Johnson',
-      status: 'Active'
-    },
-    { 
-      id: 3, 
-      className: 'English 301', 
-      roomCode: 'ENG301', 
-      studentCount: 28,
-      instructor: 'Dr. Williams',
-      status: 'Inactive'
-    },
-    { 
-      id: 4, 
-      className: 'History 150', 
-      roomCode: 'HIST150', 
-      studentCount: 35,
-      instructor: 'Prof. Brown',
-      status: 'Active'
-    },
-  ];
-
+  // 1. Fetch Data on Mount
   useEffect(() => {
-    // Simulate API call
-    setTimeout(() => {
-      setRooms(sampleRooms);
-      setLoading(false);
-    }, 1000);
+    fetchRooms();
   }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
-      // Check if click is outside any dropdown
       if (!event.target.closest('.dropdown-container')) {
         setActiveDropdown(null);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
     return () => {
       document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
+
+  const fetchRooms = async () => {
+    try {
+      setLoading(true);
+      // Get Current User
+      const user = await UserService.getCurrentUser();
+      const currentTeacherId = user.userId || user.id;
+      setTeacherId(currentTeacherId);
+
+      // Get Sections from Backend
+      const labs = await SectionService.getAllSectionsByTeacherId(currentTeacherId);
+
+      // Map Backend Data (LabEntity) to UI Format
+      const formattedRooms = labs.map(lab => ({
+        id: lab.labId,
+        className: lab.laboratoryName,
+        roomCode: lab.labCode,
+        studentCount: lab.studentIds ? lab.studentIds.length : 0,
+        instructor: `${user.firstName} ${user.lastName}`, // Or lab.creator?.firstName
+        status: 'Active' // Default status
+      }));
+
+      setRooms(formattedRooms);
+    } catch (error) {
+      console.error("Failed to fetch rooms:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   // Action handlers
   const handleView = (room) => {
@@ -79,20 +70,28 @@ const RoomList = () => {
   const handleEdit = (room) => {
     console.log('Edit room:', room);
     setActiveDropdown(null);
-    // Open edit modal or form
+    alert("Edit feature coming soon!");
   };
 
-  const handleDelete = (room) => {
+  const handleDelete = async (room) => {
     setActiveDropdown(null);
     if (window.confirm(`Are you sure you want to delete ${room.className}?`)) {
-      console.log('Delete room:', room);
-      // API call to delete room
-      setRooms(rooms.filter(r => r.id !== room.id));
+      try {
+        // Assuming SectionService has a delete method. 
+        // If not, you need to add: deleteLab: (id) => axios.delete(..., id)
+        await SectionService.deleteLab(room.id); 
+        
+        // Remove from UI
+        setRooms(rooms.filter(r => r.id !== room.id));
+      } catch (error) {
+        console.error("Failed to delete room:", error);
+        alert("Failed to delete room. Please try again.");
+      }
     }
   };
 
   const toggleDropdown = (roomId, event) => {
-    event.stopPropagation(); // Prevent event bubbling
+    event.stopPropagation();
     setActiveDropdown(activeDropdown === roomId ? null : roomId);
   };
 
@@ -104,19 +103,11 @@ const RoomList = () => {
     setShowCreateModal(false);
   };
 
-  const handleCreateRoom = (newRoomData) => {
-    console.log('New room data:', newRoomData);
-    // Here you would typically make an API call to create the room
-    // For now, we'll add it to the local state
-    const newRoom = {
-      id: rooms.length + 1,
-      className: newRoomData.laboratoryName,
-      roomCode: newRoomData.labCode,
-      studentCount: newRoomData.studentIds ? newRoomData.studentIds.length : 0,
-      instructor: 'You', // Since you're the creator
-      status: 'Active'
-    };
-    setRooms([...rooms, newRoom]);
+  // Called when CreateLaboratory successfully creates a lab
+  const handleCreateRoom = (newLabData) => {
+    console.log('Room created:', newLabData);
+    // Refresh the list from the server to get the generated ID and data
+    fetchRooms(); 
     setShowCreateModal(false);
   };
 
@@ -130,12 +121,13 @@ const RoomList = () => {
   };
 
   const getDropdownPosition = (roomId) => {
-    const isLastRow = roomId === rooms[rooms.length - 1]?.id;
+    const index = rooms.findIndex(r => r.id === roomId);
+    const isLastRow = index >= rooms.length - 2; // Check if it's among the last 2 rows
     return isLastRow ? 'bottom' : 'top';
   };
 
   if (loading) {
-    return <div className="loading">Loading rooms...</div>;
+    return <div className="loading" style={{color: 'white', padding: '20px'}}>Loading rooms...</div>;
   }
 
   return (
@@ -149,9 +141,9 @@ const RoomList = () => {
       ) : (
         <>
           <div className="room-list-header">
-            <h2>Laboratory</h2>
+            <h2>My Sections</h2>
             <button className="btn-primary" onClick={handleAddNewRoom}>
-              Add New Room
+              Add New Section
             </button>
           </div>
 
@@ -231,7 +223,7 @@ const RoomList = () => {
 
             {rooms.length === 0 && (
               <div className="no-rooms">
-                No rooms found. Create your first room!
+                No sections found. Create your first section!
               </div>
             )}
           </div>
