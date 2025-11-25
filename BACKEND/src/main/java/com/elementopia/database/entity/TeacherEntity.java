@@ -1,8 +1,12 @@
 package com.elementopia.database.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "teacher")
@@ -22,4 +26,9 @@ public class TeacherEntity {
 
     @Column(name = "last_name")
     private String lastName;
+
+    @OneToMany(mappedBy = "teacher", cascade = CascadeType.ALL, orphanRemoval = false)
+    @JsonManagedReference
+    private List<SectionEntity> sections = new ArrayList<>();
+
 }
