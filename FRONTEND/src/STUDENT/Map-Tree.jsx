@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from "react";
 import "../assets/css/Map-tree.css";
 import UserService from "../services/UserService";
-import LessonService from "../services/LessonService"; // 🟢 Swapped to Unified Service
-import LabService from "../services/LabService";       // 🟢 Added for Joining Sections
+import LessonService from "../services/LessonService";
+import LabService from "../services/LabService"; 
 
 // --- LESSON IMPORTS (Kept exactly the same) ---
 import AtomBuilder from "../STUDENT/AtomBuilder";
@@ -69,7 +69,7 @@ const lessonComponents = {
   PercentComposition, PCChallenge1, PCChallenge2, PCChallenge3,
 };
 
-// --- SECTION LOCK MODAL (Your Original UI) ---
+// --- SECTION LOCK MODAL ---
 const SectionLockModal = ({ studentId, onJoinSuccess }) => {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
@@ -80,7 +80,6 @@ const SectionLockModal = ({ studentId, onJoinSuccess }) => {
     setLoading(true);
     setError("");
 
-    // 🟢 Safety Check: Ensure we have the user ID before sending
     if (!studentId) {
         setError("User ID missing. Please refresh.");
         setLoading(false);
@@ -88,7 +87,6 @@ const SectionLockModal = ({ studentId, onJoinSuccess }) => {
     }
 
     try {
-      // 🟢 API CALL: Register student in the database
       await LabService.addStudentToLab(code, studentId);
       onJoinSuccess();
     } catch (err) {
@@ -139,10 +137,7 @@ export default function MapTree() {
       try {
         const userData = await UserService.getCurrentUser();
         setCurrentUser(userData);
-
-        // 🟢 CHECK: Is this student in a lab?
         const allLabs = await LabService.getAllLab();
-        // Robust check: Look for student ID in the 'students' array of any lab
         const myLab = allLabs.find(lab => 
             lab.students && lab.students.some(s => s.userId === userData.userId || s.id === userData.userId)
         );
@@ -164,7 +159,6 @@ export default function MapTree() {
     initData();
   }, []);
 
-  // 🟢 HELPER: Load Progress using the new LessonService
   const loadUserProgress = async (userId) => {
     try {
       const completions = await LessonService.getAllScores();
@@ -184,9 +178,7 @@ export default function MapTree() {
   const handleNodeClick = (node, isLocked) => {
     if (!hasAccess) return;
     
-    // 🟢 Simple Logic: Prevent click if locked, but no UI change needed
     if (isLocked) {
-      // You can comment this alert out if you want it silent
       alert("Please complete the previous lesson first."); 
       return;
     }
@@ -196,7 +188,6 @@ export default function MapTree() {
     }
   };
 
-  // 🟢 LOGIC: Save completion to database
   const handleLessonComplete = async () => {
     if (activeLesson && currentUser) {
       try {
@@ -249,12 +240,10 @@ export default function MapTree() {
       {!activeLesson && (
         <div className={`Node-Container ${!hasAccess ? "blurred" : ""}`}>
           {nodes.map((node, index) => {
-            // 🟢 LOGIC: Calculate if locked, but RENDER using your original classes
             const previousNode = index > 0 ? nodes[index - 1] : null;
             const isLocked = previousNode ? !completedNodes.has(previousNode.id) : false;
             
             const isCompleted = completedNodes.has(node.id);
-            // Kept your original class logic, added 'locked' just in case you have CSS for it
             const status = isCompleted ? "completed" : isLocked ? "locked" : "unlocked";
 
             return (

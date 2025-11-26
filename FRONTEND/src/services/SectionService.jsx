@@ -1,6 +1,5 @@
 import axios from "axios";
 
-// 🚀 LIVE BACKEND URL (matches your login token)
 // const API_URL = "https://elementopia.onrender.com/api/labs";
 const API_URL = "http://localhost:8080/api/labs";
 

@@ -130,9 +130,7 @@ const LessonService = {
       throw error;
     }
   },
-
-  // 1. Save Progress (Called by Student MapTree)
-  // Uses the NEW endpoint that supports Student ID
+  // 1. Save Lesson Progress (Called by Student Component)
   saveLessonProgress: async (payload) => {
     try {
       // payload: { lessonId: 1, score: 100, progress: true, student: { userId: 5 } }
@@ -173,9 +171,8 @@ const LessonService = {
     }
   },
   
-  // (Optional) Backward Compatibility if you used this elsewhere
   getCompletedLessons: async (userId) => {
-      // We can reuse getAllScores and filter, or just use getAllScores in your components
+      // We can reuse getAllScores and filter, or just use getAllScores
       try {
         const allScores = await LessonService.getAllScores();
         // Filter locally for this user

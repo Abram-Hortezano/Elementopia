@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/StudentList.css'; 
 import SectionService from '../../services/SectionService';
-import LessonService from '../../services/LessonService'; // 🟢 IMPORTED for Progress
+import LessonService from '../../services/LessonService';
 
 const StudentList = ({ room, onBack, onClose }) => {
   const [students, setStudents] = useState([]);
@@ -10,7 +10,7 @@ const StudentList = ({ room, onBack, onClose }) => {
   const [activeDropdown, setActiveDropdown] = useState(null);
 
   // Constants
-  const TOTAL_MODULES = 10; // Adjust this based on your actual lesson count
+  const TOTAL_MODULES = 10; // Adjust based on actual lesson count
 
   useEffect(() => {
     if (room?.roomCode) {
@@ -27,7 +27,7 @@ const StudentList = ({ room, onBack, onClose }) => {
       const labData = await SectionService.getClassMembers(room.roomCode);
       const rawStudents = labData.students || [];
 
-      // 2. 🟢 Fetch Scores for Calculation
+      // 2. Fetch Scores for Calculation
       let allScores = [];
       try {
         allScores = await LessonService.getAllScores();
@@ -56,8 +56,8 @@ const StudentList = ({ room, onBack, onClose }) => {
           studentId: `STU${sId.toString().padStart(3, '0')}`,
           name: `${s.firstName} ${s.lastName}`,
           email: s.email,
-          progress: Math.min(percentage, 100), // 🟢 REAL DATA
-          score: totalPoints,                  // 🟢 REAL DATA
+          progress: Math.min(percentage, 100),
+          score: totalPoints,                
           status: 'Active',
           lastActivity: 'N/A',
         };
@@ -104,9 +104,9 @@ const StudentList = ({ room, onBack, onClose }) => {
   };
 
   const getProgressBarClass = (progress) => {
-    if (progress >= 80) return 'progress-high'; // You need CSS for this (green)
-    if (progress >= 50) return 'progress-medium'; // (yellow/orange)
-    return 'progress-low'; // (red)
+    if (progress >= 80) return 'progress-high';
+    if (progress >= 50) return 'progress-medium';
+    return 'progress-low';
   };
 
   const getStatusBadge = (status) => {
@@ -156,7 +156,6 @@ const StudentList = ({ room, onBack, onClose }) => {
               <th>ID</th>
               <th>Student Name</th>
               <th>Email</th>
-              {/* 🟢 UNCOMMENTED COLUMNS */}
               <th>Progress</th> 
               <th>Score</th>
               <th>Status</th>
@@ -174,7 +173,7 @@ const StudentList = ({ room, onBack, onClose }) => {
                 </td>
                 <td><span className="student-email">{student.email}</span></td>
                 
-                {/* 🟢 PROGRESS BAR UI */}
+                {/* PROGRESS BAR UI */}
                 <td>
                   <div className="progress-container">
                     <div className="progress-bar">
