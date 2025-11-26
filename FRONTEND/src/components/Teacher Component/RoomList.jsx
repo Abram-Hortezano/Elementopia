@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/RoomList.css'; 
-import CreateLaboratory from './create-lab'; // Ensure this matches your file name (create-lab.jsx)
+import CreateLaboratory from './create-lab'; 
 import StudentList from './StudentList';
-import SectionService from '../../services/SectionService'; // Import Service
-import UserService from '../../services/UserService';     // Import User Service
+import SectionService from '../../services/SectionService'; 
+import UserService from '../../services/UserService';    
 
 const RoomList = () => {
   const [rooms, setRooms] = useState([]);
@@ -13,12 +13,10 @@ const RoomList = () => {
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [teacherId, setTeacherId] = useState(null);
 
-  // 1. Fetch Data on Mount
   useEffect(() => {
     fetchRooms();
   }, []);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.dropdown-container')) {
@@ -34,22 +32,21 @@ const RoomList = () => {
   const fetchRooms = async () => {
     try {
       setLoading(true);
-      // Get Current User
       const user = await UserService.getCurrentUser();
       const currentTeacherId = user.userId || user.id;
       setTeacherId(currentTeacherId);
 
-      // Get Sections from Backend
+      // Assuming this returns the list of LabEntities
       const labs = await SectionService.getAllSectionsByTeacherId(currentTeacherId);
 
-      // Map Backend Data (LabEntity) to UI Format
       const formattedRooms = labs.map(lab => ({
         id: lab.labId,
         className: lab.laboratoryName,
         roomCode: lab.labCode,
-        studentCount: lab.studentIds ? lab.studentIds.length : 0,
-        instructor: `${user.firstName} ${user.lastName}`, // Or lab.creator?.firstName
-        status: 'Active' // Default status
+        // 🟢 FIX: Use 'students' array, not 'studentIds'
+        studentCount: lab.students ? lab.students.length : 0, 
+        instructor: `${user.firstName} ${user.lastName}`, 
+        status: 'Active' 
       }));
 
       setRooms(formattedRooms);
@@ -60,15 +57,12 @@ const RoomList = () => {
     }
   };
 
-  // Action handlers
   const handleView = (room) => {
-    console.log('View room:', room);
     setActiveDropdown(null);
     setSelectedRoom(room);
   };
 
   const handleEdit = (room) => {
-    console.log('Edit room:', room);
     setActiveDropdown(null);
     alert("Edit feature coming soon!");
   };
@@ -77,11 +71,7 @@ const RoomList = () => {
     setActiveDropdown(null);
     if (window.confirm(`Are you sure you want to delete ${room.className}?`)) {
       try {
-        // Assuming SectionService has a delete method. 
-        // If not, you need to add: deleteLab: (id) => axios.delete(..., id)
         await SectionService.deleteLab(room.id); 
-        
-        // Remove from UI
         setRooms(rooms.filter(r => r.id !== room.id));
       } catch (error) {
         console.error("Failed to delete room:", error);
@@ -103,16 +93,15 @@ const RoomList = () => {
     setShowCreateModal(false);
   };
 
-  // Called when CreateLaboratory successfully creates a lab
   const handleCreateRoom = (newLabData) => {
-    console.log('Room created:', newLabData);
-    // Refresh the list from the server to get the generated ID and data
     fetchRooms(); 
     setShowCreateModal(false);
   };
 
   const handleBackToList = () => {
     setSelectedRoom(null);
+    // Refresh list in case student counts changed
+    fetchRooms(); 
   };
 
   const getStatusBadge = (status) => {
@@ -122,7 +111,7 @@ const RoomList = () => {
 
   const getDropdownPosition = (roomId) => {
     const index = rooms.findIndex(r => r.id === roomId);
-    const isLastRow = index >= rooms.length - 2; // Check if it's among the last 2 rows
+    const isLastRow = index >= rooms.length - 2; 
     return isLastRow ? 'bottom' : 'top';
   };
 
@@ -174,6 +163,7 @@ const RoomList = () => {
                       <span className="instructor">{room.instructor}</span>
                     </td>
                     <td>
+                      {/* 🟢 UPDATED: This will now show the correct count */}
                       <span className="student-count">{room.studentCount}</span>
                     </td>
                     <td>
@@ -184,33 +174,20 @@ const RoomList = () => {
                         <button 
                           className="dropdown-trigger"
                           onClick={(e) => toggleDropdown(room.id, e)}
-                          title="Actions"
                         >
                           ⋮
                         </button>
                         
                         {activeDropdown === room.id && (
                           <div className={`dropdown-menu ${getDropdownPosition(room.id)}`}>
-                            <button 
-                              className="dropdown-item view"
-                              onClick={() => handleView(room)}
-                            >
-                              <span className="icon">👁️</span>
-                              View Students
+                            <button className="dropdown-item view" onClick={() => handleView(room)}>
+                              <span className="icon">👁️</span> View Students
                             </button>
-                            <button 
-                              className="dropdown-item edit"
-                              onClick={() => handleEdit(room)}
-                            >
-                              <span className="icon">✏️</span>
-                              Edit Room
+                            <button className="dropdown-item edit" onClick={() => handleEdit(room)}>
+                              <span className="icon">✏️</span> Edit Room
                             </button>
-                            <button 
-                              className="dropdown-item delete"
-                              onClick={() => handleDelete(room)}
-                            >
-                              <span className="icon">🗑️</span>
-                              Delete Room
+                            <button className="dropdown-item delete" onClick={() => handleDelete(room)}>
+                              <span className="icon">🗑️</span> Delete Room
                             </button>
                           </div>
                         )}
@@ -230,7 +207,6 @@ const RoomList = () => {
         </>
       )}
 
-      {/* Create Laboratory Modal */}
       {showCreateModal && (
         <CreateLaboratory 
           onClose={handleCloseModal}

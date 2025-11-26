@@ -1,25 +1,18 @@
 import axios from "axios";
 
-// 1. BASE URL (Points to the root /api)
-// 🚀 LIVE BACKEND
-const BASE_URL = "https://elementopia.onrender.com/api";
-// const BASE_URL = "http://localhost:8080/api";
+// const BASE_URL = "https://elementopia.onrender.com/api";
+const BASE_URL = "http://localhost:8080/api";
 
 const getAuthHeader = () => {
   const token = localStorage.getItem("token");
   if (!token) {
-    // console.warn("No token found!"); // Optional: Silence warning if checking on load
     return {};
   }
   return { Authorization: `Bearer ${token}` };
 };
 
 const LessonService = {
-  // ==========================================
-  //  PART 1: LESSON CONTENT (Your Existing Code)
-  // ==========================================
-
-  // Fetch all Lessons
+ 
   getAllLessons: async () => {
     try {
       const response = await axios.get(`${BASE_URL}/lessons/getAll`, {
@@ -32,7 +25,6 @@ const LessonService = {
     }
   },
 
-  // Fetch a Lesson by ID
   getLessonById: async (id) => {
     try {
       const response = await axios.get(`${BASE_URL}/lessons/get/${id}`, {
@@ -45,7 +37,6 @@ const LessonService = {
     }
   },
 
-  // Create a new Lesson
   createLesson: async (lessonData) => {
     try {
       const response = await axios.post(`${BASE_URL}/lessons/create`, lessonData, {
@@ -58,7 +49,6 @@ const LessonService = {
     }
   },
 
-  // Add Topic to Lesson
   addTopic: async (lessonId, topicData) => {
     try {
       const response = await axios.post(
@@ -73,7 +63,6 @@ const LessonService = {
     }
   },
 
-  // Add Subtopic
   addSubtopic: async (lessonId, topicId, subtopicData) => {
     try {
       const response = await axios.post(
@@ -88,7 +77,6 @@ const LessonService = {
     }
   },
 
-  // Update Topic
   updateTopic: async (lessonId, topicId, updatedTopicData) => {
     try {
       const response = await axios.put(
@@ -103,7 +91,6 @@ const LessonService = {
     }
   },
 
-  // Delete Topic
   deleteTopic: async (lessonId, topicId) => {
     try {
       const response = await axios.delete(
@@ -117,7 +104,6 @@ const LessonService = {
     }
   },
 
-  // Update Subtopic
   updateSubtopic: async (lessonId, topicId, subtopicId, updatedSubtopicData) => {
     try {
       const response = await axios.put(
@@ -132,7 +118,6 @@ const LessonService = {
     }
   },
 
-  // Delete Subtopic
   deleteSubtopic: async (lessonId, topicId, subtopicId) => {
     try {
       const response = await axios.delete(
@@ -146,43 +131,36 @@ const LessonService = {
     }
   },
 
-  // ==========================================
-  //  PART 2: GAMIFICATION & PROGRESS (NEW)
-  // ==========================================
-
-  // Get list of completed lessons for a user
-  // Endpoint: /api/lesson-completion/user/{userId}
-  getCompletedLessons: async (userId) => {
+  // 1. Save Progress (Called by Student MapTree)
+  // Uses the NEW endpoint that supports Student ID
+  saveLessonProgress: async (payload) => {
     try {
-      const response = await axios.get(`${BASE_URL}/lesson-completion/user/${userId}`, {
+      // payload: { lessonId: 1, score: 100, progress: true, student: { userId: 5 } }
+      const response = await axios.post(`${BASE_URL}/lesson-scores`, payload, {
         headers: getAuthHeader(),
       });
-      // Ensure we return an array
-      return Array.isArray(response.data) ? response.data : [];
-    } catch (error) {
-      console.error("Failed to fetch completions:", error);
-      return []; // Return empty array on error so app doesn't crash
-    }
-  },
-
-  // Mark a lesson as complete
-  // Endpoint: /api/lesson-completion/complete
-  markLessonComplete: async (lessonId, userId) => {
-    try {
-      const response = await axios.post(
-        `${BASE_URL}/lesson-completion/complete`,
-        { lessonId: lessonId, userId: userId }, // Adjust body based on backend requirement
-        { headers: getAuthHeader() }
-      );
       return response.data;
     } catch (error) {
-      console.error("Failed to mark complete:", error);
+      console.error("Save Progress Error:", error);
       throw error;
     }
   },
 
-  // Get Student Scores (for Challenges)
-  // Endpoint: /api/score/{userId}
+  // 2. Get All Scores (Called by Teacher Dashboard)
+  // Uses the NEW endpoint to get data for calculation
+  getAllScores: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/lesson-scores`, {
+        headers: getAuthHeader(),
+      });
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+      console.error("Fetch Scores Error:", error);
+      return [];
+    }
+  },
+
+  // 3. Get Student Total Score (Career Score)
   getStudentScores: async (userId) => {
     try {
       const response = await axios.get(`${BASE_URL}/score/${userId}`, {
@@ -190,9 +168,19 @@ const LessonService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch scores:", error);
+      console.error("Failed to fetch career scores:", error);
       throw error;
     }
+  },
+  
+  // (Optional) Backward Compatibility if you used this elsewhere
+  getCompletedLessons: async (userId) => {
+      // We can reuse getAllScores and filter, or just use getAllScores in your components
+      try {
+        const allScores = await LessonService.getAllScores();
+        // Filter locally for this user
+        return allScores.filter(s => s.student?.userId === userId || s.student?.id === userId);
+      } catch (e) { return []; }
   }
 };
 

@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import '../../assets/css/StudentList.css'; // Ensure you have this CSS file
-import SectionService from '../../services/SectionService'; // Import the service
+import '../../assets/css/StudentList.css'; 
+import SectionService from '../../services/SectionService';
+import LessonService from '../../services/LessonService'; // 🟢 IMPORTED for Progress
 
 const StudentList = ({ room, onBack, onClose }) => {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeDropdown, setActiveDropdown] = useState(null);
+
+  // Constants
+  const TOTAL_MODULES = 10; // Adjust this based on your actual lesson count
 
   useEffect(() => {
     if (room?.roomCode) {
@@ -19,25 +23,45 @@ const StudentList = ({ room, onBack, onClose }) => {
       setLoading(true);
       setError("");
 
-      // 1. Fetch the Lab details (which includes the student list)
-      // Uses the endpoint: GET /api/labs/{labCode}
+      // 1. Fetch Lab Details (Students)
       const labData = await SectionService.getClassMembers(room.roomCode);
-
-      // 2. Extract and Map Students
-      // Backend returns: { ..., students: [ {userId, firstName, lastName, email, ...} ] }
       const rawStudents = labData.students || [];
 
-      const formattedStudents = rawStudents.map((s) => ({
-        id: s.userId || s.id,
-        studentId: `STU${(s.userId || s.id).toString().padStart(3, '0')}`, // Generate a display ID
-        name: `${s.firstName} ${s.lastName}`,
-        email: s.email,
-        progress: 0, // Placeholder: Backend doesn't send this yet
-        score: 0,    // Placeholder: Backend doesn't send this yet
-        status: 'Active',
-        lastActivity: 'N/A',
-        joinDate: 'N/A' // Timestamp usually not sent in simple UserEntity
-      }));
+      // 2. 🟢 Fetch Scores for Calculation
+      let allScores = [];
+      try {
+        allScores = await LessonService.getAllScores();
+      } catch (scoreErr) {
+        console.warn("Could not fetch scores, progress will be 0", scoreErr);
+      }
+
+      // 3. Merge Data
+      const formattedStudents = rawStudents.map((s) => {
+        const sId = s.userId || s.id;
+
+        // Filter scores for this student
+        const studentScores = allScores.filter(score => 
+           score.student?.userId === sId || score.student?.id === sId
+        );
+
+        // Calculate Progress
+        const uniqueCompleted = new Set(studentScores.map(sc => sc.lessonId)).size;
+        const percentage = Math.round((uniqueCompleted / TOTAL_MODULES) * 100);
+        
+        // Calculate Total Score (Optional sum of all points)
+        const totalPoints = studentScores.reduce((sum, sc) => sum + (sc.score || 0), 0);
+
+        return {
+          id: sId,
+          studentId: `STU${sId.toString().padStart(3, '0')}`,
+          name: `${s.firstName} ${s.lastName}`,
+          email: s.email,
+          progress: Math.min(percentage, 100), // 🟢 REAL DATA
+          score: totalPoints,                  // 🟢 REAL DATA
+          status: 'Active',
+          lastActivity: 'N/A',
+        };
+      });
 
       setStudents(formattedStudents);
     } catch (err) {
@@ -48,9 +72,7 @@ const StudentList = ({ room, onBack, onClose }) => {
     }
   };
 
-  // --- UI HANDLERS (Same as your template) ---
-
-  // Close dropdown when clicking outside
+  // --- UI HANDLERS ---
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.dropdown-container')) {
@@ -69,24 +91,22 @@ const StudentList = ({ room, onBack, onClose }) => {
   };
 
   const handleViewProfile = (student) => {
-    console.log('View profile:', student);
     setActiveDropdown(null);
-    alert(`Viewing profile for ${student.name}`);
+    alert(`Viewing profile for ${student.name}\nScore: ${student.score}\nProgress: ${student.progress}%`);
   };
 
   const handleRemoveStudent = async (student) => {
     setActiveDropdown(null);
     if (window.confirm(`Are you sure you want to remove ${student.name}?`)) {
-       // Note: Your backend needs a specific 'removeStudent' endpoint to do this real-time.
-       // For now, we just update the UI.
+       // Logic to remove student API call would go here
        setStudents(prev => prev.filter(s => s.id !== student.id));
     }
   };
 
   const getProgressBarClass = (progress) => {
-    if (progress >= 80) return 'progress-high';
-    if (progress >= 60) return 'progress-medium';
-    return 'progress-low';
+    if (progress >= 80) return 'progress-high'; // You need CSS for this (green)
+    if (progress >= 50) return 'progress-medium'; // (yellow/orange)
+    return 'progress-low'; // (red)
   };
 
   const getStatusBadge = (status) => {
@@ -96,8 +116,7 @@ const StudentList = ({ room, onBack, onClose }) => {
 
   const getDropdownPosition = (studentId) => {
     const index = students.findIndex(s => s.id === studentId);
-    const isLastRow = index >= students.length - 2;
-    return isLastRow ? 'bottom' : 'top';
+    return index >= students.length - 2 ? 'bottom' : 'top';
   };
 
   if (loading) {
@@ -137,9 +156,9 @@ const StudentList = ({ room, onBack, onClose }) => {
               <th>ID</th>
               <th>Student Name</th>
               <th>Email</th>
-              {/* <th>Progress</th> */} 
-              {/* <th>Score</th> */}
-              {/* Commented out Progress/Score until backend supports it to avoid confusion */}
+              {/* 🟢 UNCOMMENTED COLUMNS */}
+              <th>Progress</th> 
+              <th>Score</th>
               <th>Status</th>
               <th>Actions</th>
             </tr>
@@ -147,40 +166,31 @@ const StudentList = ({ room, onBack, onClose }) => {
           <tbody>
             {students.map(student => (
               <tr key={student.id}>
-                <td>
-                  <span className="student-id">{student.studentId}</span>
-                </td>
+                <td><span className="student-id">{student.studentId}</span></td>
                 <td>
                   <div className="student-info">
                     <div className="student-name">{student.name}</div>
                   </div>
                 </td>
-                <td>
-                  <span className="student-email">{student.email}</span>
-                </td>
+                <td><span className="student-email">{student.email}</span></td>
                 
-                {/* Placeholder Columns for Future Use
+                {/* 🟢 PROGRESS BAR UI */}
                 <td>
                   <div className="progress-container">
                     <div className="progress-bar">
                       <div 
                         className={`progress-fill ${getProgressBarClass(student.progress)}`}
-                        style={{ width: `${student.progress}%` }}
+                        style={{ width: `${student.progress}%`, backgroundColor: student.progress >= 80 ? '#4caf50' : '#6c5dd3' }}
                       ></div>
                     </div>
                     <span className="progress-text">{student.progress}%</span>
                   </div>
                 </td>
                 <td>
-                  <span className={`score`}>
-                    {student.score}
-                  </span>
+                  <span className={`score`}>{student.score}</span>
                 </td>
-                */}
 
-                <td>
-                  {getStatusBadge(student.status)}
-                </td>
+                <td>{getStatusBadge(student.status)}</td>
                 <td>
                   <div className="dropdown-container">
                     <button 
@@ -189,19 +199,12 @@ const StudentList = ({ room, onBack, onClose }) => {
                     >
                       ⋮
                     </button>
-                    
                     {activeDropdown === student.id && (
                       <div className={`dropdown-menu ${getDropdownPosition(student.id)}`}>
-                        <button 
-                          className="dropdown-item view"
-                          onClick={() => handleViewProfile(student)}
-                        >
+                        <button className="dropdown-item view" onClick={() => handleViewProfile(student)}>
                           <span className="icon">👤</span> Profile
                         </button>
-                        <button 
-                          className="dropdown-item remove"
-                          onClick={() => handleRemoveStudent(student)}
-                        >
+                        <button className="dropdown-item remove" onClick={() => handleRemoveStudent(student)}>
                           <span className="icon">🚫</span> Remove
                         </button>
                       </div>

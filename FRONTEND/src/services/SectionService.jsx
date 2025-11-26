@@ -1,7 +1,9 @@
 import axios from "axios";
 
 // 🚀 LIVE BACKEND URL (matches your login token)
-const API_URL = "https://elementopia.onrender.com/api/labs";
+// const API_URL = "https://elementopia.onrender.com/api/labs";
+const API_URL = "http://localhost:8080/api/labs";
+
 
 // Robust Token Helper
 const getAuthHeader = () => {
@@ -85,7 +87,7 @@ const SectionService = {
     }
   },
 
-// From src/services/SectionService.js
+// Gets all Sections for a Teacher
   getAllSectionsByTeacherId: async (teacherId) => {
     try {
       const response = await axios.get(`${API_URL}/getAll`, {
@@ -94,15 +96,23 @@ const SectionService = {
       
       const allLabs = response.data || [];
       
-      // 🔴 OLD FILTER (Fails because backend hides the creator)
-      // return allLabs.filter(lab => lab.creatorId === teacherId || lab.creator?.id === teacherId);
-
-      // 🟢 NEW: Return EVERYTHING. 
-      // Since we can't filter by ID (it's hidden), we just show all active sections.
       return allLabs;
       
     } catch (error) {
       console.error("Failed to get teacher sections:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  deleteLab: async (labId) => {
+    try {
+      const response = await axios.delete(`${API_URL}/${labId}`, {
+        headers: getAuthHeader(),
+      });
+      console.log("Deleting lab with ID:", labId);
+      return response.data;
+    } catch (error) {
+      console.error("Failed to delete lab:", error.response?.data || error.message);
       throw error;
     }
   },

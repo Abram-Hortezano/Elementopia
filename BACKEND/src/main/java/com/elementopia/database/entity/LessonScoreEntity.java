@@ -19,6 +19,10 @@ public class LessonScoreEntity {
     @Column(name = "lesson_id", nullable = false)
     private Long lessonId;
 
+    @ManyToOne
+    @JoinColumn(name = "student_id", nullable = false)
+    private UserEntity student;
+
     @Column(name = "progress", nullable = false)
     private boolean progress;
 

@@ -16,7 +16,10 @@ public class LessonScoreService {
 
     // Create or update
     public LessonScoreEntity saveLessonScore(LessonScoreEntity lessonScore) {
-        LessonScoreEntity existing = lessonScoreRepository.findByLessonId(lessonScore.getLessonId());
+        LessonScoreEntity existing = lessonScoreRepository.findByLessonIdAndStudentUserId(
+            lessonScore.getLessonId(), 
+            lessonScore.getStudent().getUserId() // Ensure this getter path is correct
+        );
         if (existing != null) {
             existing.setProgress(lessonScore.isProgress());
             existing.setScore(lessonScore.getScore());
