@@ -60,11 +60,13 @@ const SectionService = {
   // Join Section (Maps to 'add-student')
   joinSection: async (data) => {
     try {
-      const response = await axios.put(
-        `${API_URL}/${data.sectionCode}/add-student`,
-        {}, // Empty body
+      const response = await axios.post(
+        `${API_URL}/join`,
         {
-          params: { studentId: data.studentId },
+          studentId: data.studentId,
+          sectionCode: data.sectionCode,
+        },
+        {
           headers: getAuthHeader(),
         }
       );
