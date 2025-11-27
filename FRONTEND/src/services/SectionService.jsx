@@ -1,8 +1,7 @@
 import axios from "axios";
 
-// const API_URL = "https://elementopia.onrender.com/api/labs";
-const API_URL = "http://localhost:8080/api/labs";
-
+// const API_URL = "https://elementopia.onrender.com/api/section";
+const API_URL = "http://localhost:8080/api/section";
 
 // Robust Token Helper
 const getAuthHeader = () => {
@@ -11,7 +10,8 @@ const getAuthHeader = () => {
   // Fallback: Check inside 'user' object in localStorage or sessionStorage
   if (!token) {
     try {
-      const userStr = localStorage.getItem("user") || sessionStorage.getItem("user");
+      const userStr =
+        localStorage.getItem("user") || sessionStorage.getItem("user");
       if (userStr) {
         const user = JSON.parse(userStr);
         token = user.token || user.accessToken;
@@ -26,9 +26,9 @@ const getAuthHeader = () => {
     throw new Error("Authorization token is missing. Please log in.");
   }
 
-  return { 
+  return {
     Authorization: `Bearer ${token}`,
-    "Content-Type": "application/json"
+    "Content-Type": "application/json",
   };
 };
 
@@ -37,12 +37,11 @@ const SectionService = {
   createSection: async (data) => {
     try {
       // Translation: Section Name -> Laboratory Name
+      console.log(data);
       const payload = {
-        laboratoryName: data.sectionName,
-        labCode: data.sectionCode,
-        creatorId: data.teacherId,
-        studentIds: [],
-        lessonIds: []
+        sectionName: data.sectionName,
+        sectionCode: data.sectionCode,
+        teacherId: data.teacherId,
       };
 
       const response = await axios.post(`${API_URL}/create`, payload, {
@@ -50,7 +49,10 @@ const SectionService = {
       });
       return response.data;
     } catch (error) {
-      console.error("Failed to create section:", error.response?.data || error.message);
+      console.error(
+        "Failed to create section:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -68,7 +70,10 @@ const SectionService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to join section:", error.response?.data || error.message);
+      console.error(
+        "Failed to join section:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -81,24 +86,41 @@ const SectionService = {
       });
       return response.data; // Returns the full Lab Entity
     } catch (error) {
-      console.error("Failed to get class members:", error.response?.data || error.message);
+      console.error(
+        "Failed to get class members:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
 
-// Gets all Sections for a Teacher
-  getAllSectionsByTeacherId: async (teacherId) => {
+  getTeacherId: async () => {
     try {
-      const response = await axios.get(`${API_URL}/getAll`, {
+      const response = await axios.get(`http://localhost:8080/api/teacher/me`, {
         headers: getAuthHeader(),
       });
-      
-      const allLabs = response.data || [];
-      
-      return allLabs;
-      
+      return response.data;
     } catch (error) {
-      console.error("Failed to get teacher sections:", error.response?.data || error.message);
+      console.error(
+        "Failed to get class members:",
+        error.response?.data || error.message
+      );
+      throw error;
+    }
+  },
+
+  // Gets all Sections for a Teacher
+  getAllSectionsByTeacherId: async (teacherId) => {
+    try {
+      const response = await axios.get(`${API_URL}/teacher/${teacherId}`, {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+      console.error(
+        "Failed to get teacher sections:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -111,11 +133,13 @@ const SectionService = {
       console.log("Deleting lab with ID:", labId);
       return response.data;
     } catch (error) {
-      console.error("Failed to delete lab:", error.response?.data || error.message);
+      console.error(
+        "Failed to delete lab:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
-
 };
 
 export default SectionService;

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Copy, Check, X, Loader2 } from "lucide-react";
-import "../../assets/css/create-lab.css"; 
+import "../../assets/css/create-lab.css";
 import UserService from "../../services/UserService";
 import SectionService from "../../services/SectionService"; // Using the new service
 
@@ -8,7 +8,7 @@ export default function CreateLaboratory({ onClose, onCreate }) {
   const [sectionName, setSectionName] = useState("");
   const [sectionCode, setSectionCode] = useState("");
   const [teacherId, setTeacherId] = useState(null);
-  
+
   // UI States
   const [copied, setCopied] = useState(false);
   const [error, setError] = useState("");
@@ -21,12 +21,16 @@ export default function CreateLaboratory({ onClose, onCreate }) {
 
   const fetchUser = async () => {
     try {
-      const user = await UserService.getCurrentUser();
-      // Ensure we get the correct ID field
-      setTeacherId(user.userId || user.id);
+      const teacher = await SectionService.getTeacherId();
+      setTeacherId(teacher.teacherId);
     } catch (err) {
       console.error("Auth Error:", err);
-      setError("Please log in to create a section.");
+
+      if (err.response?.status === 404) {
+        setError("Teacher profile not found.");
+      } else {
+        setError("Please log in to create a section.");
+      }
     }
   };
 
@@ -66,18 +70,12 @@ export default function CreateLaboratory({ onClose, onCreate }) {
         teacherId: teacherId,
       };
 
-      console.log("Submitting:", sectionData);
-
       const result = await SectionService.createSection(sectionData);
-      
-      console.log("Success:", result);
-      alert("Section created successfully!");
 
       if (onCreate) {
         onCreate(result);
       }
       onClose();
-
     } catch (err) {
       console.error(err);
       if (err.response?.status === 403) {
@@ -92,15 +90,24 @@ export default function CreateLaboratory({ onClose, onCreate }) {
 
   return (
     <div className="modal-overlay" onClick={onClose}>
-      <div className="laboratory-container" onClick={(e) => e.stopPropagation()}>
-        
+      <div
+        className="laboratory-container"
+        onClick={(e) => e.stopPropagation()}
+      >
         {/* HEADER */}
-        <div className="header" style={{ position: 'relative' }}>
+        <div className="header" style={{ position: "relative" }}>
           <h2>Create New Section</h2>
           <p>Set up a new class section for your students.</p>
-          <button 
-            onClick={onClose} 
-            style={{ position: 'absolute', top: 0, right: 0, background: 'none', border: 'none', cursor: 'pointer' }}
+          <button
+            onClick={onClose}
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+            }}
           >
             <X size={24} />
           </button>
@@ -131,24 +138,36 @@ export default function CreateLaboratory({ onClose, onCreate }) {
               {copied ? <Check size={18} color="green" /> : <Copy size={18} />}
             </button>
           </div>
-          <p style={{ fontSize: '0.8rem', color: '#666', marginTop: '5px' }}>
+          <p style={{ fontSize: "0.8rem", color: "#666", marginTop: "5px" }}>
             Share this code with your students to join the section.
           </p>
         </div>
 
-        {error && <p className="error-message" style={{ color: 'red' }}>{error}</p>}
+        {error && (
+          <p className="error-message" style={{ color: "red" }}>
+            {error}
+          </p>
+        )}
 
         {/* ACTIONS */}
         <div className="action-buttons">
           <button className="cancel-btn" onClick={onClose} disabled={isLoading}>
             Cancel
           </button>
-          <button className="submit-btn" onClick={handleSubmit} disabled={isLoading}>
+          <button
+            className="submit-btn"
+            onClick={handleSubmit}
+            disabled={isLoading}
+          >
             {isLoading ? (
-              <span style={{display: 'flex', alignItems:'center', gap:'5px'}}>
+              <span
+                style={{ display: "flex", alignItems: "center", gap: "5px" }}
+              >
                 <Loader2 className="animate-spin" size={16} /> Creating...
               </span>
-            ) : "Create Section"}
+            ) : (
+              "Create Section"
+            )}
           </button>
         </div>
       </div>

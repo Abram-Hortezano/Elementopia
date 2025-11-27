@@ -81,5 +81,22 @@ public class SectionService {
         ).toList();
     }
 
+    // Delete a section
+    public void deleteSection(Long sectionId) {
+        SectionEntity section = sectionRepo.findById(sectionId)
+                .orElseThrow(() -> new NoSuchElementException("Section not found"));
+
+        // ✅ Detach students first (VERY important)
+        List<StudentEntity> students = section.getStudents();
+        if (students != null) {
+            for (StudentEntity student : students) {
+                student.setSection(null);
+            }
+            studentRepo.saveAll(students);
+        }
+
+        // ✅ Now safe to delete section
+        sectionRepo.delete(section);
+    }
 
 }

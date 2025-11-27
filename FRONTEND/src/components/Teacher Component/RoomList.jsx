@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react';
-import '../../assets/css/RoomList.css'; 
-import CreateLaboratory from './create-lab'; 
-import StudentList from './StudentList';
-import SectionService from '../../services/SectionService'; 
-import UserService from '../../services/UserService';    
+import React, { useState, useEffect } from "react";
+import "../../assets/css/RoomList.css";
+import CreateLaboratory from "./create-lab";
+import StudentList from "./StudentList";
+import SectionService from "../../services/SectionService";
+import UserService from "../../services/UserService";
 
 const RoomList = () => {
   const [rooms, setRooms] = useState([]);
@@ -19,13 +19,13 @@ const RoomList = () => {
 
   useEffect(() => {
     const handleClickOutside = (event) => {
-      if (!event.target.closest('.dropdown-container')) {
+      if (!event.target.closest(".dropdown-container")) {
         setActiveDropdown(null);
       }
     };
-    document.addEventListener('mousedown', handleClickOutside);
+    document.addEventListener("mousedown", handleClickOutside);
     return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
+      document.removeEventListener("mousedown", handleClickOutside);
     };
   }, []);
 
@@ -33,20 +33,21 @@ const RoomList = () => {
     try {
       setLoading(true);
       const user = await UserService.getCurrentUser();
-      const currentTeacherId = user.userId || user.id;
-      setTeacherId(currentTeacherId);
+      const teacher = await SectionService.getTeacherId();
+      setTeacherId(teacher.teacherId);
 
       // Assuming this returns the list of LabEntities
-      const labs = await SectionService.getAllSectionsByTeacherId(currentTeacherId);
+      const labs = await SectionService.getAllSectionsByTeacherId(
+        teacher.teacherId
+      );
 
-      const formattedRooms = labs.map(lab => ({
-        id: lab.labId,
-        className: lab.laboratoryName,
-        roomCode: lab.labCode,
-        // 🟢 FIX: Use 'students' array, not 'studentIds'
-        studentCount: lab.students ? lab.students.length : 0, 
-        instructor: `${user.firstName} ${user.lastName}`, 
-        status: 'Active' 
+      const formattedRooms = labs.map((lab) => ({
+        id: lab.Id,
+        className: lab.sectionName,
+        roomCode: lab.sectionCode,
+        studentCount: lab.students ? lab.students.length : 0,
+        instructor: `${user.firstName} ${user.lastName}`,
+        status: "Active",
       }));
 
       setRooms(formattedRooms);
@@ -71,8 +72,8 @@ const RoomList = () => {
     setActiveDropdown(null);
     if (window.confirm(`Are you sure you want to delete ${room.className}?`)) {
       try {
-        await SectionService.deleteLab(room.id); 
-        setRooms(rooms.filter(r => r.id !== room.id));
+        await SectionService.deleteLab(room.id);
+        setRooms(rooms.filter((r) => r.id !== room.id));
       } catch (error) {
         console.error("Failed to delete room:", error);
         alert("Failed to delete room. Please try again.");
@@ -94,36 +95,41 @@ const RoomList = () => {
   };
 
   const handleCreateRoom = (newLabData) => {
-    fetchRooms(); 
+    fetchRooms();
     setShowCreateModal(false);
   };
 
   const handleBackToList = () => {
     setSelectedRoom(null);
     // Refresh list in case student counts changed
-    fetchRooms(); 
+    fetchRooms();
   };
 
   const getStatusBadge = (status) => {
-    const statusClass = status === 'Active' ? 'status-active' : 'status-inactive';
+    const statusClass =
+      status === "Active" ? "status-active" : "status-inactive";
     return <span className={`status-badge ${statusClass}`}>{status}</span>;
   };
 
   const getDropdownPosition = (roomId) => {
-    const index = rooms.findIndex(r => r.id === roomId);
-    const isLastRow = index >= rooms.length - 2; 
-    return isLastRow ? 'bottom' : 'top';
+    const index = rooms.findIndex((r) => r.id === roomId);
+    const isLastRow = index >= rooms.length - 2;
+    return isLastRow ? "bottom" : "top";
   };
 
   if (loading) {
-    return <div className="loading" style={{color: 'white', padding: '20px'}}>Loading rooms...</div>;
+    return (
+      <div className="loading" style={{ color: "white", padding: "20px" }}>
+        Loading rooms...
+      </div>
+    );
   }
 
   return (
     <div className="room-list-container">
       {selectedRoom ? (
-        <StudentList 
-          room={selectedRoom} 
+        <StudentList
+          room={selectedRoom}
           onBack={handleBackToList}
           onClose={handleBackToList}
         />
@@ -149,7 +155,7 @@ const RoomList = () => {
                 </tr>
               </thead>
               <tbody>
-                {rooms.map(room => (
+                {rooms.map((room) => (
                   <tr key={room.id}>
                     <td>
                       <div className="class-info">
@@ -166,27 +172,38 @@ const RoomList = () => {
                       {/* 🟢 UPDATED: This will now show the correct count */}
                       <span className="student-count">{room.studentCount}</span>
                     </td>
-                    <td>
-                      {getStatusBadge(room.status)}
-                    </td>
+                    <td>{getStatusBadge(room.status)}</td>
                     <td>
                       <div className="dropdown-container">
-                        <button 
+                        <button
                           className="dropdown-trigger"
                           onClick={(e) => toggleDropdown(room.id, e)}
                         >
                           ⋮
                         </button>
-                        
+
                         {activeDropdown === room.id && (
-                          <div className={`dropdown-menu ${getDropdownPosition(room.id)}`}>
-                            <button className="dropdown-item view" onClick={() => handleView(room)}>
+                          <div
+                            className={`dropdown-menu ${getDropdownPosition(
+                              room.id
+                            )}`}
+                          >
+                            <button
+                              className="dropdown-item view"
+                              onClick={() => handleView(room)}
+                            >
                               <span className="icon">👁️</span> View Students
                             </button>
-                            <button className="dropdown-item edit" onClick={() => handleEdit(room)}>
+                            <button
+                              className="dropdown-item edit"
+                              onClick={() => handleEdit(room)}
+                            >
                               <span className="icon">✏️</span> Edit Room
                             </button>
-                            <button className="dropdown-item delete" onClick={() => handleDelete(room)}>
+                            <button
+                              className="dropdown-item delete"
+                              onClick={() => handleDelete(room)}
+                            >
                               <span className="icon">🗑️</span> Delete Room
                             </button>
                           </div>
@@ -208,7 +225,7 @@ const RoomList = () => {
       )}
 
       {showCreateModal && (
-        <CreateLaboratory 
+        <CreateLaboratory
           onClose={handleCloseModal}
           onCreate={handleCreateRoom}
         />
