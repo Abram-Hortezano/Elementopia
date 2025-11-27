@@ -48,6 +48,7 @@ public class UserService {
         if (user.getStudent() != null) {
             StudentDTO studentDTO = new StudentDTO();
             studentDTO.setId(user.getStudent().getStudentId());
+            studentDTO.setSection(user.getStudent().getSection());
             studentDTO.setFirstName(user.getStudent().getFirstName());
             studentDTO.setLastName(user.getStudent().getLastName());
             dto.setStudent(studentDTO);
