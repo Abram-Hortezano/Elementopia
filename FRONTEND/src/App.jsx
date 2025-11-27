@@ -1,13 +1,10 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
-// Public
+// Student Pages
 import LandingPage from "./STUDENT/LandingPage";
 import LoginCard from "./STUDENT/login-card";
 import RegisterCard from "./STUDENT/register-card";
 import AboutUs from "./STUDENT/about-us";
-import ProfilePageMain from "./pages/profile-page";
-
-// Student
 import StudentHomePage from "./STUDENT/StudentHomePage";
 import StudentRoomPage from "./STUDENT/StudentRoomPage";
 import StudentCareerPage from "./STUDENT/StudentCareerPage";
@@ -20,13 +17,16 @@ import StudentElementMatcher from "./STUDENT/ElementMatcher";
 import StudentStateChanges from "./STUDENT/StudentStateChanges";
 import StudentCardMinigame from "./STUDENT/StudentCardMinigame";
 
-// Teacher
+// Teacher Pages
 import PageLayout from "./TEACHER/TeacherPageLayout";
 import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
+import TeacherGameRoomPage from "./TEACHER/TeacherGameRoomPage";
 import TeacherRoomPage from "./TEACHER/TeacherRoomPage";
 import TeacherSandbox from "./TEACHER/TeacherSandboxPage";
-import TeacherGameRoomPage from "./TEACHER/TeacherGameRoomPage";
+
+// Misc
+import ProfilePageMain from "./pages/profile-page";
 
 // Utils
 import PrivateRoute from "./components/utils/PrivateRoute";
@@ -35,19 +35,19 @@ export default function App() {
   return (
     <Router>
       <Routes>
-        {/* ---------- Public Routes ---------- */}
+        {/* Public Routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/about-us" element={<AboutUs />} />
-        <Route path="/login" element={<LoginCard />} />
-        <Route path="/sign-up" element={<RegisterCard />} />
-        <Route path="/profile" element={<ProfilePageMain />} />
         <Route path="/career" element={<div>Career Page (Coming Soon)</div>} />
         <Route
           path="/contact-us"
           element={<div>Contact Us Page (Coming Soon)</div>}
         />
+        <Route path="/login" element={<LoginCard />} />
+        <Route path="/sign-up" element={<RegisterCard />} />
+        <Route path="/profile" element={<ProfilePageMain />} />
 
-        {/* ---------- Student Routes ---------- */}
+        {/* Student Routes - Protected */}
         <Route
           path="/student-home-page"
           element={
@@ -56,7 +56,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/student/profile"
           element={
@@ -65,7 +64,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/student/room"
           element={
@@ -74,16 +72,14 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
-          path="/student/career"
+          path="/student/student-career-page"
           element={
             <PrivateRoute allowedRoles={["STUDENT"]}>
               <StudentCareerPage />
             </PrivateRoute>
           }
         />
-
         <Route
           path="/student/discovery"
           element={
@@ -92,7 +88,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/student/game-room"
           element={
@@ -101,7 +96,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/student/sandbox"
           element={
@@ -110,7 +104,14 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
+        <Route
+          path="/student/Chem-Simulation"
+          element={
+            <PrivateRoute allowedRoles={["STUDENT"]}>
+              <StudentSandboxPage />
+            </PrivateRoute>
+          }
+        />
         <Route
           path="/student/daily-challenge"
           element={
@@ -119,7 +120,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/student/game1"
           element={
@@ -128,7 +128,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/student/game2"
           element={
@@ -137,7 +136,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/student/game3"
           element={
@@ -147,7 +145,7 @@ export default function App() {
           }
         />
 
-        {/* ---------- Teacher Routes ---------- */}
+        {/* Teacher Routes - Protected */}
         <Route
           path="/teacher-home-page"
           element={
@@ -156,7 +154,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/teacher/analytics"
           element={
@@ -165,16 +162,14 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
-          path="/teacher/career"
+          path="/teacher/career-page"
           element={
             <PrivateRoute allowedRoles={["TEACHER"]}>
               <TeacherCareerPage />
             </PrivateRoute>
           }
         />
-
         <Route
           path="/teacher/room"
           element={
@@ -183,7 +178,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
           path="/teacher/sandbox"
           element={
@@ -192,9 +186,8 @@ export default function App() {
             </PrivateRoute>
           }
         />
-
         <Route
-          path="/teacher/game-room"
+          path="/teacher/Chem-Simulation"
           element={
             <PrivateRoute allowedRoles={["TEACHER"]}>
               <TeacherGameRoomPage />
