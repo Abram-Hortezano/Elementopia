@@ -83,13 +83,14 @@ const SectionService = {
   // Get Class Members (Get Lab by Code)
   getClassMembers: async (sectionCode) => {
     try {
-      const response = await axios.get(`${API_URL}/${sectionCode}`, {
+      const response = await axios.get(`${API_URL}/getClassMembers`, {
+        params: { code: sectionCode },
         headers: getAuthHeader(),
       });
-      return response.data; // Returns the full Lab Entity
+      return response.data;
     } catch (error) {
       console.error(
-        "Failed to get class members:",
+        "Failed to fetch class members:",
         error.response?.data || error.message
       );
       throw error;
