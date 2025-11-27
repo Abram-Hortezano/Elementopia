@@ -39,11 +39,7 @@ export default function Navigation() {
           ELEMENTOPIA
         </a>
 
-        {/* Center Navigation Links - Hidden when burger is used */}
         <div className="nav-links">
-          {/*<a href="/about-us">About Us</a>
-          <a href="/career">Career</a>
-          <a href="/contact-us">Contact Us</a> */}
         </div>
 
         {/* Right Side - Login & Sign Up */}
@@ -57,18 +53,24 @@ export default function Navigation() {
         </div>
       </nav>
 
-      {popupType && (
-        <div className="popup-overlay" onClick={closePopup}>
-          <div className="popup-content" onClick={(e) => e.stopPropagation()}>
-            {/* <button className="close-btn" onClick={closePopup}>✖</button> */}
-            {popupType === "login" ? (
-              <LoginCard />
-            ) : (
-              <SignupCard onRegisterSuccess={closePopup} />
-            )}
-          </div>
+    {popupType && (
+      <div className="popup-overlay" onClick={closePopup}>
+        <div className="popup-content" onClick={(e) => e.stopPropagation()}>
+          
+          {popupType === "login" ? (
+            <LoginCard 
+              onSwitchToSignup={() => openPopup("signup")} 
+            />
+          ) : (
+            <SignupCard 
+              onRegisterSuccess={closePopup} 
+              onSwitchToLogin={() => openPopup("login")} 
+            />
+          )}
+
         </div>
-      )}
+      </div>
+    )}
     </div>
   );
 }
