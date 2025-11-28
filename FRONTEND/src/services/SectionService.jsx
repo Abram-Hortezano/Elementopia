@@ -60,11 +60,13 @@ const SectionService = {
   // Join Section (Maps to 'add-student')
   joinSection: async (data) => {
     try {
-      const response = await axios.put(
-        `${API_URL}/${data.sectionCode}/add-student`,
-        {}, // Empty body
+      const response = await axios.post(
+        `${API_URL}/join`,
         {
-          params: { studentId: data.studentId },
+          studentId: data.studentId,
+          sectionCode: data.sectionCode,
+        },
+        {
           headers: getAuthHeader(),
         }
       );
@@ -81,13 +83,14 @@ const SectionService = {
   // Get Class Members (Get Lab by Code)
   getClassMembers: async (sectionCode) => {
     try {
-      const response = await axios.get(`${API_URL}/${sectionCode}`, {
+      const response = await axios.get(`${API_URL}/getClassMembers`, {
+        params: { code: sectionCode },
         headers: getAuthHeader(),
       });
-      return response.data; // Returns the full Lab Entity
+      return response.data;
     } catch (error) {
       console.error(
-        "Failed to get class members:",
+        "Failed to fetch class members:",
         error.response?.data || error.message
       );
       throw error;
