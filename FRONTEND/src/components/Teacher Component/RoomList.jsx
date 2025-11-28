@@ -17,6 +17,7 @@ const RoomList = () => {
     fetchRooms();
   }, []);
 
+  // Close dropdowns when clicking outside
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".dropdown-container")) {
@@ -36,16 +37,31 @@ const RoomList = () => {
       const teacher = await SectionService.getTeacherId();
       setTeacherId(teacher.teacherId);
 
-      // Assuming this returns the list of LabEntities
-      const labs = await SectionService.getAllSectionsByTeacherId(
-        teacher.teacherId
+      // 1. Get the list of rooms (Sections)
+      const labs = await SectionService.getAllSectionsByTeacherId(teacher.teacherId);
+
+      const labsWithCounts = await Promise.all(
+        labs.map(async (lab) => {
+          try {
+            // We use the endpoint we KNOW works (getClassMembers)
+            const fullDetails = await SectionService.getClassMembers(lab.sectionCode);
+            return {
+              ...lab,
+              realStudentCount: fullDetails.students ? fullDetails.students.length : 0
+            };
+          } catch (err) {
+            console.warn(`Could not fetch details for ${lab.sectionCode}`, err);
+            return { ...lab, realStudentCount: 0 };
+          }
+        })
       );
 
-      const formattedRooms = labs.map((lab) => ({
-        id: lab.Id,
+      // 3. Format the data for the table
+      const formattedRooms = labsWithCounts.map((lab) => ({
+        id: lab.id,
         className: lab.sectionName,
         roomCode: lab.sectionCode,
-        studentCount: lab.students ? lab.students.length : 0,
+        studentCount: lab.realStudentCount, 
         instructor: `${user.firstName} ${user.lastName}`,
         status: "Active",
       }));
@@ -95,13 +111,14 @@ const RoomList = () => {
   };
 
   const handleCreateRoom = (newLabData) => {
+    // Refresh the list after creating
     fetchRooms();
     setShowCreateModal(false);
   };
 
   const handleBackToList = () => {
     setSelectedRoom(null);
-    // Refresh list in case student counts changed
+    // Refresh list in case student counts changed while viewing the list
     fetchRooms();
   };
 
@@ -169,7 +186,6 @@ const RoomList = () => {
                       <span className="instructor">{room.instructor}</span>
                     </td>
                     <td>
-                      {/* 🟢 UPDATED: This will now show the correct count */}
                       <span className="student-count">{room.studentCount}</span>
                     </td>
                     <td>{getStatusBadge(room.status)}</td>

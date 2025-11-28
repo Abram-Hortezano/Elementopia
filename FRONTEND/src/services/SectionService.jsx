@@ -1,17 +1,14 @@
 import axios from "axios";
 
-// const API_URL = "https://elementopia.onrender.com/api/section";
+// const BASE_URL = "https://elementopia.onrender.com/section";
 const API_URL = "http://localhost:8080/api/section";
 
-// Robust Token Helper
 const getAuthHeader = () => {
   let token = localStorage.getItem("token");
 
-  // Fallback: Check inside 'user' object in localStorage or sessionStorage
   if (!token) {
     try {
-      const userStr =
-        localStorage.getItem("user") || sessionStorage.getItem("user");
+      const userStr = localStorage.getItem("user") || sessionStorage.getItem("user");
       if (userStr) {
         const user = JSON.parse(userStr);
         token = user.token || user.accessToken;
@@ -33,11 +30,9 @@ const getAuthHeader = () => {
 };
 
 const SectionService = {
-  // Create Section (Maps Frontend 'Section' -> Backend 'Lab')
+  // Create Section
   createSection: async (data) => {
     try {
-      // Translation: Section Name -> Laboratory Name
-      console.log(data);
       const payload = {
         sectionName: data.sectionName,
         sectionCode: data.sectionCode,
@@ -49,22 +44,20 @@ const SectionService = {
       });
       return response.data;
     } catch (error) {
-      console.error(
-        "Failed to create section:",
-        error.response?.data || error.message
-      );
+      console.error("Failed to create section:", error);
       throw error;
     }
   },
-
-  // Join Section (Maps to 'add-student')
-  joinSection: async (data) => {
+  // Join Section
+  joinSection: async (sectionCode, studentId) => {
     try {
+      console.log("Sending Join Request:", { sectionCode, studentId }); // Debug Log
+
       const response = await axios.post(
         `${API_URL}/join`,
         {
-          studentId: data.studentId,
-          sectionCode: data.sectionCode,
+          sectionCode: sectionCode,
+          studentId: studentId,
         },
         {
           headers: getAuthHeader(),
@@ -72,15 +65,12 @@ const SectionService = {
       );
       return response.data;
     } catch (error) {
-      console.error(
-        "Failed to join section:",
-        error.response?.data || error.message
-      );
+      console.error("Failed to join section:", error.response?.data || error.message);
       throw error;
     }
   },
 
-  // Get Class Members (Get Lab by Code)
+  // Get Class Members
   getClassMembers: async (sectionCode) => {
     try {
       const response = await axios.get(`${API_URL}/getClassMembers`, {
@@ -89,14 +79,12 @@ const SectionService = {
       });
       return response.data;
     } catch (error) {
-      console.error(
-        "Failed to fetch class members:",
-        error.response?.data || error.message
-      );
+      console.error("Failed to fetch class members:", error);
       throw error;
     }
   },
 
+  // Get Teacher ID
   getTeacherId: async () => {
     try {
       const response = await axios.get(`http://localhost:8080/api/teacher/me`, {
@@ -104,15 +92,12 @@ const SectionService = {
       });
       return response.data;
     } catch (error) {
-      console.error(
-        "Failed to get class members:",
-        error.response?.data || error.message
-      );
+      console.error("Failed to get teacher info:", error);
       throw error;
     }
   },
 
-  // Gets all Sections for a Teacher
+  // Get Teacher Sections
   getAllSectionsByTeacherId: async (teacherId) => {
     try {
       const response = await axios.get(`${API_URL}/teacher/${teacherId}`, {
@@ -120,11 +105,21 @@ const SectionService = {
       });
       return response.data;
     } catch (error) {
-      console.error(
-        "Failed to get teacher sections:",
-        error.response?.data || error.message
-      );
+      console.error("Failed to get teacher sections:", error);
       throw error;
+    }
+  },
+
+  // Get Student Sections
+  getSectionsByStudentId: async (studentId) => {
+    try {
+      const response = await axios.get(`${API_URL}/student/${studentId}`, {
+        headers: getAuthHeader(),
+      });
+      return response.data;
+    } catch (error) {
+        // Return empty array if fails 
+        return [];
     }
   },
 
@@ -133,13 +128,9 @@ const SectionService = {
       const response = await axios.delete(`${API_URL}/${labId}`, {
         headers: getAuthHeader(),
       });
-      console.log("Deleting lab with ID:", labId);
       return response.data;
     } catch (error) {
-      console.error(
-        "Failed to delete lab:",
-        error.response?.data || error.message
-      );
+      console.error("Failed to delete lab:", error);
       throw error;
     }
   },

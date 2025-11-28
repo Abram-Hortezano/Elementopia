@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/StudentList.css'; 
 import SectionService from '../../services/SectionService';
-import LessonService from '../../services/LessonService';
+import lessonCompletionService from '../../services/lessonCompletionService';
 
 const StudentList = ({ room, onBack, onClose }) => {
   const [students, setStudents] = useState([]);
@@ -37,11 +37,16 @@ const StudentList = ({ room, onBack, onClose }) => {
 
       // 3. Merge Data
       const formattedStudents = rawStudents.map((s) => {
-        const sId = s.userId || s.id;
+        const sId = s.studentId || s.userId || s.id;
+
+        if (!sId){
+          console.warn("Student without valid ID found:", s);
+          return null;
+        }
 
         // Filter scores for this student
         const studentScores = allScores.filter(score => 
-           score.student?.userId === sId || score.student?.id === sId
+           score.student?.studentId === sId || score.student?.id === sId
         );
 
         // Calculate Progress

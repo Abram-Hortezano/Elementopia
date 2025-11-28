@@ -2,27 +2,42 @@ import axios from "axios";
 
 // const API_URL = "https://elementopia.onrender.com/api/lesson-completion";
 const API_URL = "http://localhost:8080/api/lesson-completion";
-  
+ 
 
 const getAuthHeader = () => {
-  const token = localStorage.getItem("token");
-  return token
-    ? {
-        Authorization: `Bearer ${token}`,
-        "Content-Type": "application/json",
+  const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
+
+  if (userStr) {
+    try {
+      const userObj = JSON.parse(userStr);
+      const token = userObj.token || (typeof userObj === 'string' ? userObj : null);
+
+      if (token) {
+        return {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        };
       }
-    : {};
+    } catch (e) {
+      console.warn("Error parsing user token for LessonCompletionService:", e);
+    }
+  }
+  return {};
 };
 
 const LessonCompletionService = {
+  
   // Complete a lesson (POST /complete)
-  completeLesson: async (completionData) => {
-    // completionData should probably look like { userId: 1, lessonId: 1 }
+  completeLesson: async (studentId, lessonId) => {
     try {
+      const completionData = { studentId, lessonId };
+      
       const response = await axios.post(
-        `${API_URL}/complete`,
-        completionData,
-        { headers: getAuthHeader() }
+        `${API_URL}/complete`, 
+        completionData, 
+        getAuthHeader()
       );
       return response.data;
     } catch (error) {
@@ -31,12 +46,10 @@ const LessonCompletionService = {
     }
   },
 
-  // Get all completions for a user (GET /user/{userId})
-  getUserCompletions: async (userId) => {
+  // Get all completions for a user (GET /user/{studentId})
+  getUserCompletions: async (studentId) => {
     try {
-      const response = await axios.get(`${API_URL}/user/${userId}`, {
-        headers: getAuthHeader(),
-      });
+      const response = await axios.get(`${API_URL}/user/${studentId}`, getAuthHeader());
       return response.data;
     } catch (error) {
       console.error("Failed to fetch user completions:", error.response?.data || error.message);
@@ -47,9 +60,7 @@ const LessonCompletionService = {
   // Delete a completion record (DELETE /delete/{id})
   deleteCompletion: async (id) => {
     try {
-      const response = await axios.delete(`${API_URL}/delete/${id}`, {
-        headers: getAuthHeader(),
-      });
+      const response = await axios.delete(`${API_URL}/delete/${id}`, getAuthHeader());
       return response.data;
     } catch (error) {
       console.error("Failed to delete completion:", error.response?.data || error.message);

@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from "react";
+import axios from "axios"; 
 import "../assets/css/Map-tree.css";
 import UserService from "../services/UserService";
-import LessonService from "../services/LessonService";
-import LabService from "../services/LabService"; 
+import LessonCompletionService from "../services/lessonCompletionService"; 
+import SectionService from "../services/SectionService";
 
-// --- LESSON IMPORTS (Kept exactly the same) ---
+// --- LESSON IMPORTS ---
 import AtomBuilder from "../STUDENT/AtomBuilder";
 import IonicBonding from "../STUDENT/IonicBonding";
 import CovalentBonding from "../STUDENT/CovalentBonding";
@@ -12,7 +13,7 @@ import MoleMass from "../STUDENT/MoleMass";
 import MolesToGrams from "../STUDENT/MolesToGrams";
 import PercentComposition from "../STUDENT/PercentComposition";
 
-// --- CHALLENGE IMPORTS (Kept exactly the same) ---
+// --- CHALLENGE IMPORTS ---
 import AtomChallenge1 from "../components/Student Components/AtomChallenge1";
 import AtomChallenge2 from "../components/Student Components/AtomChallenge2";
 import AtomChallenge3 from "../components/Student Components/AtomChallenge3";
@@ -32,7 +33,7 @@ import PCChallenge1 from "../components/Student Components/PCChallenge1";
 import PCChallenge2 from "../components/Student Components/PCChallenge2";
 import PCChallenge3 from "../components/Student Components/PCChallenge3";
 
-// --- NODE MAP (Kept exactly the same) ---
+// --- NODE MAP ---
 const nodes = [
   { id: 1, label: "The Atom", position: { top: "4%", left: "2%" }, lesson: "AtomBuilder" },
   { id: 7, label: "★", position: { top: "8%", left: "7%" }, lesson: "AtomChallenge1" },
@@ -60,6 +61,28 @@ const nodes = [
   { id: 24, label: "★", position: { top: "62%", left: "88%" }, lesson: "PCChallenge3" },
 ];
 
+// --- PREREQUISITES ---
+const prerequisites = {
+  1: null, 7: 1, 8: 7, 9: 8,
+  2: 9, 10: 2, 11: 10, 12: 11,
+  3: 12, 13: 3, 14: 13, 15: 14,
+  4: 15, 16: 4, 17: 16, 18: 17,
+  5: 18, 19: 5, 20: 19, 21: 20,
+  6: 21, 22: 6, 23: 22, 24: 23,
+};
+
+// --- BACKEND TO NODE MAP ---
+// Maps backend completion record IDs to frontend node IDs
+const backendToNodeMap = {
+  1: 1, 2: 7, 3: 8, 4: 9,
+  5: 2, 6: 10, 7: 11, 8: 12,
+  9: 3, 10: 13, 11: 14, 12: 15,
+  13: 4, 14: 16, 15: 17, 16: 18,
+  17: 5, 18: 19, 19: 20, 20: 21,
+  21: 6, 22: 22, 23: 23, 24: 24,
+};
+
+// --- LESSON COMPONENTS ---
 const lessonComponents = {
   AtomBuilder, AtomChallenge1, AtomChallenge2, AtomChallenge3,
   IonicBonding, IonicChallenge1, IonicChallenge2, IonicChallenge3,
@@ -69,7 +92,7 @@ const lessonComponents = {
   PercentComposition, PCChallenge1, PCChallenge2, PCChallenge3,
 };
 
-// --- SECTION LOCK MODAL ---
+// --- SECTION MODAL ---
 const SectionLockModal = ({ studentId, onJoinSuccess }) => {
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
@@ -81,13 +104,13 @@ const SectionLockModal = ({ studentId, onJoinSuccess }) => {
     setError("");
 
     if (!studentId) {
-        setError("User ID missing. Please refresh.");
-        setLoading(false);
-        return;
+      setError("User ID missing. Please refresh.");
+      setLoading(false);
+      return;
     }
 
     try {
-      await LabService.addStudentToLab(code, studentId);
+      await SectionService.joinSection(code, studentId);
       onJoinSuccess();
     } catch (err) {
       setError(err.response?.data?.message || "Invalid section code. Try again.");
@@ -131,25 +154,89 @@ export default function MapTree() {
   const [checkingAccess, setCheckingAccess] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // 1. Check Access & Fetch User Data
+  // 🟢 LOAD USER PROGRESS WITH MAPPING
+  const loadUserProgress = async (studentId) => {
+    try {
+      const completions = await LessonCompletionService.getUserCompletions(studentId);
+      console.log("--- START DEBUG: LOADED COMPLETIONS ---");
+      console.log("Raw Server Data:", completions);
+      console.log("Raw Server Data Sample:", completions && completions[0]);
+      console.log("--- END DEBUG ---");
+
+      const completedIds = new Set();
+      (completions || []).forEach(c => {
+        // Try multiple mapping strategies because different backend payloads
+        // may expose the lesson id under different fields (c.id, c.lessonId,
+        // c.lesson?.id, etc.) or may include a lesson name we can match.
+        let mappedId = null;
+
+        // Try direct id-like fields first
+        const possibleKeys = [c.id, c.lessonId, c.lesson?.id, c.lesson?.lessonId, c.completionId];
+        for (const key of possibleKeys) {
+          if (key != null && backendToNodeMap[key]) {
+            mappedId = backendToNodeMap[key];
+            break;
+          }
+        }
+
+        // Fallback: if the completion record contains a lesson name/string,
+        // try to match it against our `nodes` list (n.lesson values).
+        if (mappedId == null) {
+          const lessonName = c.lesson?.name || c.lessonName || c.name || c.title || c.label || c.lessonCode;
+          if (lessonName) {
+            const nodeMatch = nodes.find(n => n.lesson && n.lesson.toLowerCase() === String(lessonName).toLowerCase());
+            if (nodeMatch) mappedId = nodeMatch.id;
+            else {
+              // Try looser matching (contains)
+              const looseMatch = nodes.find(n => n.lesson && String(lessonName).toLowerCase().includes(n.lesson.toLowerCase()));
+              if (looseMatch) mappedId = looseMatch.id;
+            }
+          }
+        }
+
+        console.log(`Mapping: c=${JSON.stringify(c)} → nodeId=${mappedId}`);
+        if (mappedId != null) completedIds.add(mappedId);
+      });
+
+      setCompletedNodes(completedIds);
+      console.log(`✅ Loaded ${completedIds.size} completed lessons for student ID: ${studentId}`);
+      console.log("Completed Node IDs:", Array.from(completedIds).sort((a, b) => a - b));
+    } catch (err) {
+      console.warn("Could not load user completions on login.", err.response?.data || err.message);
+      setCompletedNodes(new Set());
+    }
+  };
+
   useEffect(() => {
     const initData = async () => {
       try {
-        const userData = await UserService.getCurrentUser();
+        let userData = await UserService.getCurrentUser();
         setCurrentUser(userData);
-        const allLabs = await LabService.getAllLab();
-        const myLab = allLabs.find(lab => 
-            lab.students && lab.students.some(s => s.userId === userData.userId || s.id === userData.userId)
-        );
 
-        if (myLab) {
+        // Auto-create student profile if missing
+        if (userData.role === "STUDENT" && !userData.student) {
+          try {
+            const userSession = JSON.parse(sessionStorage.getItem("user") || localStorage.getItem("user"));
+            await axios.post("http://localhost:8080/api/student/add", {
+              firstName: userData.firstName,
+              lastName: userData.lastName,
+              user: { userId: userData.userId || userData.id } 
+            }, { 
+              headers: { Authorization: `Bearer ${userSession?.token}`, "Content-Type": "application/json" } 
+            });
+            userData = await UserService.getCurrentUser();
+            setCurrentUser(userData);
+          } catch (e) { console.warn("Auto-create failed", e); }
+        }
+
+        if (userData.student && userData.student.section) {
           setHasAccess(true);
-          await loadUserProgress(userData.userId || userData.id);
+          const validStudentId = userData.student.studentId || userData.student.id;
+          if (validStudentId) await loadUserProgress(validStudentId);
         } else {
           setHasAccess(false);
         }
-      } catch (error) {
-        console.error("Failed to verify section access", error);
+      } catch (err) {
         setHasAccess(false);
       } finally {
         setCheckingAccess(false);
@@ -159,57 +246,58 @@ export default function MapTree() {
     initData();
   }, []);
 
-  const loadUserProgress = async (userId) => {
-    try {
-      const completions = await LessonService.getAllScores();
-      
-      // Filter for THIS student
-      const myCompletions = completions.filter(c => 
-        c.student?.userId === userId || c.student?.id === userId
-      );
-
-      const completedIds = new Set(myCompletions.map(c => c.lessonId));
-      setCompletedNodes(completedIds);
-    } catch (err) {
-      console.error("Could not load progress", err);
+  // Helper function to check if all prerequisites in the chain are completed
+  const isPrerequisiteChainComplete = (nodeId) => {
+    let currentId = nodeId;
+    while (currentId !== null && currentId !== undefined) {
+      const prereq = prerequisites[currentId];
+      if (prereq === null || prereq === undefined) {
+        // Reached the start of the chain
+        return true;
+      }
+      if (!completedNodes.has(prereq)) {
+        // Found an incomplete prerequisite in the chain
+        return false;
+      }
+      currentId = prereq;
     }
+    return true;
   };
 
   const handleNodeClick = (node, isLocked) => {
     if (!hasAccess) return;
-    
-    if (isLocked) {
-      alert("Please complete the previous lesson first."); 
-      return;
-    }
-
-    if (node.lesson) {
-      setActiveLesson(node);
-    }
+    if (isLocked) return alert("Please complete the previous lesson first.");
+    if (node.lesson) setActiveLesson(node);
   };
 
   const handleLessonComplete = async () => {
     if (activeLesson && currentUser) {
       try {
-        const userId = currentUser.userId || currentUser.id;
-        
-        const payload = {
-          lessonId: activeLesson.id,
-          score: 100,
-          progress: true,
-          student: { userId: userId } // Link to Student
-        };
+        const validStudentId = currentUser.student?.studentId || currentUser.student?.id;
+        if (!validStudentId) return console.error("Missing student ID");
 
-        await LessonService.saveLessonProgress(payload);
-        
-        setCompletedNodes((prev) => {
-          const updated = new Set(prev);
-          updated.add(activeLesson.id);
-          return updated;
-        });
+        // activeLesson.id is the NODE ID, not the lesson ID
+        // We need to find the correct backend lesson ID from backendToNodeMap
+        const lessonId = Object.keys(backendToNodeMap).find(
+          key => backendToNodeMap[key] === activeLesson.id
+        );
 
-      } catch (error) {
-        console.error("Failed to save progress:", error);
+        console.log(`Completing lesson: nodeId=${activeLesson.id}, backendLessonId=${lessonId}`);
+
+        if (!lessonId) {
+          console.error(`Could not find backend lesson ID for node ${activeLesson.id}`);
+          return;
+        }
+
+        await LessonCompletionService.completeLesson(validStudentId, parseInt(lessonId));
+        await loadUserProgress(validStudentId);
+      } catch (err) {
+        if (err.message?.includes("Lesson already completed")) {
+          const validStudentId = currentUser.student?.studentId || currentUser.student?.id;
+          await loadUserProgress(validStudentId);
+        } else {
+          console.error("Failed to save progress:", err);
+        }
       }
     }
     setActiveLesson(null);
@@ -217,33 +305,28 @@ export default function MapTree() {
 
   const CurrentLessonComponent = activeLesson ? lessonComponents[activeLesson.lesson] : null;
 
-  if (checkingAccess) return (
-    <div className="Map-Container loading-container">
-      <div className="loading-text">Loading Student Data...</div>
-    </div>
-  );
+  if (checkingAccess) return <div className="Map-Container loading-container"><div className="loading-text">Loading Student Data...</div></div>;
 
   return (
     <div className="Map-Container">
-      {/* --- LOCK OVERLAY --- */}
       {!hasAccess && (
-        <SectionLockModal 
-            studentId={currentUser?.userId || currentUser?.id}
-            onJoinSuccess={() => {
-                setHasAccess(true);
-                if(currentUser) loadUserProgress(currentUser.userId || currentUser.id);
-            }} 
+        <SectionLockModal
+          studentId={currentUser?.student?.studentId || currentUser?.student?.id || currentUser?.userId}
+          onJoinSuccess={async () => {
+            setHasAccess(true);
+            const updatedUser = await UserService.getCurrentUser();
+            setCurrentUser(updatedUser);
+            const validStudentId = updatedUser.student?.studentId || updatedUser.student?.id;
+            await loadUserProgress(validStudentId);
+          }}
         />
       )}
 
-      {/* --- MAP VIEW --- */}
       {!activeLesson && (
         <div className={`Node-Container ${!hasAccess ? "blurred" : ""}`}>
-          {nodes.map((node, index) => {
-            const previousNode = index > 0 ? nodes[index - 1] : null;
-            const isLocked = previousNode ? !completedNodes.has(previousNode.id) : false;
-            
+          {nodes.map(node => {
             const isCompleted = completedNodes.has(node.id);
+            const isLocked = !isPrerequisiteChainComplete(node.id);
             const status = isCompleted ? "completed" : isLocked ? "locked" : "unlocked";
 
             return (
@@ -255,26 +338,20 @@ export default function MapTree() {
                 onClick={() => handleNodeClick(node, isLocked)}
                 title={status}
               >
-                {/* 🟢 Reverted: No Lock Icon, just the original text */}
                 <span className="node-label">{node.label.replace("★ ", "")}</span>
               </div>
             );
           })}
 
-          <div className={`end-circle ${nodes.every((n) => completedNodes.has(n.id)) ? "unlocked" : "locked"}`}>
-            END
-          </div>
+          <div className={`end-circle ${nodes.every(n => completedNodes.has(n.id)) ? "unlocked" : "locked"}`}>END</div>
         </div>
       )}
 
-      {/* --- LESSON MODAL --- */}
       {activeLesson && CurrentLessonComponent && hasAccess && (
         <div className="lesson-modal">
           <div className="lesson-inner">
             <div className="lesson-header">
-              <button className="close-btn" onClick={() => setActiveLesson(null)}>
-                ✖
-              </button>
+              <button className="close-btn" onClick={() => setActiveLesson(null)}>✖</button>
             </div>
             <div className="lesson-body">
               <CurrentLessonComponent onComplete={handleLessonComplete} />

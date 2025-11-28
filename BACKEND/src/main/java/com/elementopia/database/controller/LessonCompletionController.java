@@ -19,9 +19,9 @@ public class LessonCompletionController {
     // Mark a lesson as completed by a student
     @PostMapping("/complete")
     public ResponseEntity<?> completeLesson(@RequestBody Map<String, Long> body) {
-        Long userId = body.get("userId");
+        Long studentId = body.get("studentId");
         Long lessonId = body.get("lessonId");
-        return ResponseEntity.ok(lcService.completeLesson(userId, lessonId));
+        return ResponseEntity.ok(lcService.completeLesson(studentId, lessonId));
     }
 
     // All completions of a user

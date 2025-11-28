@@ -1,50 +1,100 @@
 import axios from "axios";
 
-// const BASE_URL = "https://elementopia.onrender.com/api";
 const BASE_URL = "http://localhost:8080/api";
 
 const getAuthHeader = () => {
-  const token = localStorage.getItem("token");
-  if (!token) {
-    return {};
+
+  const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
+  
+  if (userStr) {
+    try {
+      const userObj = JSON.parse(userStr);
+      
+      // Handle case where userObj is the token string itself, or an object with a .token field
+      const token = userObj.token || (typeof userObj === 'string' ? userObj : null);
+
+      if (token) {
+        return { 
+            headers: { 
+                Authorization: `Bearer ${token}`,
+                "Content-Type": "application/json"
+            } 
+        };
+      }
+    } catch (e) {
+      console.warn("Error parsing user token:", e);
+    }
   }
-  return { Authorization: `Bearer ${token}` };
+  return {}; // Return empty if no token found
 };
 
 const LessonService = {
- 
-  getAllLessons: async () => {
+
+  // Called by Map-Tree.jsx to save progress
+  saveLessonProgress: async (payload) => {
     try {
-      const response = await axios.get(`${BASE_URL}/lessons/getAll`, {
-        headers: getAuthHeader(),
-      });
+      console.log("📡 Sending Progress Payload:", payload);
+      // Endpoint: /api/lesson-scores
+      const response = await axios.post(
+        `${BASE_URL}/lesson-scores`, 
+        payload, 
+        getAuthHeader()
+      );
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch all lessons:", error.response?.data || error.message);
+      console.error("❌ Save Progress Error:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
+  // Called to color the map nodes (Green/Locked)
+  getAllScores: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/lesson-scores`, getAuthHeader());
+      return Array.isArray(response.data) ? response.data : [];
+    } catch (error) {
+      console.error("Fetch Scores Error:", error);
+      return [];
+    }
+  },
+
+  // Get total career score
+  getStudentScores: async (userId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/score/${userId}`, getAuthHeader());
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch career scores:", error);
+      throw error;
+    }
+  },
+
+  getAllLessons: async () => {
+    try {
+      const response = await axios.get(`${BASE_URL}/lessons/getAll`, getAuthHeader());
+      return response.data;
+    } catch (error) {
+      console.error("Failed to fetch all lessons:", error);
       throw error;
     }
   },
 
   getLessonById: async (id) => {
     try {
-      const response = await axios.get(`${BASE_URL}/lessons/get/${id}`, {
-        headers: getAuthHeader(),
-      });
+      const response = await axios.get(`${BASE_URL}/lessons/get/${id}`, getAuthHeader());
       return response.data;
     } catch (error) {
-      console.error(`Failed to fetch lesson ${id}:`, error.response?.data || error.message);
+      console.error(`Failed to fetch lesson ${id}:`, error);
       throw error;
     }
   },
 
   createLesson: async (lessonData) => {
     try {
-      const response = await axios.post(`${BASE_URL}/lessons/create`, lessonData, {
-        headers: getAuthHeader(),
-      });
+      const response = await axios.post(`${BASE_URL}/lessons/create`, lessonData, getAuthHeader());
       return response.data;
     } catch (error) {
-      console.error("Failed to create lesson:", error.response?.data || error.message);
+      console.error("Failed to create lesson:", error);
       throw error;
     }
   },
@@ -54,25 +104,11 @@ const LessonService = {
       const response = await axios.post(
         `${BASE_URL}/lessons/${lessonId}/addTopic`,
         topicData,
-        { headers: getAuthHeader() }
+        getAuthHeader()
       );
       return response.data;
     } catch (error) {
       console.error("Failed to add topic:", error);
-      throw error;
-    }
-  },
-
-  addSubtopic: async (lessonId, topicId, subtopicData) => {
-    try {
-      const response = await axios.post(
-        `${BASE_URL}/lessons/${lessonId}/topic/${topicId}/add-subtopic`,
-        subtopicData,
-        { headers: getAuthHeader() }
-      );
-      return response.data;
-    } catch (error) {
-      console.error("Failed to add subtopic:", error);
       throw error;
     }
   },
@@ -82,7 +118,7 @@ const LessonService = {
       const response = await axios.put(
         `${BASE_URL}/lessons/${lessonId}/topic/${topicId}/update`,
         updatedTopicData,
-        { headers: getAuthHeader() }
+        getAuthHeader()
       );
       return response.data;
     } catch (error) {
@@ -95,11 +131,25 @@ const LessonService = {
     try {
       const response = await axios.delete(
         `${BASE_URL}/lessons/${lessonId}/topic/${topicId}/delete`,
-        { headers: getAuthHeader() }
+        getAuthHeader()
       );
       return response.data;
     } catch (error) {
       console.error("Failed to delete topic:", error);
+      throw error;
+    }
+  },
+
+  addSubtopic: async (lessonId, topicId, subtopicData) => {
+    try {
+      const response = await axios.post(
+        `${BASE_URL}/lessons/${lessonId}/topic/${topicId}/add-subtopic`,
+        subtopicData,
+        getAuthHeader()
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Failed to add subtopic:", error);
       throw error;
     }
   },
@@ -109,7 +159,7 @@ const LessonService = {
       const response = await axios.put(
         `${BASE_URL}/lessons/${lessonId}/topic/${topicId}/subtopic/${subtopicId}/update`,
         updatedSubtopicData,
-        { headers: getAuthHeader() }
+        getAuthHeader()
       );
       return response.data;
     } catch (error) {
@@ -122,62 +172,13 @@ const LessonService = {
     try {
       const response = await axios.delete(
         `${BASE_URL}/lessons/${lessonId}/topic/${topicId}/subtopic/${subtopicId}/delete`,
-        { headers: getAuthHeader() }
+        getAuthHeader()
       );
       return response.data;
     } catch (error) {
       console.error("Failed to delete subtopic:", error);
       throw error;
     }
-  },
-  // 1. Save Lesson Progress (Called by Student Component)
-  saveLessonProgress: async (payload) => {
-    try {
-      // payload: { lessonId: 1, score: 100, progress: true, student: { userId: 5 } }
-      const response = await axios.post(`${BASE_URL}/lesson-scores`, payload, {
-        headers: getAuthHeader(),
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Save Progress Error:", error);
-      throw error;
-    }
-  },
-
-  // 2. Get All Scores (Called by Teacher Dashboard)
-  // Uses the NEW endpoint to get data for calculation
-  getAllScores: async () => {
-    try {
-      const response = await axios.get(`${BASE_URL}/lesson-scores`, {
-        headers: getAuthHeader(),
-      });
-      return Array.isArray(response.data) ? response.data : [];
-    } catch (error) {
-      console.error("Fetch Scores Error:", error);
-      return [];
-    }
-  },
-
-  // 3. Get Student Total Score (Career Score)
-  getStudentScores: async (userId) => {
-    try {
-      const response = await axios.get(`${BASE_URL}/score/${userId}`, {
-        headers: getAuthHeader(),
-      });
-      return response.data;
-    } catch (error) {
-      console.error("Failed to fetch career scores:", error);
-      throw error;
-    }
-  },
-  
-  getCompletedLessons: async (userId) => {
-      // We can reuse getAllScores and filter, or just use getAllScores
-      try {
-        const allScores = await LessonService.getAllScores();
-        // Filter locally for this user
-        return allScores.filter(s => s.student?.userId === userId || s.student?.id === userId);
-      } catch (e) { return []; }
   }
 };
 
