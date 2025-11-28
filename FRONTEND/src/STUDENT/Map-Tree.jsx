@@ -154,7 +154,6 @@ export default function MapTree() {
   const [checkingAccess, setCheckingAccess] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
 
-  // 🟢 LOAD USER PROGRESS WITH MAPPING
   const loadUserProgress = async (studentId) => {
     try {
       const completions = await LessonCompletionService.getUserCompletions(studentId);
@@ -165,13 +164,10 @@ export default function MapTree() {
 
       const completedIds = new Set();
       (completions || []).forEach(c => {
-        // Try multiple mapping strategies because different backend payloads
-        // may expose the lesson id under different fields (c.id, c.lessonId,
-        // c.lesson?.id, etc.) or may include a lesson name we can match.
+
         let mappedId = null;
 
-        // Try direct id-like fields first
-        const possibleKeys = [c.id, c.lessonId, c.lesson?.id, c.lesson?.lessonId, c.completionId];
+        const possibleKeys = [c.lessonId, c.lesson?.id, c.lesson?.lessonId, c.completionId];
         for (const key of possibleKeys) {
           if (key != null && backendToNodeMap[key]) {
             mappedId = backendToNodeMap[key];
@@ -179,23 +175,24 @@ export default function MapTree() {
           }
         }
 
-        // Fallback: if the completion record contains a lesson name/string,
-        // try to match it against our `nodes` list (n.lesson values).
         if (mappedId == null) {
           const lessonName = c.lesson?.name || c.lessonName || c.name || c.title || c.label || c.lessonCode;
           if (lessonName) {
             const nodeMatch = nodes.find(n => n.lesson && n.lesson.toLowerCase() === String(lessonName).toLowerCase());
             if (nodeMatch) mappedId = nodeMatch.id;
             else {
-              // Try looser matching (contains)
               const looseMatch = nodes.find(n => n.lesson && String(lessonName).toLowerCase().includes(n.lesson.toLowerCase()));
               if (looseMatch) mappedId = looseMatch.id;
             }
           }
         }
 
-        console.log(`Mapping: c=${JSON.stringify(c)} → nodeId=${mappedId}`);
-        if (mappedId != null) completedIds.add(mappedId);
+        if (mappedId == null) {
+          console.warn("Could not map completion to a lesson. Completion object:", c);
+        } else {
+          console.log(`Mapping: c=${JSON.stringify(c)} → nodeId=${mappedId}`);
+          completedIds.add(mappedId);
+        }
       });
 
       setCompletedNodes(completedIds);
@@ -276,8 +273,6 @@ export default function MapTree() {
         const validStudentId = currentUser.student?.studentId || currentUser.student?.id;
         if (!validStudentId) return console.error("Missing student ID");
 
-        // activeLesson.id is the NODE ID, not the lesson ID
-        // We need to find the correct backend lesson ID from backendToNodeMap
         const lessonId = Object.keys(backendToNodeMap).find(
           key => backendToNodeMap[key] === activeLesson.id
         );
