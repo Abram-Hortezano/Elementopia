@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 @Entity
 @Table(name = "lesson_completion")
@@ -30,4 +31,16 @@ public class LessonCompletionEntity {
     // Date the student finished the lesson
     @Column(name = "date_completed", nullable = false)
     private LocalDateTime dateCompleted = LocalDateTime.now();
+
+    // Expose lesson id and title for frontend mapping (serialized as read-only properties)
+    @JsonProperty("lessonId")
+    public Long getLessonId() {
+        return this.lesson != null ? this.lesson.getId() : null;
+    }
+
+    @JsonProperty("lessonTitle")
+    public String getLessonTitle() {
+        return this.lesson != null ? this.lesson.getTitle() : null;
+    }
+
 }

@@ -6,5 +6,8 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LessonScoreRepository extends JpaRepository<LessonScoreEntity, Long> {
+    
     LessonScoreEntity findByLessonId(Long lessonId);
+
+    LessonScoreEntity findByLessonIdAndStudentUserId(Long lessonId, Long userId);
 }

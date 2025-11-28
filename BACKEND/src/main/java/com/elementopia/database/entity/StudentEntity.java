@@ -25,4 +25,9 @@ public class StudentEntity {
 
     @Column(name = "last_name")
     private String lastName;
+
+    @ManyToOne
+    @JoinColumn(name = "section_id")
+    @JsonBackReference
+    private SectionEntity section;
 }

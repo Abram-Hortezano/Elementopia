@@ -5,7 +5,7 @@ import UserService from "../services/UserService";
 import { useNavigate } from "react-router-dom";
 import { Eye, EyeOff } from "lucide-react";
 
-const RegisterCard = ({ onRegisterSuccess }) => {
+const RegisterCard = ({ onRegisterSuccess, onSwitchToLogin }) => {
   const [firstname, setFirstname] = useState("");
   const [lastname, setLastname] = useState("");
   const [email, setEmail] = useState("");
@@ -74,7 +74,9 @@ const RegisterCard = ({ onRegisterSuccess }) => {
     if (isRegistered) {
       setTimeout(() => {
         onRegisterSuccess && onRegisterSuccess();
-        navigate("/login");
+        // Optional: If you want to automatically open Login popup after success, 
+        // you would call onSwitchToLogin() here instead of navigate.
+        onSwitchToLogin(); 
       }, 1500);
     }
   }, [isRegistered, navigate, onRegisterSuccess]);
@@ -177,16 +179,12 @@ const RegisterCard = ({ onRegisterSuccess }) => {
 
           <p className="login-msg">
             Already have an account?{" "}
-            <a
-              href="/login"
-              onClick={(e) => {
-                e.preventDefault();
-                navigate("/login");
-              }}
+            <span
+              onClick={onSwitchToLogin}
               className="login-link popup"
             >
               Login
-            </a>
+            </span>
           </p>
         </FeatureCard>
       </div>

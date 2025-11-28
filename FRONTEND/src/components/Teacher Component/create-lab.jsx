@@ -1,225 +1,175 @@
 import { useState, useEffect } from "react";
-import { Copy, Check, User } from "lucide-react";
+import { Copy, Check, X, Loader2 } from "lucide-react";
 import "../../assets/css/create-lab.css";
 import UserService from "../../services/UserService";
-import LessonService from "../../services/LessonService";
-import LaboratoryService from "../../services/LabService";
+import SectionService from "../../services/SectionService"; // Using the new service
 
-// Reusable function to fetch all lessons
-const fetchLessons = async (setLessons) => {
-  try {
-    const data = await LessonService.getAllLessons();
-    if (Array.isArray(data)) {
-      setLessons(data);
-    } else {
-      setLessons([]);
-    }
-  } catch (error) {
-    setLessons([]);
-  }
-};
+export default function CreateLaboratory({ onClose, onCreate }) {
+  const [sectionName, setSectionName] = useState("");
+  const [sectionCode, setSectionCode] = useState("");
+  const [teacherId, setTeacherId] = useState(null);
 
-export default function CreateLaboratory({ onClose }) {
-  const [laboratoryName, setLaboratoryName] = useState("");
-  const [code, setCode] = useState("");
+  // UI States
   const [copied, setCopied] = useState(false);
-  const [labNameError, setLabNameError] = useState("");
-  const [creatorId, setCreatorId] = useState(null);
-
-  const [allUsers, setAllUsers] = useState([]);
-  const [selectedStudentIds, setSelectedStudentIds] = useState([]);
-  const [lessons, setLessons] = useState([]);
-  const [selectedLessonIds, setSelectedLessonIds] = useState([]);
-  const [searchTerm, setSearchTerm] = useState("");
+  const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
     generateCode();
-    fetchInitialData();
+    fetchUser();
   }, []);
 
-  const fetchInitialData = async () => {
+  const fetchUser = async () => {
     try {
-      const currentUser = await UserService.getCurrentUser();
-      const users = await UserService.getAllUsers();
-      // Assuming user objects have 'userId', 'firstName', and 'lastName' properties
-      setCreatorId(currentUser?.userId || null); // Use userId from currentUser
-      setAllUsers(
-        users.filter((user) => user.userId !== currentUser?.userId) || []
-      ); // Filter by userId
-      await fetchLessons(setLessons);
-    } catch (error) {
-      // Handle error fetching initial data, e.g., show a message to the user
-      // console.error("Failed to fetch initial data:", error); // Removed for clean output
+      const teacher = await SectionService.getTeacherId();
+      setTeacherId(teacher.teacherId);
+    } catch (err) {
+      console.error("Auth Error:", err);
+
+      if (err.response?.status === 404) {
+        setError("Teacher profile not found.");
+      } else {
+        setError("Please log in to create a section.");
+      }
     }
   };
 
   const generateCode = () => {
-    const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+    const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let result = "";
     for (let i = 0; i < 6; i++) {
-      result += characters.charAt(
-        Math.floor(Math.random() * characters.length)
-      );
+      result += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    setCode(result);
-  };
-
-  const toggleStudentSelection = (id) => {
-    setSelectedStudentIds((prev) =>
-      prev.includes(id) ? prev.filter((sid) => sid !== id) : [...prev, id]
-    );
+    setSectionCode(result);
   };
 
   const copyCode = () => {
-    navigator.clipboard.writeText(code);
+    navigator.clipboard.writeText(sectionCode);
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleSubmit = async () => {
-    if (!laboratoryName) {
-      setLabNameError("Laboratory name is required.");
+    if (!sectionName.trim()) {
+      setError("Section name is required.");
       return;
     }
-    if (!selectedLessonIds) {
-      alert("Please select a lesson.");
+    if (!teacherId) {
+      setError("Teacher ID missing. Please refresh or log in.");
       return;
     }
+
+    setIsLoading(true);
+    setError("");
 
     try {
-      const labData = {
-        laboratoryName: laboratoryName,
-        labCode: code,
-        creatorId: creatorId,
-        studentIds: selectedStudentIds,
-        lessonIds: selectedLessonIds,
+      // Prepare data for the Service
+      const sectionData = {
+        sectionName: sectionName,
+        sectionCode: sectionCode,
+        teacherId: teacherId,
       };
 
-      console.log(labData);
+      const result = await SectionService.createSection(sectionData);
 
-      await LaboratoryService.createLab(labData);
-      alert("Laboratory created successfully!");
+      if (onCreate) {
+        onCreate(result);
+      }
       onClose();
-    } catch (error) {
-      alert("Failed to create laboratory.");
-      // console.error("Error creating laboratory:", error); // Removed for clean output
+    } catch (err) {
+      console.error(err);
+      if (err.response?.status === 403) {
+        setError("Session expired. Please log out and log in again.");
+      } else {
+        setError("Failed to create section. Check console.");
+      }
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const handleCancel = () => {
-    onClose();
-  };
-
-  // Filter users based on search term, using firstName and lastName
-  const filteredUsers = allUsers.filter(
-    (user) =>
-      (user.firstName &&
-        user.firstName.toLowerCase().includes(searchTerm.toLowerCase())) ||
-      (user.lastName &&
-        user.lastName.toLowerCase().includes(searchTerm.toLowerCase()))
-  );
-
   return (
-    <div className="laboratory-container">
-      <div className="header">
-        <h2>Create New Laboratory</h2>
-        <p>Set up a new laboratory for your students to explore chemistry.</p>
-      </div>
-
-      <div className="input-group">
-        <label htmlFor="name">Laboratory Name</label>
-        <input
-          id="name"
-          type="text"
-          placeholder="e.g., Chemistry 101 Lab"
-          value={laboratoryName}
-          onChange={(e) => {
-            setLaboratoryName(e.target.value);
-            setLabNameError("");
-          }}
-        />
-        {labNameError && <p className="error-message">{labNameError}</p>}
-      </div>
-
-      <div className="input-group">
-        <label>Laboratory Code</label>
-        <div className="code-container">
-          <div className="code">{code}</div>
-          <button onClick={copyCode}>
-            {copied ? <Check size={16} /> : <Copy size={16} />}
+    <div className="modal-overlay" onClick={onClose}>
+      <div
+        className="laboratory-container"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {/* HEADER */}
+        <div className="header" style={{ position: "relative" }}>
+          <h2>Create New Section</h2>
+          <p>Set up a new class section for your students.</p>
+          <button
+            onClick={onClose}
+            style={{
+              position: "absolute",
+              top: 0,
+              right: 0,
+              background: "none",
+              border: "none",
+              cursor: "pointer",
+            }}
+          >
+            <X size={24} />
           </button>
         </div>
-        <p>Share this code with your students to join the laboratory</p>
-      </div>
 
-      <div className="input-group">
-        <label>Select Lessons</label>
-        <select
-          multiple
-          value={selectedLessonIds}
-          onChange={(e) => {
-            // grab all selected <option> values
-            const values = Array.from(e.target.selectedOptions, (o) =>
-              parseInt(o.value)
-            );
-            setSelectedLessonIds(values);
-          }}
-        >
-          {lessons.length === 0 && (
-            <option disabled>Loading lessons or no lessons found...</option>
-          )}
-          {lessons.map((lesson) => (
-            <option key={lesson.id} value={lesson.id}>
-              {lesson.title}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <div className="input-group">
-        <label>Select Students</label>
-        <input
-          type="text"
-          placeholder="Search students by name..."
-          value={searchTerm}
-          onChange={(e) => setSearchTerm(e.target.value)}
-          className="search-bar"
-        />
-        <div className="student-list">
-          {filteredUsers.length === 0 && (
-            <p>
-              No users found matching your search or no other users available.
-            </p>
-          )}
-          {filteredUsers.map((user) => (
-            <div
-              key={user.userId} // Use userId from backend
-              className={`student-item ${
-                selectedStudentIds.includes(user.userId) ? "selected" : ""
-              }`} // Check against userId
-              onClick={() => toggleStudentSelection(user.userId)} // Toggle using userId
-            >
-              <User size={16} />
-              <span>
-                {user.firstName} {user.lastName}
-              </span>{" "}
-              {/* Display firstName and lastName */}
-              {selectedStudentIds.includes(user.userId) && (
-                <Check size={16} />
-              )}{" "}
-              {/* Check against userId */}
-            </div>
-          ))}
+        {/* INPUT: NAME */}
+        <div className="input-group">
+          <label htmlFor="name">Section Name</label>
+          <input
+            id="name"
+            type="text"
+            placeholder="e.g., Chemistry 101 - Period 1"
+            value={sectionName}
+            onChange={(e) => {
+              setSectionName(e.target.value);
+              setError("");
+            }}
+            disabled={isLoading}
+          />
         </div>
-      </div>
 
-      <div className="action-buttons">
-        <button className="cancel-btn" onClick={handleCancel}>
-          Cancel
-        </button>
-        <button className="submit-btn" onClick={handleSubmit}>
-          Create Laboratory
-        </button>
+        {/* INPUT: CODE */}
+        <div className="input-group">
+          <label>Section Code</label>
+          <div className="code-container">
+            <div className="code">{sectionCode}</div>
+            <button onClick={copyCode} title="Copy Code">
+              {copied ? <Check size={18} color="green" /> : <Copy size={18} />}
+            </button>
+          </div>
+          <p style={{ fontSize: "0.8rem", color: "#666", marginTop: "5px" }}>
+            Share this code with your students to join the section.
+          </p>
+        </div>
+
+        {error && (
+          <p className="error-message" style={{ color: "red" }}>
+            {error}
+          </p>
+        )}
+
+        {/* ACTIONS */}
+        <div className="action-buttons">
+          <button className="cancel-btn" onClick={onClose} disabled={isLoading}>
+            Cancel
+          </button>
+          <button
+            className="submit-btn"
+            onClick={handleSubmit}
+            disabled={isLoading}
+          >
+            {isLoading ? (
+              <span
+                style={{ display: "flex", alignItems: "center", gap: "5px" }}
+              >
+                <Loader2 className="animate-spin" size={16} /> Creating...
+              </span>
+            ) : (
+              "Create Section"
+            )}
+          </button>
+        </div>
       </div>
     </div>
   );

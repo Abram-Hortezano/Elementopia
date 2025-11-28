@@ -52,6 +52,30 @@ const UserService = {
     }
   },
 
+  // Join Section (With Test Code)
+  joinSection: async (sectionCode) => {
+    // --- 🚧 TEMP: TEST CODE BACKDOOR 🚧 ---
+    // Enter "TEST-123" in the modal to unlock immediately.
+    // This is NOT saved, so a refresh will lock you out again.
+    if (sectionCode === "TEST-123") {
+      console.log("🔓 Test Code Accepted: Unlocking Map (Temporary)");
+      return Promise.resolve({ message: "Test Section Joined Successfully" });
+    }
+    // ---------------------------------------
+
+    try {
+      const response = await axios.post(
+        `${API_URL}/join-section`, 
+        { sectionCode }, 
+        { headers: getAuthHeader() }
+      );
+      return response.data;
+    } catch (error) {
+      console.error("Failed to join section:", error.response?.data || error.message);
+      throw error;
+    }
+  },
+
   // Get all users
   getAllUsers: async () => {
     try {
@@ -115,7 +139,6 @@ const UserService = {
   // Register new user
   registerUser: async (userData) => {
     try {
-      console.log(userData);
       const response = await axios.post(`${API_URL}/register`, userData);
       return response.data;
     } catch (error) {

@@ -9,18 +9,7 @@ import Footer from "../components/footer";
 import Navigation from "../components/navigation";
 
 function LandingPage() {
-  console.log("LandingPage component rendered!");
-  // const settings = {
-  //   dots: true, // Show navigation dots
-  //   infinite: true,
-  //   speed: 500,
-  //   slidesToShow: 3, // Number of slides visible at a time
-  //   slidesToScroll: 3, // Number of slides to scroll at a time
-  //   autoplay: true, // Auto-play slides
-  //   autoplaySpeed: 3000,
-  //   arrows: true,
-  // };
-
+  // console.log("LandingPage component rendered!");
   return (
   <div className="root">
     <div className="landingpage-container">
@@ -45,12 +34,19 @@ function LandingPage() {
           <img src={animationGif} alt="Chemistry GIF" className="gif-image" />
         </div>
       </div>
-
-      <MissionSection />
-      <Carousel />
-      <Footer />
+      <div className="MissionSection">
+        <MissionSection />
+      </div>
+      <div className="Carousel">
+        <Carousel />
+      </div>
+        <footer>
+                <Footer />
+        </footer>
     </div>
+
   </div>
+  
   );
 }
 

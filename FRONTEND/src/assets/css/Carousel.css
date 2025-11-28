@@ -4,11 +4,13 @@
 .carousel-container {
   width: 90%;
   margin: auto;
-  position: relative;
   top: 100px;
   padding: 50px 0;
   border-bottom: 2px solid rgba(255, 255, 255, 0.3);
   text-align: center;
+  /* border: 5px solid white; */
+  margin-bottom: 10%;
+
 }
 .carousel-label {
   font-family: "Orbitron", sans-serif;
