@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/StudentList.css'; 
 import SectionService from '../../services/SectionService';
+import LessonService from '../../services/LessonService';
 import lessonCompletionService from '../../services/lessonCompletionService';
 
 const StudentList = ({ room, onBack, onClose }) => {
@@ -22,60 +23,76 @@ const StudentList = ({ room, onBack, onClose }) => {
     try {
       setLoading(true);
       setError("");
-
       // 1. Fetch Lab Details (Students)
       const labData = await SectionService.getClassMembers(room.roomCode);
       const rawStudents = labData.students || [];
+      // 2. Fetch total lessons to compute percentages accurately
+      let lessonsCount = TOTAL_MODULES;
+          try {
+            const lessons = await LessonService.getAllLessons();
+            lessonsCount = Array.isArray(lessons) ? lessons.length : lessonsCount;
+          } catch (e) {
+            console.warn('Could not fetch total lessons, keeping default totalModules', e);
+            lessonsCount = TOTAL_MODULES;
+          }
 
-      // 2. Fetch Scores for Calculation
-      let allScores = [];
-      try {
-        allScores = await LessonService.getAllScores();
-      } catch (scoreErr) {
-        console.warn("Could not fetch scores, progress will be 0", scoreErr);
-      }
+          // 3. Fetch each student's completions in parallel and merge data
+          const validStudents = rawStudents.map((s) => {
+            const sId = s.studentId || s.userId || s.id;
+            return sId ? { raw: s, id: sId } : null;
+          }).filter(Boolean);
 
-      // 3. Merge Data
-      const formattedStudents = rawStudents.map((s) => {
-        const sId = s.studentId || s.userId || s.id;
+          // Fetch completions for all students in parallel
+          const completionsPromises = validStudents.map(vs =>
+            lessonCompletionService.getUserCompletions(vs.id).then(data => ({ id: vs.id, completions: data || [] })).catch(err => {
+              console.warn(`Could not load completions for student ${vs.id}`, err);
+              return { id: vs.id, completions: [] };
+            })
+          );
 
-        if (!sId){
-          console.warn("Student without valid ID found:", s);
-          return null;
+          const completionsResults = await Promise.all(completionsPromises);
+          const completionsById = Object.fromEntries(completionsResults.map(r => [r.id, r.completions]));
+
+          // Fetch all scores once to compute total points per student (optional)
+          let allScores = [];
+          try {
+            allScores = await LessonService.getAllScores();
+          } catch (e) {
+            console.warn('Could not fetch lesson scores for students', e);
+          }
+
+          const formattedStudents = validStudents.map(({ raw, id: sId }) => {
+            const studentCompletions = completionsById[sId] || [];
+
+            // Unique lesson IDs completed for this student
+            const uniqueCompleted = new Set(studentCompletions.map(c => c.lessonId || c.lesson?.id)).size;
+            const denominator = lessonsCount || 1;
+            const percentage = Math.round((uniqueCompleted / denominator) * 100);
+
+            // Total points from the pre-fetched scores
+            const studentScores = allScores.filter(score => score.student?.studentId === sId || score.student?.id === sId);
+            const totalPoints = studentScores.reduce((sum, sc) => sum + (sc.score || 0), 0);
+
+            return {
+              id: sId,
+              studentId: `STU${sId.toString().padStart(3, '0')}`,
+              name: `${raw.firstName || raw.user?.firstName || ''} ${raw.lastName || raw.user?.lastName || ''}`.trim(),
+              email: raw.email || raw.user?.email || '—',
+              progress: Math.min(percentage, 100),
+              score: totalPoints,
+              status: 'Active',
+              lastActivity: 'N/A',
+            };
+          });
+
+          setStudents(formattedStudents);
+        } catch (err) {
+          console.error("Failed to fetch students:", err);
+          setError("Could not load student list. Please try again.");
+        } finally {
+          setLoading(false);
         }
-
-        // Filter scores for this student
-        const studentScores = allScores.filter(score => 
-           score.student?.studentId === sId || score.student?.id === sId
-        );
-
-        // Calculate Progress
-        const uniqueCompleted = new Set(studentScores.map(sc => sc.lessonId)).size;
-        const percentage = Math.round((uniqueCompleted / TOTAL_MODULES) * 100);
-        
-        // Calculate Total Score (Optional sum of all points)
-        const totalPoints = studentScores.reduce((sum, sc) => sum + (sc.score || 0), 0);
-
-        return {
-          id: sId,
-          studentId: `STU${sId.toString().padStart(3, '0')}`,
-          name: `${s.firstName} ${s.lastName}`,
-          email: s.email,
-          progress: Math.min(percentage, 100),
-          score: totalPoints,                
-          status: 'Active',
-          lastActivity: 'N/A',
-        };
-      });
-
-      setStudents(formattedStudents);
-    } catch (err) {
-      console.error("Failed to fetch students:", err);
-      setError("Could not load student list. Please try again.");
-    } finally {
-      setLoading(false);
-    }
-  };
+      };
 
   // --- UI HANDLERS ---
   useEffect(() => {
