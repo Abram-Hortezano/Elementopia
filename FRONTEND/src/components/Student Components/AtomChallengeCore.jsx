@@ -7,20 +7,33 @@ import {
 } from "@dnd-kit/core";
 import "../../assets/css/AtomChallenge.css";
 
+// --- Close Button Component ---
+function CloseButton({ onClose }) {
+  return (
+    <button className="close-btn" onClick={onClose} aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12z"/>
+      </svg>
+    </button>
+  );
+}
+
 // --- Draggable Particle ---
-function DraggableParticle({ id, type, isHidden, index, total, location }) {
-  const { attributes, listeners, setNodeRef } = useDraggable({ id });
+function DraggableParticle({ id, type, isHidden, location, index, total }) {
+  const { attributes, listeners, setNodeRef, transform } = useDraggable({ id });
 
   const particleStyle = {
     visibility: isHidden ? "hidden" : "visible",
     position: "relative",
-    transition: "all 0.25s ease",
+    transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
+    transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : undefined,
+    zIndex: transform ? 1000 : "auto",
   };
 
-  // ✅ Position electrons in orbit only when inside the shell
+  // Position electrons in orbit when in shell
   if (location === "shell" && type === "electron" && index !== undefined && total !== undefined) {
     const angle = (index / total) * 360;
-    const radius = 140;
+    const radius = window.innerWidth < 768 ? 80 : 100;
     const x = radius * Math.cos((angle * Math.PI) / 180);
     const y = radius * Math.sin((angle * Math.PI) / 180);
 
@@ -28,14 +41,7 @@ function DraggableParticle({ id, type, isHidden, index, total, location }) {
       position: "absolute",
       top: `calc(50% + ${y}px - 12px)`,
       left: `calc(50% + ${x}px - 12px)`,
-    });
-  } else {
-    Object.assign(particleStyle, {
-      position: "relative",
-      top: "auto",
-      left: "auto",
-      transform: "none",
-      margin: "0",
+      transform: transform ? `translate3d(${transform.x}px, ${transform.y}px, 0)` : "none",
     });
   }
 
@@ -44,9 +50,14 @@ function DraggableParticle({ id, type, isHidden, index, total, location }) {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className={`particle ${type}`}
+      className={`particle ${type} ${location} ${isHidden ? 'hidden' : ''}`}
       style={particleStyle}
-    />
+      data-type={type}
+    >
+      <div className="particle-inner">
+        <div className="particle-glow"></div>
+      </div>
+    </div>
   );
 }
 
@@ -54,67 +65,21 @@ function DraggableParticle({ id, type, isHidden, index, total, location }) {
 function DropZone({ id, children, className }) {
   const { setNodeRef, isOver } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={`${className} ${isOver ? "hovering" : ""}`}>
+    <div 
+      ref={setNodeRef} 
+      className={`${className} ${isOver ? "hovering" : ""} drop-zone`}
+      data-zone={id}
+    >
       {children}
-    </div>
-  );
-}
-
-// --- Particle Orb ---
-function ParticleOrb({ type, count, size = "small" }) {
-  const orbSize = {
-    tiny: "35px",
-    small: "45px",
-    medium: "55px"
-  }[size];
-
-  const orbStyle = {
-    width: orbSize,
-    height: orbSize,
-    background: type === "proton" 
-      ? "radial-gradient(circle, #ff6b6b, #e74c3c)"
-      : "radial-gradient(circle, #bdc3c7, #95a5a6)",
-    borderRadius: "50%",
-    display: "flex",
-    flexDirection: "column",
-    justifyContent: "center",
-    alignItems: "center",
-    color: "white",
-    fontWeight: "bold",
-    boxShadow: type === "proton"
-      ? "0 0 15px rgba(231, 76, 60, 0.6)"
-      : "0 0 15px rgba(149, 165, 166, 0.6)",
-    border: `2px solid ${type === "proton" ? "#ff7979" : "#ecf0f1"}`,
-    margin: "3px",
-    position: "relative"
-  };
-
-  return (
-    <div className="particle-orb" style={orbStyle}>
-      <div className="orb-count" style={{ 
-        fontSize: size === "tiny" ? "1rem" : "1.2rem",
-        lineHeight: "1.1"
-      }}>
-        {count}
-      </div>
-      <div className="orb-label" style={{ 
-        fontSize: size === "tiny" ? "0.5rem" : "0.6rem",
-        opacity: 0.9,
-        marginTop: "1px"
-      }}>
-        {type === "proton" ? "p" : "n"}
-      </div>
     </div>
   );
 }
 
 // --- Combined Nucleus Display ---
 function CombinedNucleusDisplay({ protons, neutrons }) {
-  // Create separate orbs for protons and neutrons
   const protonOrbs = [];
   const neutronOrbs = [];
   
-  // Split protons into groups of max 10
   let remainingProtons = protons;
   while (remainingProtons > 0) {
     const groupCount = Math.min(remainingProtons, 10);
@@ -122,7 +87,6 @@ function CombinedNucleusDisplay({ protons, neutrons }) {
     remainingProtons -= groupCount;
   }
   
-  // Split neutrons into groups of max 10
   let remainingNeutrons = neutrons;
   while (remainingNeutrons > 0) {
     const groupCount = Math.min(remainingNeutrons, 10);
@@ -130,42 +94,85 @@ function CombinedNucleusDisplay({ protons, neutrons }) {
     remainingNeutrons -= groupCount;
   }
 
-  const getOrbSize = (count, index, total) => {
-    if (total === 1 && count <= 5) return "small";
-    if (count >= 8) return "small";
-    return "tiny";
-  };
-
   return (
     <div className="combined-nucleus">
       <div className="nucleus-orbs-container">
-        {/* Proton Orbs */}
         {protonOrbs.length > 0 && (
           <div className="proton-orbs-group">
             {protonOrbs.map((count, index) => (
-              <ParticleOrb
+              <div
                 key={`proton-${index}`}
-                type="proton"
-                count={count}
-                size={getOrbSize(count, index, protonOrbs.length)}
-              />
+                className="particle-orb proton-orb"
+                style={{ '--particle-count': count }}
+              >
+                <div className="orb-glow"></div>
+                <div className="orb-content">
+                  <div className="orb-count">{count}</div>
+                  <div className="orb-label">p</div>
+                </div>
+              </div>
             ))}
           </div>
         )}
         
-        {/* Neutron Orbs */}
         {neutronOrbs.length > 0 && (
           <div className="neutron-orbs-group">
             {neutronOrbs.map((count, index) => (
-              <ParticleOrb
+              <div
                 key={`neutron-${index}`}
-                type="neutron"
-                count={count}
-                size={getOrbSize(count, index, neutronOrbs.length)}
-              />
+                className="particle-orb neutron-orb"
+                style={{ '--particle-count': count }}
+              >
+                <div className="orb-glow"></div>
+                <div className="orb-content">
+                  <div className="orb-count">{count}</div>
+                  <div className="orb-label">n</div>
+                </div>
+              </div>
             ))}
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// --- Particle Controls ---
+function ParticleControl({ type, current, max, onUpdate }) {
+  const particleConfig = {
+    proton: { color: '#FF6B6B', label: 'Protons', icon: '⚛️' },
+    neutron: { color: '#BDC3C7', label: 'Neutrons', icon: '⚪' },
+    electron: { color: '#3498DB', label: 'Electrons', icon: '⚡' }
+  };
+
+  const config = particleConfig[type];
+
+  return (
+    <div className="control-group" data-type={type}>
+      <div className="control-header">
+        <span className="control-icon">{config.icon}</span>
+        <span className="control-label">{config.label}</span>
+        <span className="particle-count-display">{current}</span>
+      </div>
+      <div className="control-buttons">
+        <button 
+          className="control-btn decrease"
+          onClick={() => onUpdate(-1)}
+          disabled={current === 0}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 13H5v-2h14v2z"/>
+          </svg>
+        </button>
+        <button 
+          className="control-btn increase"
+          onClick={() => onUpdate(1)}
+          disabled={current === max}
+        >
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+            <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/>
+          </svg>
+        </button>
       </div>
     </div>
   );
@@ -175,36 +182,29 @@ function CombinedNucleusDisplay({ protons, neutrons }) {
 export default function AtomChallengeCore({ challenge, onChallengeComplete }) {
   const [particles, setParticles] = useState({});
   const [activeId, setActiveId] = useState(null);
+  const [particleCounts, setParticleCounts] = useState({
+    protons: 0,
+    neutrons: 0,
+    electrons: 0
+  });
 
-  // ✅ Auto-generate particles based on challenge requirements + random extras
   useEffect(() => {
     const generatedParticles = {};
     let id = 1;
 
-    // Core required particles
-    for (let i = 0; i < challenge.protons; i++) {
+    const poolSize = Math.max(challenge.protons, challenge.neutrons, challenge.electrons) + 5;
+    
+    for (let i = 0; i < poolSize; i++) {
       generatedParticles[`p${id}`] = { type: "proton", location: "bin" };
       id++;
-    }
-
-    for (let i = 0; i < challenge.neutrons; i++) {
       generatedParticles[`n${id}`] = { type: "neutron", location: "bin" };
       id++;
-    }
-
-    for (let i = 0; i < challenge.electrons; i++) {
       generatedParticles[`e${id}`] = { type: "electron", location: "bin" };
       id++;
     }
 
-    // ✅ Add two random extra particles
-    const particleTypes = ["proton", "neutron", "electron"];
-    for (let i = 0; i < 2; i++) {
-      const randomType = particleTypes[Math.floor(Math.random() * particleTypes.length)];
-      generatedParticles[`extra${i + 1}`] = { type: randomType, location: "bin", isExtra: true };
-    }
-
     setParticles(generatedParticles);
+    setParticleCounts({ protons: 0, neutrons: 0, electrons: 0 });
   }, [challenge]);
 
   const activeParticleType = activeId ? particles[activeId]?.type : null;
@@ -222,60 +222,69 @@ export default function AtomChallengeCore({ challenge, onChallengeComplete }) {
     }));
   };
 
-  const handleCheck = () => {
-    const nucleusProtons = Object.values(particles).filter(
-      (p) => p.location === "nucleus" && p.type === "proton"
-    ).length;
-    const nucleusNeutrons = Object.values(particles).filter(
-      (p) => p.location === "nucleus" && p.type === "neutron"
-    ).length;
-    const shellElectrons = Object.values(particles).filter(
-      (p) => p.location === "shell" && p.type === "electron"
-    ).length;
+  const updateParticleCount = (type, change) => {
+    setParticleCounts(prev => {
+      const newCount = prev[type] + change;
+      const maxAllowed = type === 'protons' ? challenge.protons :
+                        type === 'neutrons' ? challenge.neutrons :
+                        challenge.electrons;
+      
+      if (newCount >= 0 && newCount <= maxAllowed) {
+        return { ...prev, [type]: newCount };
+      }
+      return prev;
+    });
+  };
 
-    if (
-      nucleusProtons === challenge.protons &&
-      nucleusNeutrons === challenge.neutrons &&
-      shellElectrons === challenge.electrons
-    ) {
-      alert(`✅ Correct! You built ${challenge.name}!`);
-      onChallengeComplete();
+  const getVisualParticles = () => {
+    const visualParticles = {};
+    let id = 1;
+
+    for (let i = 0; i < particleCounts.protons; i++) {
+      visualParticles[`visual-p${id}`] = { type: "proton", location: "nucleus" };
+      id++;
+    }
+
+    for (let i = 0; i < particleCounts.neutrons; i++) {
+      visualParticles[`visual-n${id}`] = { type: "neutron", location: "nucleus" };
+      id++;
+    }
+
+    for (let i = 0; i < particleCounts.electrons; i++) {
+      visualParticles[`visual-e${id}`] = { type: "electron", location: "shell" };
+      id++;
+    }
+
+    return visualParticles;
+  };
+
+  const handleCheck = () => {
+    const correct = particleCounts.protons === challenge.protons &&
+                   particleCounts.neutrons === challenge.neutrons &&
+                   particleCounts.electrons === challenge.electrons;
+
+    if (correct) {
+      setTimeout(() => {
+        alert(`✅ Correct! You built ${challenge.name}!`);
+        onChallengeComplete();
+      }, 300);
     } else {
       alert("❌ Not quite right! Try again.");
     }
   };
 
-  // ✅ Function to count particles in nucleus
-  const getNucleusParticles = () => {
-    const nucleusParticles = Object.values(particles).filter(p => p.location === "nucleus");
-    const protons = nucleusParticles.filter(p => p.type === "proton").length;
-    const neutrons = nucleusParticles.filter(p => p.type === "neutron").length;
-    const electrons = nucleusParticles.filter(p => p.type === "electron").length;
-    
-    return { protons, neutrons, electrons, total: protons + neutrons + electrons };
-  };
-
   const renderParticlesIn = (location) => {
-    // ✅ For nucleus, check if we should show combined view
-    if (location === "nucleus") {
-      const nucleusStats = getNucleusParticles();
-      
-      // Show combined view when total particles exceed 3
-      if (nucleusStats.total > 3) {
-        return (
-          <CombinedNucleusDisplay 
-            protons={nucleusStats.protons} 
-            neutrons={nucleusStats.neutrons} 
-          />
-        );
-      }
-    }
-
-    // ✅ Regular rendering for other locations or when nucleus has 3 or fewer particles
-    const particlesInLocation = Object.entries(particles).filter(
+    const visualParticles = getVisualParticles();
+    const particlesInLocation = Object.entries(visualParticles).filter(
       ([, p]) => p.location === location
     );
-    
+
+    if (location === "nucleus" && particlesInLocation.length > 3) {
+      const protons = particlesInLocation.filter(([, p]) => p.type === "proton").length;
+      const neutrons = particlesInLocation.filter(([, p]) => p.type === "neutron").length;
+      return <CombinedNucleusDisplay protons={protons} neutrons={neutrons} />;
+    }
+
     return particlesInLocation.map(([id, p], index) => (
       <DraggableParticle
         key={id}
@@ -289,28 +298,81 @@ export default function AtomChallengeCore({ challenge, onChallengeComplete }) {
     ));
   };
 
+  const totalNucleusParticles = particleCounts.protons + particleCounts.neutrons;
+  const isComplete = particleCounts.protons === challenge.protons &&
+                    particleCounts.neutrons === challenge.neutrons &&
+                    particleCounts.electrons === challenge.electrons;
+
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="atom-challenge-wrapper">
-        <div className="lesson-modal atom-builder">
-          <h2>Build {challenge.name}</h2>
-
-          <div className="atom-diagram">
-            <DropZone id="nucleus" className="nucleus">
-              {renderParticlesIn("nucleus")}
-            </DropZone>
-            <DropZone id="shell" className="electron-shell">
-              {renderParticlesIn("shell")}
-            </DropZone>
+        <div className="atom-builder">
+          
+          <div className="challenge-header">
+            <h2>Build {challenge.name}</h2>
+            <div className="element-info">
+              <span className="atomic-number">Atomic #: {challenge.protons}</span>
+              <span className="mass-number">Mass: {challenge.protons + challenge.neutrons}</span>
+            </div>
           </div>
 
-          <DropZone id="bin" className="parts-bin">
-            <h4>Available Parts</h4>
-            <div className="particles-container">{renderParticlesIn("bin")}</div>
-          </DropZone>
+          <div className="atom-diagram-container">
+            <div className="atom-diagram">
+              <div className="electron-shell-shell">
+                <div className="orbit-ring"></div>
+                <div className="orbit-ring orbit-ring-2"></div>
+              </div>
+              <DropZone id="shell" className="electron-shell">
+                {renderParticlesIn("shell")}
+                {particleCounts.electrons === 0 && (
+                  <div className="empty-hint">
+                    <span>⚡</span>
+                    <p>Electrons</p>
+                  </div>
+                )}
+              </DropZone>
+              
+              <DropZone id="nucleus" className="nucleus">
+                {renderParticlesIn("nucleus")}
+                {totalNucleusParticles === 0 && (
+                  <div className="empty-hint">
+                    <span>⚛️</span>
+                    <p>Nucleus</p>
+                  </div>
+                )}
+              </DropZone>
+            </div>
+          </div>
+
+          <div className="particle-controls-container">
+            <div className="particle-controls">
+              <ParticleControl
+                type="proton"
+                current={particleCounts.protons}
+                max={challenge.protons}
+                onUpdate={(change) => updateParticleCount('protons', change)}
+              />
+              <ParticleControl
+                type="neutron"
+                current={particleCounts.neutrons}
+                max={challenge.neutrons}
+                onUpdate={(change) => updateParticleCount('neutrons', change)}
+              />
+              <ParticleControl
+                type="electron"
+                current={particleCounts.electrons}
+                max={challenge.electrons}
+                onUpdate={(change) => updateParticleCount('electrons', change)}
+              />
+            </div>
+          </div>
 
           <div className="controls-area">
-            <button onClick={handleCheck} className="complete-btn">
+            <button 
+              onClick={handleCheck} 
+              className={`complete-btn ${isComplete ? 'pulse' : ''}`}
+            >
+              <span className="btn-icon">🔬</span>
               Check Atom
             </button>
           </div>
@@ -318,7 +380,13 @@ export default function AtomChallengeCore({ challenge, onChallengeComplete }) {
       </div>
 
       <DragOverlay>
-        {activeId && <div className={`particle ${activeParticleType} is-dragging`} />}
+        {activeId && (
+          <div className={`particle ${activeParticleType} dragging-overlay`}>
+            <div className="particle-inner">
+              <div className="particle-glow"></div>
+            </div>
+          </div>
+        )}
       </DragOverlay>
     </DndContext>
   );
