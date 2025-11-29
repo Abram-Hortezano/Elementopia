@@ -153,54 +153,87 @@ export default function MapTree() {
   const [hasAccess, setHasAccess] = useState(false);
   const [checkingAccess, setCheckingAccess] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
+  const [totalScore, setTotalScore] = useState(0);
 
   const loadUserProgress = async (studentId) => {
     try {
       const completions = await LessonCompletionService.getUserCompletions(studentId);
-      console.log("--- START DEBUG: LOADED COMPLETIONS ---");
-      console.log("Raw Server Data:", completions);
-      console.log("Raw Server Data Sample:", completions && completions[0]);
-      console.log("--- END DEBUG ---");
+      console.log("=== COMPLETION LOADING DEBUG ===");
+      console.log("📊 Total completions from server:", completions?.length || 0);
+      console.log("📦 Raw completions:", completions);
+      
+      if (completions && completions.length > 0) {
+        console.log("📋 Sample completion structure:");
+        const sample = completions[0];
+        console.log("  - id:", sample.id);
+        console.log("  - lessonId:", sample.lessonId);
+        console.log("  - lesson:", sample.lesson);
+        console.log("  - All keys:", Object.keys(sample));
+      }
 
       const completedIds = new Set();
-      (completions || []).forEach(c => {
+      (completions || []).forEach((c, index) => {
+        console.log(`\n🔍 Processing completion ${index + 1}:`, c);
 
         let mappedId = null;
 
+        // Try direct lessonId mapping
         const possibleKeys = [c.lessonId, c.lesson?.id, c.lesson?.lessonId, c.completionId];
+        console.log(`  Checking keys:`, possibleKeys);
+        
         for (const key of possibleKeys) {
           if (key != null && backendToNodeMap[key]) {
             mappedId = backendToNodeMap[key];
+            console.log(`  ✅ MAPPED via key ${key} → nodeId=${mappedId}`);
             break;
           }
         }
 
+        // Try name-based mapping as fallback
         if (mappedId == null) {
-          const lessonName = c.lesson?.name || c.lessonName || c.name || c.title || c.label || c.lessonCode;
+          const lessonName = c.lesson?.name || c.lessonName || c.name || c.title || c.label || c.lessonCode || c.lessonTitle;
+          console.log(`  Trying name-based mapping with: "${lessonName}"`);
+          
           if (lessonName) {
             const nodeMatch = nodes.find(n => n.lesson && n.lesson.toLowerCase() === String(lessonName).toLowerCase());
-            if (nodeMatch) mappedId = nodeMatch.id;
-            else {
+            if (nodeMatch) {
+              mappedId = nodeMatch.id;
+              console.log(`  ✅ MAPPED via exact name → nodeId=${mappedId}`);
+            } else {
               const looseMatch = nodes.find(n => n.lesson && String(lessonName).toLowerCase().includes(n.lesson.toLowerCase()));
-              if (looseMatch) mappedId = looseMatch.id;
+              if (looseMatch) {
+                mappedId = looseMatch.id;
+                console.log(`  ✅ MAPPED via loose name → nodeId=${mappedId}`);
+              }
             }
           }
         }
 
         if (mappedId == null) {
-          console.warn("Could not map completion to a lesson. Completion object:", c);
+          console.error(`  ❌ FAILED TO MAP completion:`, c);
+          console.error(`  Available backend mapping keys:`, Object.keys(backendToNodeMap));
         } else {
-          console.log(`Mapping: c=${JSON.stringify(c)} → nodeId=${mappedId}`);
           completedIds.add(mappedId);
         }
       });
 
       setCompletedNodes(completedIds);
+      
+      // 🏆 CALCULATE SCORE: Each completed challenge (★) = 100 points
+      const challengeNodes = nodes.filter(n => n.label.includes("★"));
+      const completedChallenges = challengeNodes.filter(n => completedIds.has(n.id));
+      const calculatedScore = completedChallenges.length * 100;
+      
+      setTotalScore(calculatedScore);
+      
       console.log(`✅ Loaded ${completedIds.size} completed lessons for student ID: ${studentId}`);
+      console.log(`⭐ Completed ${completedChallenges.length}/${challengeNodes.length} challenges`);
+      console.log(`🏆 Total Score: ${calculatedScore} points`);
       console.log("Completed Node IDs:", Array.from(completedIds).sort((a, b) => a - b));
     } catch (err) {
       console.warn("Could not load user completions on login.", err.response?.data || err.message);
       setCompletedNodes(new Set());
+      setTotalScore(0);
     }
   };
 
@@ -249,11 +282,9 @@ export default function MapTree() {
     while (currentId !== null && currentId !== undefined) {
       const prereq = prerequisites[currentId];
       if (prereq === null || prereq === undefined) {
-        // Reached the start of the chain
         return true;
       }
       if (!completedNodes.has(prereq)) {
-        // Found an incomplete prerequisite in the chain
         return false;
       }
       currentId = prereq;
@@ -285,6 +316,8 @@ export default function MapTree() {
         }
 
         await LessonCompletionService.completeLesson(validStudentId, parseInt(lessonId));
+        
+        // Reload progress to update score
         await loadUserProgress(validStudentId);
       } catch (err) {
         if (err.message?.includes("Lesson already completed")) {
@@ -315,6 +348,19 @@ export default function MapTree() {
             await loadUserProgress(validStudentId);
           }}
         />
+      )}
+
+      {/* 🏆 SCORE DISPLAY BANNER */}
+      {hasAccess && (
+        <div className="score-banner">
+          <div className="score-display">
+            <span className="score-label">Total Score:</span>
+            <span className="score-value">{totalScore}</span>
+            <span className="score-stars">
+              ⭐ {totalScore / 100} / {nodes.filter(n => n.label.includes("★")).length}
+            </span>
+          </div>
+        </div>
       )}
 
       {!activeLesson && (
