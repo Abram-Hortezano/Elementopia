@@ -1,6 +1,13 @@
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css";
 import "slick-carousel/slick/slick-theme.css";
+import MapTree from "../assets/carousel-assets/student-map-tree.png"
+import chemSim from "../assets/carousel-assets/student-chem-simulation.png"
+import achievement from "../assets/carousel-assets/student-achievement-page.png"
+import studentHomepage from "../assets/carousel-assets/student-home-page.png"
+import createSection from "../assets/carousel-assets/teacher-section-create.png"
+import viewStudent from "../assets/carousel-assets/teacher-section-student-view.png"
+import viewSection from "../assets/carousel-assets/teacher-section-view.png"
 import "../assets/css/Carousel.css"; 
 import "../assets/css/Carousel.css";
 
@@ -23,26 +30,41 @@ const Carousel = () => {
       <Slider {...settings}>
         <div className="carousel-slide">
           <img
-            src="https://imgs.search.brave.com/Jx8eAt3b3FFc7T8qGmK4AjpohtGB8b4pA1TYkGAkfTQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90My5m/dGNkbi5uZXQvanBn/LzA5LzY1LzEzLzk0/LzM2MF9GXzk2NTEz/OTQwOV9JT21HVGVQ/Z2ZFVW44ek1YWnFw/YTlPRXRpRmJndkVC/TC5qcGc"
+            src={MapTree}
             alt="Slide 1"
           />
         </div>
         <div className="carousel-slide">
           <img
-            src="https://imgs.search.brave.com/o8RJsyBu9AEl2ypNLchMlnv-6kg8ttNiHYsxevChiiQ/rs:fit:860:0:0:0/g:ce/aHR0cHM6Ly90NC5m/dGNkbi5uZXQvanBn/LzA5LzYxLzg3LzE3/LzM2MF9GXzk2MTg3/MTc4M19GcGNkd1Zu/bmlJY21tT3YwcjJu/bzJ0MVVxeU9HWEVF/eC5qcGc"
+            src={chemSim}
             alt="Slide 2"
           />
         </div>
         <div className="carousel-slide">
           <img
-            src="https://cdn1.epicgames.com/spt-assets/419bd4760ed0465ba7f365f56f47d163/shrapnel-19nie.jpg?resize=1&w=480&h=270&quality=medium"
+            src={achievement}
             alt="Slide 3"
           />
         </div>
         <div className="carousel-slide">
           <img
-            src="https://cdn1.epicgames.com/spt-assets/419bd4760ed0465ba7f365f56f47d163/shrapnel-19nie.jpg?resize=1&w=480&h=270&quality=medium"
+            src={studentHomepage}
             alt="Slide 4"
+          />
+        </div>
+        <div className="carousel-slide">
+          <img
+            src={createSection}
+          />
+        </div>
+        <div className="carousel-slide">
+          <img
+            src={viewStudent}
+          />
+        </div>
+        <div className="carousel-slide">
+          <img
+            src={viewSection}
           />
         </div>
       </Slider>
