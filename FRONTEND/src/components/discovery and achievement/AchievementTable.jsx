@@ -7,7 +7,6 @@ import {
   CardContent,
   Chip,
   LinearProgress,
-  Tooltip,
 } from "@mui/material";
 import LockIcon from "@mui/icons-material/Lock";
 import CheckCircleIcon from "@mui/icons-material/CheckCircle";
@@ -15,64 +14,15 @@ import EmojiEventsIcon from "@mui/icons-material/EmojiEvents";
 import AchievementService from "../../services/AchievementService";
 import UserService from "../../services/UserService";
 
-// Define all possible achievements (must match MapTree.jsx)
+// Define all possible achievements (must match backend codeName)
 const ALL_ACHIEVEMENTS = [
-  {
-    id: 'first_lesson',
-    title: 'First Steps',
-    description: 'Complete your first lesson',
-    icon: '📚',
-    category: 'Progress',
-    rarity: 'Common'
-  },
-  {
-    id: 'first_challenge',
-    title: 'Challenge Accepted',
-    description: 'Complete your first challenge',
-    icon: '⭐',
-    category: 'Challenges',
-    rarity: 'Common'
-  },
-  {
-    id: 'three_challenges',
-    title: 'Hat Trick',
-    description: 'Complete 3 challenges',
-    icon: '🎯',
-    category: 'Challenges',
-    rarity: 'Uncommon'
-  },
-  {
-    id: 'atomic_master',
-    title: 'Atomic Master',
-    description: 'Complete all Atom lessons',
-    icon: '⚛️',
-    category: 'Mastery',
-    rarity: 'Rare'
-  },
-  {
-    id: 'score_500',
-    title: 'Rising Star',
-    description: 'Earn 500 points',
-    icon: '🌟',
-    category: 'Scoring',
-    rarity: 'Uncommon'
-  },
-  {
-    id: 'score_1000',
-    title: 'High Achiever',
-    description: 'Earn 1000 points',
-    icon: '🏆',
-    category: 'Scoring',
-    rarity: 'Rare'
-  },
-  {
-    id: 'perfect_score',
-    title: 'Perfect Score',
-    description: 'Earn maximum points (1800)',
-    icon: '👑',
-    category: 'Scoring',
-    rarity: 'Legendary'
-  },
+  { id: 'first_lesson', title: 'First Steps', description: 'Complete your first lesson', icon: '📚', category: 'Progress', rarity: 'Common' },
+  { id: 'first_challenge', title: 'Challenge Accepted', description: 'Complete your first challenge', icon: '⭐', category: 'Challenges', rarity: 'Common' },
+  { id: 'three_challenges', title: 'Hat Trick', description: 'Complete 3 challenges', icon: '🎯', category: 'Challenges', rarity: 'Uncommon' },
+  { id: 'atomic_master', title: 'Atomic Master', description: 'Complete all Atom lessons', icon: '⚛️', category: 'Mastery', rarity: 'Rare' },
+  { id: 'score_500', title: 'Rising Star', description: 'Earn 500 points', icon: '🌟', category: 'Scoring', rarity: 'Uncommon' },
+  { id: 'score_1000', title: 'High Achiever', description: 'Earn 1000 points', icon: '🏆', category: 'Scoring', rarity: 'Rare' },
+  { id: 'perfect_score', title: 'Perfect Score', description: 'Earn maximum points (1800)', icon: '👑', category: 'Scoring', rarity: 'Legendary' },
 ];
 
 const getRarityColor = (rarity) => {
@@ -94,13 +44,20 @@ const AchievementTable = () => {
     const loadAchievements = async () => {
       try {
         const user = await UserService.getCurrentUser();
-        if (user?.userId) {
-          const achievements = await AchievementService.getAchievementsByUser(user.userId);
-          const earnedIds = new Set(achievements.map(a => a.achievementId || a.id));
-          setEarnedAchievements(earnedIds);
-          setEarnedDetails(achievements);
-          console.log(`🏆 Loaded ${earnedIds.size} achievements`);
-        }
+        if (!user?.userId) return;
+
+        const achievements = await AchievementService.getAchievementsByUser(user.userId);
+
+        console.log("🏆 Backend achievements:", achievements);
+
+        // ✅ FIXED: use codeName instead of achievementId / id
+        const earnedSet = new Set(
+          achievements.map(a => a.codeName)
+        );
+
+        setEarnedAchievements(earnedSet);
+        setEarnedDetails(achievements);
+
       } catch (error) {
         console.error("Failed to load achievements:", error);
       } finally {
@@ -111,12 +68,16 @@ const AchievementTable = () => {
     loadAchievements();
   }, []);
 
-  const completionPercentage = Math.round((earnedAchievements.size / ALL_ACHIEVEMENTS.length) * 100);
+  const completionPercentage = Math.round(
+    (earnedAchievements.size / ALL_ACHIEVEMENTS.length) * 100
+  );
+
   const categories = ['Progress', 'Challenges', 'Scoring', 'Mastery'];
 
   return (
     <Box>
-      {/* Header Stats */}
+
+      {/* HEADER STATS */}
       <Box
         sx={{
           mb: 4,
@@ -127,245 +88,131 @@ const AchievementTable = () => {
           boxShadow: "0px 0px 20px rgba(0, 188, 212, 0.4)",
         }}
       >
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', mb: 2 }}>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <EmojiEventsIcon sx={{ fontSize: 48, color: '#ffd700' }} />
-            <Box>
-              <Typography variant="h4" sx={{ fontWeight: 'bold', color: '#00bcd4' }}>
-                Your Achievements
-              </Typography>
-              <Typography variant="body1" sx={{ color: '#888' }}>
-                Track your progress and unlock rewards
-              </Typography>
-            </Box>
-          </Box>
-          <Box sx={{ textAlign: 'right' }}>
-            <Typography variant="h3" sx={{ fontWeight: 'bold', color: '#ffd700' }}>
-              {earnedAchievements.size}/{ALL_ACHIEVEMENTS.length}
+        <Box sx={{ display: 'flex', justifyContent: 'space-between' }}>
+          <Box>
+            <Typography variant="h4" sx={{ color: '#00bcd4', fontWeight: 'bold' }}>
+              Your Achievements
             </Typography>
-            <Typography variant="body2" sx={{ color: '#888' }}>
-              Unlocked
-            </Typography>
+            <Typography sx={{ color: '#888' }}>Track your progress</Typography>
           </Box>
+          <Typography variant="h3" sx={{ color: '#ffd700' }}>
+            {earnedAchievements.size}/{ALL_ACHIEVEMENTS.length}
+          </Typography>
         </Box>
 
-        {/* Progress Bar */}
         <Box sx={{ mt: 2 }}>
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mb: 1 }}>
-            <Typography variant="body2" sx={{ color: '#888' }}>
-              Overall Progress
-            </Typography>
-            <Typography variant="body2" sx={{ color: '#00bcd4', fontWeight: 'bold' }}>
-              {completionPercentage}%
-            </Typography>
-          </Box>
           <LinearProgress
             variant="determinate"
             value={completionPercentage}
-            sx={{
-              height: 12,
-              borderRadius: 6,
-              backgroundColor: '#333',
-              '& .MuiLinearProgress-bar': {
-                background: 'linear-gradient(90deg, #00bcd4, #ffd700)',
-                borderRadius: 6,
-              }
-            }}
+            sx={{ height: 12, borderRadius: 6 }}
           />
         </Box>
       </Box>
 
       {loading ? (
-        <Box sx={{ textAlign: 'center', py: 4 }}>
-          <Typography sx={{ color: '#888' }}>Loading achievements...</Typography>
-        </Box>
+        <Typography sx={{ textAlign: "center", color: "#888" }}>
+          Loading achievements...
+        </Typography>
       ) : (
         <>
-          {/* Category Sections */}
+          {/* CATEGORY SECTIONS */}
           {categories.map(category => {
             const categoryAchievements = ALL_ACHIEVEMENTS.filter(a => a.category === category);
             const earnedInCategory = categoryAchievements.filter(a => earnedAchievements.has(a.id)).length;
-            
+
             return (
               <Box key={category} sx={{ mb: 4 }}>
-                <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                  <Typography 
-                    variant="h5" 
-                    sx={{ 
-                      fontWeight: 'bold',
-                      color: '#00bcd4',
-                      textTransform: 'uppercase',
-                      letterSpacing: 1
-                    }}
-                  >
-                    {category}
+
+                <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
+                  <Typography sx={{ color: "#00bcd4", fontWeight: "bold" }}>
+                    {category.toUpperCase()}
                   </Typography>
-                  <Chip
-                    label={`${earnedInCategory}/${categoryAchievements.length}`}
-                    sx={{
-                      bgcolor: '#00bcd4',
-                      color: '#000',
-                      fontWeight: 'bold'
-                    }}
-                  />
+                  <Chip label={`${earnedInCategory}/${categoryAchievements.length}`} />
                 </Box>
 
                 <Grid container spacing={3}>
                   {categoryAchievements.map(achievement => {
                     const isUnlocked = earnedAchievements.has(achievement.id);
-                    const earnedData = earnedDetails.find(e => 
-                      (e.achievementId || e.id) === achievement.id
+
+                    // ✅ FIXED MATCH USING codeName
+                    const earnedData = earnedDetails.find(
+                      e => e.codeName === achievement.id
                     );
-                    
+
                     return (
                       <Grid item xs={12} sm={6} md={4} key={achievement.id}>
                         <Card
                           sx={{
                             bgcolor: isUnlocked ? '#1e1e1e' : '#0f0f0f',
-                            border: isUnlocked 
-                              ? `2px solid ${getRarityColor(achievement.rarity)}`
-                              : '2px solid #333',
-                            borderRadius: '12px',
-                            height: '100%',
-                            position: 'relative',
-                            overflow: 'visible',
-                            transition: 'all 0.3s ease',
-                            opacity: isUnlocked ? 1 : 0.5,
-                            '&:hover': {
-                              transform: isUnlocked ? 'translateY(-8px)' : 'none',
-                              boxShadow: isUnlocked 
-                                ? `0 12px 24px ${getRarityColor(achievement.rarity)}40`
-                                : 'none',
-                            }
+                            border: `2px solid ${isUnlocked ? getRarityColor(achievement.rarity) : '#333'}`,
+                            borderRadius: "12px",
+                            opacity: isUnlocked ? 1 : 0.5
                           }}
                         >
-                          {/* Rarity Badge */}
+
+                          {/* RARITY BADGE */}
                           <Box
                             sx={{
                               position: 'absolute',
                               top: -12,
                               right: 16,
                               bgcolor: getRarityColor(achievement.rarity),
-                              color: '#fff',
                               px: 2,
-                              py: 0.5,
+                              py: 0.4,
                               borderRadius: '12px',
                               fontSize: '0.75rem',
-                              fontWeight: 'bold',
-                              textTransform: 'uppercase',
-                              boxShadow: '0 4px 8px rgba(0,0,0,0.3)'
+                              fontWeight: 'bold'
                             }}
                           >
                             {achievement.rarity}
                           </Box>
 
-                          <CardContent sx={{ pt: 3 }}>
-                            {/* Icon and Status */}
-                            <Box sx={{ display: 'flex', alignItems: 'flex-start', mb: 2 }}>
-                              <Box
-                                sx={{
-                                  fontSize: '4rem',
-                                  filter: isUnlocked ? 'none' : 'grayscale(100%)',
-                                  opacity: isUnlocked ? 1 : 0.3,
-                                  mr: 2,
-                                  lineHeight: 1
-                                }}
-                              >
-                                {achievement.icon}
-                              </Box>
-                              
-                              <Box sx={{ flex: 1 }}>
-                                <Typography
-                                  variant="h6"
-                                  sx={{
-                                    fontWeight: 'bold',
-                                    color: isUnlocked ? '#fff' : '#555',
-                                    mb: 0.5
-                                  }}
-                                >
-                                  {achievement.title}
-                                </Typography>
-                                
+                          <CardContent>
+
+                            <Box sx={{ display: "flex", alignItems: "center", gap: 2 }}>
+                              <span style={{ fontSize: "3rem" }}>{achievement.icon}</span>
+
+                              <Box>
+                                <Typography variant="h6">{achievement.title}</Typography>
+
                                 {isUnlocked ? (
-                                  <Chip
-                                    icon={<CheckCircleIcon />}
-                                    label="Unlocked"
-                                    size="small"
-                                    sx={{
-                                      bgcolor: getRarityColor(achievement.rarity),
-                                      color: '#fff',
-                                      fontWeight: 'bold'
-                                    }}
-                                  />
+                                  <Chip icon={<CheckCircleIcon />} label="Unlocked" color="success" />
                                 ) : (
-                                  <Chip
-                                    icon={<LockIcon />}
-                                    label="Locked"
-                                    size="small"
-                                    sx={{
-                                      bgcolor: '#333',
-                                      color: '#888'
-                                    }}
-                                  />
+                                  <Chip icon={<LockIcon />} label="Locked" />
                                 )}
                               </Box>
                             </Box>
 
-                            {/* Description */}
-                            <Typography
-                              sx={{
-                                color: isUnlocked ? '#ccc' : '#555',
-                                fontSize: '0.95rem',
-                                minHeight: '40px'
-                              }}
-                            >
+                            <Typography sx={{ mt: 1 }}>
                               {achievement.description}
                             </Typography>
 
-                            {/* Date Earned (if unlocked) */}
-                            {isUnlocked && earnedData?.dateEarned && (
-                              <Typography
-                                sx={{
-                                  mt: 2,
-                                  fontSize: '0.75rem',
-                                  color: '#888',
-                                  fontStyle: 'italic'
-                                }}
-                              >
-                                Unlocked: {new Date(earnedData.dateEarned).toLocaleDateString()}
+                            {/* ✅ DATE FIXED */}
+                            {isUnlocked && earnedData?.dateAchieved && (
+                              <Typography sx={{ fontSize: '0.7rem', color: '#aaa' }}>
+                                Unlocked on: {new Date(earnedData.dateAchieved).toLocaleDateString()}
                               </Typography>
                             )}
+
                           </CardContent>
                         </Card>
                       </Grid>
                     );
                   })}
                 </Grid>
+
               </Box>
             );
           })}
 
-          {/* Empty State */}
+          {/* EMPTY STATE */}
           {earnedAchievements.size === 0 && (
-            <Box
-              sx={{
-                textAlign: 'center',
-                py: 6,
-                px: 3,
-                bgcolor: '#1e1e1e',
-                borderRadius: '12px',
-                border: '2px dashed #333'
-              }}
-            >
-              <EmojiEventsIcon sx={{ fontSize: 64, color: '#555', mb: 2 }} />
-              <Typography variant="h5" sx={{ color: '#888', mb: 1 }}>
-                No Achievements Yet
-              </Typography>
-              <Typography sx={{ color: '#666' }}>
-                Complete lessons and challenges to start unlocking achievements!
-              </Typography>
+            <Box sx={{ textAlign: 'center', py: 5 }}>
+              <EmojiEventsIcon sx={{ fontSize: 64, color: '#555' }} />
+              <Typography>No achievements yet</Typography>
             </Box>
           )}
+
         </>
       )}
     </Box>
