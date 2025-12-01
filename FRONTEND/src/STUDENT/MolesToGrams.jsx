@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import "../assets/css/MolesToGrams.css";
 
-export default function MolesToGrams({ onContinue = () => {} }) {
+export default function MolesToGrams({ onComplete = () => {} }) {
   const [step, setStep] = useState(0);
   const [showAnimation, setShowAnimation] = useState(false);
   const [animationDone, setAnimationDone] = useState(false);
@@ -24,7 +24,7 @@ export default function MolesToGrams({ onContinue = () => {} }) {
             setAnimationDone(true);
             // Auto-close after animation completes
             timeoutId2 = setTimeout(() => {
-              onContinue();
+              onComplete();
             }, 2000);
           }, 800);
         }

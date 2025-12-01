@@ -1,5 +1,6 @@
 package com.elementopia.database.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.Data;
@@ -67,6 +68,6 @@ public class UserEntity {
     private ScoreEntity score;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
+    @JsonIgnore
     private List<LessonCompletionEntity> lessonCompletions = new ArrayList<>();
 }

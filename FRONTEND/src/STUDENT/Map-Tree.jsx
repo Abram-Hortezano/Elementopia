@@ -4,6 +4,7 @@ import "../assets/css/Map-tree.css";
 import UserService from "../services/UserService";
 import LessonCompletionService from "../services/lessonCompletionService"; 
 import SectionService from "../services/SectionService";
+import AchievementService from "../services/AchievementService";
 
 // --- LESSON IMPORTS ---
 import AtomBuilder from "../STUDENT/AtomBuilder";
@@ -124,6 +125,75 @@ const lessonComponents = {
   MoleMass, MoleMassChallenge1, MoleMassChallenge2, MoleMassChallenge3,
   MolesToGrams, MTGChallenge1, MTGChallenge2, MTGChallenge3,
   PercentComposition, PCChallenge1, PCChallenge2, PCChallenge3,
+};
+
+// --- ACHIEVEMENTS ---
+const ACHIEVEMENTS = {
+  FIRST_LESSON: {
+    id: 'first_lesson',
+    title: 'First Steps',
+    description: 'Complete your first lesson',
+    icon: '📚',
+    condition: (completedNodes) => completedNodes.size >= 1
+  },
+  FIRST_CHALLENGE: {
+    id: 'first_challenge',
+    title: 'Challenge Accepted',
+    description: 'Complete your first challenge',
+    icon: '⭐',
+    condition: (completedNodes) => {
+      const challenges = nodes.filter(n => n.label.includes("★"));
+      return challenges.some(c => completedNodes.has(c.id));
+    }
+  },
+  THREE_CHALLENGES: {
+    id: 'three_challenges',
+    title: 'Hat Trick',
+    description: 'Complete 3 challenges',
+    icon: '🎯',
+    condition: (completedNodes) => {
+      const challenges = nodes.filter(n => n.label.includes("★"));
+      return challenges.filter(c => completedNodes.has(c.id)).length >= 3;
+    }
+  },
+  ATOMIC_MASTER: {
+    id: 'atomic_master',
+    title: 'Atomic Master',
+    description: 'Complete all Atom lessons',
+    icon: '⚛️',
+    condition: (completedNodes) => {
+      const atomNodes = [1, 7, 8, 9];
+      return atomNodes.every(id => completedNodes.has(id));
+    }
+  },
+  SCORE_500: {
+    id: 'score_500',
+    title: 'Rising Star',
+    description: 'Earn 500 points',
+    icon: '🌟',
+    condition: (completedNodes, totalScore) => totalScore >= 500
+  },
+  SCORE_1000: {
+    id: 'score_1000',
+    title: 'High Achiever',
+    description: 'Earn 1000 points',
+    icon: '🏆',
+    condition: (completedNodes, totalScore) => totalScore >= 1000
+  },
+  PERFECT_SCORE: {
+    id: 'perfect_score',
+    title: 'Perfect Score',
+    description: 'Earn maximum points (1800)',
+    icon: '👑',
+    condition: (completedNodes, totalScore) => totalScore >= 1800
+  },
+  ALL_COMPLETE: {
+    id: 'all_complete',
+    title: 'Chemistry Champion',
+    description: 'Complete all lessons',
+    icon: '🎓',
+    condition: (completedNodes) => completedNodes.size === nodes.length
+  }
 };
 
 // --- SECTION MODAL ---
@@ -287,17 +357,79 @@ export default function MapTree() {
   const [currentUser, setCurrentUser] = useState(null);
   const [totalScore, setTotalScore] = useState(0);
   const [currentPage, setCurrentPage] = useState(0);
+  const [earnedAchievements, setEarnedAchievements] = useState(new Set());
+  const [newAchievement, setNewAchievement] = useState(null);
+
+// Load user achievements
+  const loadAchievements = async (userId) => {
+    try {
+      const achievements = await AchievementService.getAchievementsByUser(userId);
+      const earned = new Set(achievements.map(a => a.achievementId || a.id));
+      setEarnedAchievements(earned);
+      console.log(`🏆 Loaded ${earned.size} achievements`);
+    } catch (error) {
+      console.error("Failed to load achievements:", error);
+    }
+  };
+
+  // Check for new achievements
+  const checkAchievements = async (completedNodes, totalScore) => {
+    if (!currentUser?.userId) return;
+
+    const newlyEarned = [];
+
+    for (const [key, achievement] of Object.entries(ACHIEVEMENTS)) {
+      // Skip if already earned
+      if (earnedAchievements.has(achievement.id)) continue;
+
+      // Check if condition is met
+      if (achievement.condition(completedNodes, totalScore)) {
+        newlyEarned.push(achievement);
+        
+        try {
+          // Save to backend
+          await AchievementService.createAchievement(currentUser.userId, {
+            title: achievement.title,
+            description: achievement.description,
+            icon: achievement.icon,
+            achievementId: achievement.id
+          });
+          
+          console.log(`🏆 Achievement Unlocked: ${achievement.title}`);
+        } catch (error) {
+          console.error(`Failed to save achievement ${achievement.id}:`, error);
+        }
+      }
+    }
+
+    // Update state and show notification
+    if (newlyEarned.length > 0) {
+      setEarnedAchievements(prev => {
+        const updated = new Set(prev);
+        newlyEarned.forEach(a => updated.add(a.id));
+        return updated;
+      });
+      
+      // Show first new achievement
+      setNewAchievement(newlyEarned[0]);
+      setTimeout(() => setNewAchievement(null), 5000);
+    }
+  };
 
   const loadUserProgress = async (studentId) => {
     try {
       const completions = await LessonCompletionService.getUserCompletions(studentId);
-      
+      console.log("--- START DEBUG: LOADED COMPLETIONS ---");
+      console.log("Raw Server Data:", completions);
+      console.log("Raw Server Data Sample:", completions && completions[0]);
+      console.log("--- END DEBUG ---");
+
       const completedIds = new Set();
-      (completions || []).forEach((c) => {
+      (completions || []).forEach(c => {
+
         let mappedId = null;
 
         const possibleKeys = [c.lessonId, c.lesson?.id, c.lesson?.lessonId, c.completionId];
-        
         for (const key of possibleKeys) {
           if (key != null && backendToNodeMap[key]) {
             mappedId = backendToNodeMap[key];
@@ -306,33 +438,41 @@ export default function MapTree() {
         }
 
         if (mappedId == null) {
-          const lessonName = c.lesson?.name || c.lessonName || c.name || c.title || c.label || c.lessonCode || c.lessonTitle;
-          
+          const lessonName = c.lesson?.name || c.lessonName || c.name || c.title || c.label || c.lessonCode;
           if (lessonName) {
             const nodeMatch = nodes.find(n => n.lesson && n.lesson.toLowerCase() === String(lessonName).toLowerCase());
-            if (nodeMatch) {
-              mappedId = nodeMatch.id;
-            } else {
+            if (nodeMatch) mappedId = nodeMatch.id;
+            else {
               const looseMatch = nodes.find(n => n.lesson && String(lessonName).toLowerCase().includes(n.lesson.toLowerCase()));
-              if (looseMatch) {
-                mappedId = looseMatch.id;
-              }
+              if (looseMatch) mappedId = looseMatch.id;
             }
           }
         }
 
-        if (mappedId != null) {
+        if (mappedId == null) {
+          console.warn("Could not map completion to a lesson. Completion object:", c);
+        } else {
+          console.log(`Mapping: c=${JSON.stringify(c)} → nodeId=${mappedId}`);
           completedIds.add(mappedId);
         }
       });
 
       setCompletedNodes(completedIds);
       
+      // Calculate total score
       const challengeNodes = nodes.filter(n => n.label.includes("★"));
       const completedChallenges = challengeNodes.filter(n => completedIds.has(n.id));
       const calculatedScore = completedChallenges.length * 100;
       
       setTotalScore(calculatedScore);
+      
+      // Check for new achievements
+      await checkAchievements(completedIds, calculatedScore);
+      
+      console.log(`✅ Loaded ${completedIds.size} completed lessons for student ID: ${studentId}`);
+      console.log(`⭐ Completed ${completedChallenges.length}/${challengeNodes.length} challenges`);
+      console.log(`🏆 Total Score: ${calculatedScore} points`);
+      console.log("Completed Node IDs:", Array.from(completedIds).sort((a, b) => a - b));
     } catch (err) {
       console.warn("Could not load user completions on login.", err.response?.data || err.message);
       setCompletedNodes(new Set());
@@ -467,6 +607,20 @@ export default function MapTree() {
               <span className="map-page-indicator">
                 Page {currentPage + 1} of {PAGES.length}
               </span>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Achievement Notification Popup */}
+      {newAchievement && (
+        <div className="achievement-notification">
+          <div className="achievement-content">
+            <div className="achievement-icon">{newAchievement.icon}</div>
+            <div className="achievement-text">
+              <div className="achievement-badge">Achievement Unlocked!</div>
+              <div className="achievement-title">{newAchievement.title}</div>
+              <div className="achievement-description">{newAchievement.description}</div>
             </div>
           </div>
         </div>

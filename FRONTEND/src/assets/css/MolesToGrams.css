@@ -212,3 +212,188 @@
   .beaker-example .beaker-example { min-width: 100%; }
   .molar-table td, .molar-table th { font-size: 0.9rem; }
 }
+
+/* === ANIMATION SECTION === */
+.animation-section {
+  margin-top: 24px;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 165, 0, 0.15);
+}
+
+.fade-in {
+  animation: fadeIn 0.6s ease-in;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Compound Display */
+.compound-display {
+  text-align: center;
+  margin-bottom: 24px;
+  font-size: 1.1rem;
+}
+
+.compound-label {
+  color: #ffd699;
+  font-weight: 600;
+}
+
+.compound-formula {
+  color: #fff;
+  font-weight: 800;
+  font-size: 1.3rem;
+  margin: 0 8px;
+}
+
+.compound-mass {
+  color: #dfe6ea;
+  font-size: 0.95rem;
+}
+
+/* Beaker Row */
+.beaker-row {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 40px;
+  margin: 30px 0;
+  flex-wrap: wrap;
+}
+
+/* Individual Beakers */
+.beaker {
+  position: relative;
+  width: 180px;
+  height: 240px;
+  background: linear-gradient(to bottom, rgba(255,255,255,0.03), rgba(255,255,255,0.08));
+  border: 3px solid rgba(230, 126, 34, 0.4);
+  border-radius: 8px 8px 80px 80px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 16px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  overflow: hidden;
+}
+
+.beaker-label {
+  color: #ffd699;
+  font-weight: 700;
+  font-size: 1.1rem;
+  margin-bottom: 12px;
+  z-index: 2;
+}
+
+.moles-display,
+.grams-display {
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 800;
+  z-index: 2;
+  margin-top: auto;
+}
+
+/* Liquid Level */
+.liquid-level {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 60%;
+  background: linear-gradient(to top, rgba(52, 152, 219, 0.4), rgba(52, 152, 219, 0.2));
+  border-radius: 0 0 80px 80px;
+  z-index: 1;
+}
+
+.liquid-level.filling {
+  height: 0%;
+  animation: fillBeaker 3s ease-out forwards;
+}
+
+@keyframes fillBeaker {
+  to { height: 60%; }
+}
+
+/* Transfer Arrow */
+.transfer-arrow {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 40px;
+}
+
+.arrow-head {
+  font-size: 3rem;
+  color: #e67e22;
+  font-weight: bold;
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); opacity: 0.8; }
+  50% { transform: scale(1.2); opacity: 1; }
+}
+
+.flowing-dots {
+  display: flex;
+  gap: 8px;
+}
+
+.dot {
+  width: 8px;
+  height: 8px;
+  background: #e67e22;
+  border-radius: 50%;
+  animation: flow 1.2s ease-in-out infinite;
+}
+
+.dot:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.dot:nth-child(3) {
+  animation-delay: 0.4s;
+}
+
+@keyframes flow {
+  0%, 100% { opacity: 0.3; transform: translateY(0); }
+  50% { opacity: 1; transform: translateY(-8px); }
+}
+
+/* Formula Float */
+.formula-float {
+  text-align: center;
+  margin-top: 24px;
+  color: #ffd699;
+  font-size: 1.1rem;
+  font-weight: 600;
+  font-style: italic;
+  animation: float 2s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-5px); }
+}
+
+/* Responsive */
+@media (max-width: 820px) {
+  .beaker-row {
+    gap: 20px;
+  }
+  
+  .beaker {
+    width: 140px;
+    height: 200px;
+  }
+  
+  .arrow-head {
+    font-size: 2rem;
+  }
+}

@@ -2,7 +2,7 @@ package com.elementopia.database.entity;
 
 import java.time.LocalDate;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -11,6 +11,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PrePersist; // <--- ADDED THIS IMPORT
 import jakarta.persistence.Table;
 import lombok.Data;
 
@@ -34,11 +35,16 @@ public class AchievementEntity {
     @Column(name = "code_name")
     private String codeName;
 
-    //@Column(name = "is_template")
-    //private boolean isTemplate = false;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
-    @JsonBackReference
+    @JsonIgnore
     private UserEntity user;
+
+    // --- THE FIX IS HERE ---
+    @PrePersist
+    protected void onCreate() {
+        if (dateAchieved == null) {
+            dateAchieved = LocalDate.now(); // Sets the date automatically
+        }
+    }
 }
