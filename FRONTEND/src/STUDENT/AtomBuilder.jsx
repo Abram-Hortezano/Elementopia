@@ -4,38 +4,38 @@ import '../assets/css/AtomBuilder.css';
 
 // --- Main Component ---
 export default function AtomBuilder({ onComplete }) {
-const [isIntroVisible, setIsIntroVisible] = useState(true);
- const [particles, setParticles] = useState({
- p1: { type: 'proton', location: 'bin' }, p2: { type: 'proton', location: 'bin' },
- n1: { type: 'neutron', location: 'bin' }, n2: { type: 'neutron', location: 'bin' },
-e1: { type: 'electron', location: 'bin' }, e2: { type: 'electron', location: 'bin' },
- });
-const [promptStep, setPromptStep] = useState(0);
- const [challengeStatus, setChallengeStatus] = useState('pending');
- const [activeId, setActiveId] = useState(null);
-const [tutorialComplete, setTutorialComplete] = useState(false);
- const [mistakeCount, setMistakeCount] = useState(0);
- const DEDUCTION_PER_MISTAKE = 5;
+  const [isIntroVisible, setIsIntroVisible] = useState(true);
+  const [particles, setParticles] = useState({
+    p1: { type: 'proton', location: 'bin' }, p2: { type: 'proton', location: 'bin' },
+    n1: { type: 'neutron', location: 'bin' }, n2: { type: 'neutron', location: 'bin' },
+    e1: { type: 'electron', location: 'bin' }, e2: { type: 'electron', location: 'bin' },
+  });
+  const [promptStep, setPromptStep] = useState(0);
+  const [challengeStatus, setChallengeStatus] = useState('pending');
+  const [activeId, setActiveId] = useState(null);
+  const [tutorialComplete, setTutorialComplete] = useState(false);
+  const [mistakeCount, setMistakeCount] = useState(0);
+  const DEDUCTION_PER_MISTAKE = 5;
 
-const prompts = [
- { title: "Step 1: Add a Proton", description: "Protons live in the atom's core, the Nucleus. They have a positive (+) charge and determine what element an atom is. Drag a Proton into the center." },
-{ title: "Step 2: Add a Neutron", description: "Excellent. Neutrons also live in the Nucleus. They have no charge and their main job is to add mass and keep the protons from repelling each other." },
- { title: "Step 3: Add an Electron", description: "Great! Electrons are tiny, negatively (-) charged particles that orbit the Nucleus in areas called shells. Drag an Electron to the outer shell." },
- { title: "Tutorial Complete!", description: "You've just built a model of Hydrogen-2. With one proton, it's Hydrogen. The neutron makes it a heavier version. Now, get ready for a challenge." },
- { title: "Challenge: Build Helium", description: "Your turn. Construct a stable Helium atom. It needs 2 Protons, 2 Neutrons, and 2 Electrons." }
- ];
+  const prompts = [
+    { title: "Step 1: Add a Proton", description: "Protons live in the atom's core, the Nucleus. They have a positive (+) charge and determine what element an atom is. Drag a Proton into the center." },
+    { title: "Step 2: Add a Neutron", description: "Excellent. Neutrons also live in the Nucleus. They have no charge and their main job is to add mass and keep the protons from repelling each other." },
+    { title: "Step 3: Add an Electron", description: "Great! Electrons are tiny, negatively (-) charged particles that orbit the Nucleus in areas called shells. Drag an Electron to the outer shell." },
+    { title: "Tutorial Complete!", description: "You've just built a model of Hydrogen-2. With one proton, it's Hydrogen. The neutron makes it a heavier version. Now, get ready for a challenge." },
+    { title: "Challenge: Build Helium", description: "Your turn. Construct a stable Helium atom. It needs 2 Protons, 2 Neutrons, and 2 Electrons." }
+  ];
 
- function handleDragStart(event) {
- setActiveId(event.active.id);
- }
+  function handleDragStart(event) {
+    setActiveId(event.active.id);
+  }
 
- function handleDragEnd(event) {
- const { over, active } = event;
- setActiveId(null);
+  function handleDragEnd(event) {
+    const { over, active } = event;
+    setActiveId(null);
 
- if (!over) return; // Return if dropped on nothing
+    if (!over) return; // Return if dropped on nothing
 
-const particleId = active.id;
+    const particleId = active.id;
     const targetZone = over.id;
 
     // Prevent electrons from being dropped in the nucleus
@@ -69,8 +69,7 @@ const particleId = active.id;
       setChallengeStatus('correct');
     } else {
       setChallengeStatus('incorrect');
-            // --- SCORING 1: Increment mistake count on wrong answer ---
-            setMistakeCount((prevCount) => prevCount + 1);
+      setMistakeCount((prevCount) => prevCount + 1);
       setTimeout(() => setChallengeStatus('pending'), 1500);
     }
   }
@@ -95,7 +94,7 @@ const particleId = active.id;
 
   if (isIntroVisible) {
     return (
-      <div className="lesson-modal atom-builder">
+      <div className="atom-builder-modal atom-builder-intro">
         <IntroScreen onStart={() => setIsIntroVisible(false)} />
       </div>
     );
@@ -103,53 +102,52 @@ const particleId = active.id;
 
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
-      <div className="lesson-modal atom-builder">
+      <div className="atom-builder-modal atom-builder-main">
         <InfoBox
           key={promptStep}
           title={prompts[promptStep].title}
           description={prompts[promptStep].description}
         />
-        <div className="atom-diagram">
-          <DropZone id="shell" className="electron-shell">
+        <div className="atom-builder-diagram">
+          <DropZone id="shell" className="atom-builder-shell">
             {renderParticlesIn('shell')}
           </DropZone>
-          <DropZone id="nucleus" className="nucleus">
+          <DropZone id="nucleus" className="atom-builder-nucleus">
             {renderParticlesIn('nucleus')}
           </DropZone>
         </div>
-        <DropZone id="bin" className="parts-bin">
+        <DropZone id="bin" className="atom-builder-bin">
           <h3>Parts Bin</h3>
-          <div className="particles-container">
+          <div className="atom-builder-particles">
             {renderParticlesIn('bin')}
           </div>
         </DropZone>
-        <div className="controls-area">
+        <div className="atom-builder-controls">
           {tutorialComplete && promptStep === 3 && (
-            <button onClick={beginChallenge} className="begin-challenge-btn">
+            <button onClick={beginChallenge} className="atom-builder-challenge-btn">
               Begin Challenge
             </button>
           )}
           {promptStep === 4 && challengeStatus !== 'correct' && (
-            <button onClick={checkHeliumChallenge} className={`check-btn ${challengeStatus}`}>
+            <button onClick={checkHeliumChallenge} className={`atom-builder-check-btn ${challengeStatus}`}>
               {challengeStatus === 'incorrect' ? 'Try Again! - Deducted 5 points' : 'Check My Atom'}
             </button>
           )}
           {challengeStatus === 'correct' && (
-            <div className="success-message">
+            <div className="atom-builder-success">
               <p>Correct! You built Helium! ⚛️</p>
-                            {/* --- SCORING 2: Pass calculated deductions to onComplete --- */}
               <button 
-                                onClick={() => onComplete(mistakeCount * DEDUCTION_PER_MISTAKE)} 
-                                className="complete-btn">
-                                Complete Lesson
-                            </button>
+                onClick={() => onComplete(mistakeCount * DEDUCTION_PER_MISTAKE)} 
+                className="atom-builder-complete-btn">
+                Complete Lesson
+              </button>
             </div>
           )}
         </div>
      </div>
       <DragOverlay>
         {activeId ? (
-          <div className={`particle ${activeParticleType} is-dragging`}></div>
+          <div className={`atom-builder-particle ${activeParticleType} atom-builder-dragging`}></div>
         ) : null}
       </DragOverlay>
     </DndContext>
@@ -160,19 +158,19 @@ const particleId = active.id;
 
 function IntroScreen({ onStart }) {
   return (
-    <div className="intro-screen">
-      <h1 className="intro-ab-title">Lesson 1: The Atom</h1>
-      <p className="intro-text">
+    <div className="atom-builder-intro-screen">
+      <h1 className="atom-builder-title">Lesson 1: The Atom</h1>
+      <p className="atom-builder-intro-text">
         Everything in the universe is made of tiny building blocks called atoms. In this lesson, you'll learn about the fundamental particles that make up an atom and build one yourself.
       </p>
-      <button onClick={onStart} className="intro-start-btn">Start Lesson</button>
+      <button onClick={onStart} className="atom-builder-start-btn">Start Lesson</button>
     </div>
   );
 }
 
 function InfoBox({ title, description }) {
   return (
-    <div className="info-box">
+    <div className="atom-builder-info">
       <h3>{title}</h3>
       <p>{description}</p>
     </div>
@@ -204,7 +202,7 @@ function DraggableParticle({ id, type, isHidden, index, total }) {
       ref={setNodeRef}
       {...listeners}
       {...attributes}
-      className={`particle ${type}`}
+      className={`atom-builder-particle ${type}`}
       style={particleStyle}
     />
   );
@@ -213,7 +211,7 @@ function DraggableParticle({ id, type, isHidden, index, total }) {
 function DropZone({ id, children, className }) {
   const { setNodeRef, isOver } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={`${className} ${isOver ? 'hovering' : ''}`}>
+    <div ref={setNodeRef} className={`${className} ${isOver ? 'atom-builder-hovering' : ''}`}>
       {children}
     </div>
   );

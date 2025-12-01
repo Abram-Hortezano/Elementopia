@@ -8,8 +8,11 @@
   background: radial-gradient(ellipse at center, #0f1a2b 0%, #0a0f18 100%);
   color: white;
 <<<<<<< HEAD
+<<<<<<< HEAD
   font-family: "Poppins", sans-serif;
 =======
+=======
+>>>>>>> 269a62132ee4dc2e6db6e63375acb7e6f1ac9044
   font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
   position: fixed;
   top: 0;
@@ -17,7 +20,10 @@
   right: 0;
   bottom: 0;
   overflow: auto;
+<<<<<<< HEAD
 >>>>>>> c68d2a4fbe167b194b1053adce26fb578ff9e408
+=======
+>>>>>>> 269a62132ee4dc2e6db6e63375acb7e6f1ac9044
   padding: 20px;
   box-sizing: border-box;
 }
@@ -225,6 +231,7 @@
   transform: translate(-50%, -50%);
   border-radius: 50%;
 <<<<<<< HEAD
+<<<<<<< HEAD
   border: 2px dashed rgba(255, 255, 255, 0.3);
   z-index: 1;
   pointer-events: auto;
@@ -244,6 +251,9 @@
 =======
   z-index: 5;
 >>>>>>> c68d2a4fbe167b194b1053adce26fb578ff9e408
+=======
+  z-index: 5;
+>>>>>>> 269a62132ee4dc2e6db6e63375acb7e6f1ac9044
   display: flex;
   justify-content: center;
   align-items: center;
@@ -260,9 +270,12 @@
   border-radius: 50%;
   cursor: grab;
 <<<<<<< HEAD
+<<<<<<< HEAD
   box-shadow: inset 0 -3px 5px rgba(0, 0, 0, 0.4), 0 3px 5px rgba(0, 0, 0, 0.3);
   transition: transform 0.25s ease;
 =======
+=======
+>>>>>>> 269a62132ee4dc2e6db6e63375acb7e6f1ac9044
   position: relative;
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   z-index: 20;
@@ -322,7 +335,10 @@
 
 .particle.electron .particle-glow {
   background: radial-gradient(circle, #3498db, transparent 70%);
+<<<<<<< HEAD
 >>>>>>> c68d2a4fbe167b194b1053adce26fb578ff9e408
+=======
+>>>>>>> 269a62132ee4dc2e6db6e63375acb7e6f1ac9044
 }
 
 .particle:hover {
@@ -536,6 +552,7 @@
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 /* --- ANIMATIONS --- */
 @keyframes rotate {
   from {
@@ -555,13 +572,18 @@
     box-shadow: 0 0 25px rgba(52, 152, 219, 0.8);
   }
 =======
+=======
+>>>>>>> 269a62132ee4dc2e6db6e63375acb7e6f1ac9044
 .complete-btn:active {
   transform: translateY(-1px);
 }
 
 .complete-btn.pulse {
   animation: button-pulse 2s infinite;
+<<<<<<< HEAD
 >>>>>>> c68d2a4fbe167b194b1053adce26fb578ff9e408
+=======
+>>>>>>> 269a62132ee4dc2e6db6e63375acb7e6f1ac9044
 }
 
 .btn-icon {

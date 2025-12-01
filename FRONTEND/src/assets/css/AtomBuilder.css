@@ -1,39 +1,39 @@
 /* --- Keyframe Animations --- */
-@keyframes fadeIn {
+@keyframes atom-builder-fadeIn {
     from { opacity: 0; transform: translate(-50%, -50%) scale(0.9); }
     to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
 }
 
-@keyframes fade-in-text {
+@keyframes atom-builder-fade-in-text {
     from { opacity: 0; transform: translateY(-10px); }
     to { opacity: 1; transform: translateY(0); }
 }
 
-@keyframes rotate {
+@keyframes atom-builder-rotate {
     from { transform: rotate(0deg); }
     to { transform: rotate(360deg); }
 }
 
-@keyframes pulse-glow {
+@keyframes atom-builder-pulse-glow {
     0% { box-shadow: 0 0 20px rgba(44, 62, 80, 0.6); }
     50% { box-shadow: 0 0 35px rgba(52, 152, 219, 0.8); }
     100% { box-shadow: 0 0 20px rgba(44, 62, 80, 0.6); }
 }
 
-@keyframes success-pop {
+@keyframes atom-builder-success-pop {
     0% { transform: scale(0); }
     80% { transform: scale(1.1); }
     100% { transform: scale(1); }
 }
 
-@keyframes shake {
+@keyframes atom-builder-shake {
     0%, 100% { transform: translateX(0); }
     25% { transform: translateX(-5px); }
     75% { transform: translateX(5px); }
 }
 
 /* --- NEW Intro Screen Styling --- */
-.intro-screen {
+.atom-builder-intro-screen {
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -41,17 +41,17 @@
     height: 100%;
     text-align: center;
     padding: 2rem;
-    animation: fade-in-text 1s ease-out;
+    animation: atom-builder-fade-in-text 1s ease-out;
 }
 
-.intro-ab-title {
+.atom-builder-title {
     font-size: 2.5rem;
     color: #3498db;
     margin-bottom: 1rem;
     text-shadow: 0 0 10px rgba(52, 152, 219, 0.5);
 }
 
-.intro-text {
+.atom-builder-intro-text {
     font-size: 1.2rem;
     line-height: 1.6;
     max-width: 600px;
@@ -59,7 +59,7 @@
     color: #ecf0f1;
 }
 
-.intro-start-btn {
+.atom-builder-start-btn {
     padding: 12px 25px;
     font-size: 1.4rem;
     font-weight: bold;
@@ -72,14 +72,14 @@
     box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
 }
 
-.intro-start-btn:hover {
+.atom-builder-start-btn:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6);
 }
 
-
 /* --- Main Modal Styling --- */
-.lesson-modal.atom-builder {
+.atom-builder-modal.atom-builder-intro,
+.atom-builder-modal.atom-builder-main {
     position: fixed;
     top: 50%;
     left: 50%;
@@ -101,11 +101,11 @@
     color: white;
     font-family: sans-serif;
     z-index: 100;
-    animation: fadeIn 0.5s ease-out;
+    animation: atom-builder-fadeIn 0.5s ease-out;
 }
 
 /* --- Info Box Styling --- */
-.info-box {
+.atom-builder-info {
     width: 100%;
     height: 20%;
     text-align: center;
@@ -113,16 +113,16 @@
     background-color: rgba(0, 0, 0, 0.2);
     border-radius: 10px;
     border: 1px solid rgba(52, 152, 219, 0.5);
-    animation: fade-in-text 0.6s ease-out;
+    animation: atom-builder-fade-in-text 0.6s ease-out;
 }
 
-.info-box h3 {
+.atom-builder-info h3 {
     margin: 0 0 8px 0;
     color: #3498db;
     font-size: 1.4rem;
 }
 
-.info-box p {
+.atom-builder-info p {
     margin: 0;
     font-size: 1rem;
     line-height: 1.4;
@@ -130,7 +130,7 @@
 }
 
 /* --- Atom Diagram Styling --- */
-.atom-diagram {
+.atom-builder-diagram {
     width: 100%;
     height: 45%;
     display: flex;
@@ -140,17 +140,17 @@
     margin: 20%
 }
 
-.electron-shell {
+.atom-builder-shell {
     width: 300px;
     height: 300px;
     border-radius: 50%;
+    border: 2px dotted white;
     position: absolute; 
     transition: border-color 0.3s ease;
     z-index: 1;
 }
 
-
-.nucleus {
+.atom-builder-nucleus {
     width: 100px;
     height: 100px;
     background: radial-gradient(circle, #3a536e, #2c3e50);
@@ -161,16 +161,16 @@
     align-items: center;
     flex-wrap: wrap;
     padding: 10px;
-    animation: pulse-glow 4s infinite ease-in-out;
+    animation: atom-builder-pulse-glow 4s infinite ease-in-out;
     transition: box-shadow 0.3s ease;
     z-index: 2;
 }
 
-.electron-shell.hovering::before { border-color: #3498db; }
-.nucleus.hovering { box-shadow: 0 0 40px #e74c3c; }
+.atom-builder-shell.atom-builder-hovering::before { border-color: #3498db; }
+.atom-builder-nucleus.atom-builder-hovering { box-shadow: 0 0 40px #e74c3c; }
 
 /* --- Particle Styling --- */
-.parts-bin {
+.atom-builder-bin {
     width: 95%;
     height: auto;
     background-color: #2c3e50;
@@ -180,7 +180,7 @@
     margin-top: 3%;
 }
 
-.particles-container {
+.atom-builder-particles {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -188,7 +188,7 @@
     height: 70%;
 }
 
-.particle {
+.atom-builder-particle {
     width: 30px;
     height: 30px;
     border-radius: 50%;
@@ -206,29 +206,31 @@
     z-index: 3;
 }
 
-.particle:hover {
+.atom-builder-particle:hover {
     transform: scale(1.15);
 }
 
-.particle.proton { background-color: #e74c3c; }
-.particle.proton::after { content: 'p+'; }
-.particle.neutron { background-color: #95a5a6; }
-.particle.neutron::after { content: 'n'; }
-.particle.electron { background-color: #3498db; 
+.atom-builder-particle.proton { background-color: #e74c3c; }
+.atom-builder-particle.proton::after { content: 'p+'; }
+.atom-builder-particle.neutron { background-color: #95a5a6; }
+.atom-builder-particle.neutron::after { content: 'n'; }
+.atom-builder-particle.electron { 
+    background-color: #3498db; 
     width: 26px;
-  height: 26px;
-    color:#161e27;}
-.particle.electron::after { content: 'e-'; }
+    height: 26px;
+    color: #161e27;
+}
+.atom-builder-particle.electron::after { content: 'e-'; }
 
 /* --- Controls & Feedback --- */
-.controls-area {
+.atom-builder-controls {
     height: 15%;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-.check-btn, .complete-btn, .begin-challenge-btn {
+.atom-builder-check-btn, .atom-builder-complete-btn, .atom-builder-challenge-btn {
     padding: 10px 20px;
     font-size: 1.2rem;
     border-radius: 8px;
@@ -238,40 +240,40 @@
     transition: background-color 0.3s, transform 0.2s;
 }
 
-.check-btn, .complete-btn {
+.atom-builder-check-btn, .atom-builder-complete-btn {
     background-color: #2ecc71;
 }
 
-.begin-challenge-btn {
+.atom-builder-challenge-btn {
     background-color: #3498db;
-    animation: success-pop 0.5s ease-out;
+    animation: atom-builder-success-pop 0.5s ease-out;
 }
 
-.check-btn:hover, .complete-btn:hover, .begin-challenge-btn:hover {
+.atom-builder-check-btn:hover, .atom-builder-complete-btn:hover, .atom-builder-challenge-btn:hover {
     transform: scale(1.05);
 }
 
-.begin-challenge-btn:hover {
+.atom-builder-challenge-btn:hover {
     background-color: #2980b9;
 }
 
-.check-btn.incorrect {
+.atom-builder-check-btn.incorrect {
     background-color: #e74c3c;
-    animation: shake 0.5s;
+    animation: atom-builder-shake 0.5s;
 }
 
-.success-message {
+.atom-builder-success {
     text-align: center;
-    animation: success-pop 0.5s ease-out;
+    animation: atom-builder-success-pop 0.5s ease-out;
 }
 
-.success-message p {
+.atom-builder-success p {
     font-size: 1.2rem;
     margin-bottom: 10px;
 }
 
 /* --- Drag Overlay Style --- */
-.particle.is-dragging {
+.atom-builder-particle.atom-builder-dragging {
     cursor: grabbing;
     z-index: 9999;
     box-shadow: 0 10px 25px rgba(0,0,0,0.4);
