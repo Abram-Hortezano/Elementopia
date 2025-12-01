@@ -16,7 +16,7 @@ function CloseButton({ onClose }) {
       </svg>
     </button>
   );
-}
+} 
 
 // --- Draggable Particle ---
 function DraggableParticle({ id, type, isHidden, location, index, total }) {

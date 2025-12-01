@@ -29,3 +29,4 @@ export default function AtomChallenge1({ onComplete }) {
     />
   );
 }
+
