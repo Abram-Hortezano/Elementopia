@@ -391,8 +391,7 @@ export default function MapTree() {
           await AchievementService.createAchievement(currentUser.userId, {
             title: achievement.title,
             description: achievement.description,
-            icon: achievement.icon,
-            achievementId: achievement.id
+            codeName: achievement.id
           });
           
           console.log(`🏆 Achievement Unlocked: ${achievement.title}`);
