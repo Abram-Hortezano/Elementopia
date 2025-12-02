@@ -3,7 +3,7 @@ import { Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
 import Navbar from "../components/NavBar.jsx";
 import TeacherSidebar from "../components/Teacher Component/TeacherSidebar.jsx";
-import RoomList from "../components/Teacher Component/Roomlist.jsx";
+import RoomList from "../components/Teacher Component/RoomList.jsx";
 
 const DrawerHeader = styled("div")(({ theme }) => ({
   ...theme.mixins.toolbar,
