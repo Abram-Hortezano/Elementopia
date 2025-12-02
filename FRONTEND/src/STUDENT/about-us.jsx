@@ -6,6 +6,8 @@ import "../assets/css/about-us.css";
 import dollanoImg from "../assets/img/dollano.jpg";
 import hortezanoImg from "../assets/img/hortezano.png";
 import segalleImg from "../assets/img/segalle.png";
+import huyoaImg  from "../assets/img/huyoa.jpg"
+import dakayImg from "../assets/img/dakay.jpg"
 
 import defaultAvatar from "../assets/img/robo-avatar.png"; 
 
@@ -27,13 +29,13 @@ const teamMembers = [
   },
   {
     name: "Miguel Antonio T. Dakay",
-    role: "Quality Assurance",
-    image: defaultAvatar, // Placeholder
+    role: "Quality Assurance & Frontend Developer",
+    image: dakayImg,
   },
   {
     name: "Mark Edwin E. Huyo-a",
     role: "Backend Developer",
-    image: defaultAvatar, // Placeholder
+    image: huyoaImg,
   },
 ];
 
