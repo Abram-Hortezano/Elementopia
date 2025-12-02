@@ -1,15 +1,17 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/achievement";
-// const API_URL = "https://elementopia.onrender.com/api/achievement";
+// const API_URL = "http://localhost:8080/api/achievement";
+const API_URL = "https://elementopia.onrender.com/api/achievement";
 
 const getAuthHeader = () => {
-  const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
+  const userStr =
+    sessionStorage.getItem("user") || localStorage.getItem("user");
 
   if (userStr) {
     try {
       const userObj = JSON.parse(userStr);
-      const token = userObj.token || (typeof userObj === 'string' ? userObj : null);
+      const token =
+        userObj.token || (typeof userObj === "string" ? userObj : null);
 
       if (token) {
         return {
@@ -23,7 +25,6 @@ const getAuthHeader = () => {
   }
   return {};
 };
-
 
 const AchievementService = {
   // Get All Achievements
@@ -86,13 +87,9 @@ const AchievementService = {
       const headers = getAuthHeader();
       console.log("Auth Headers:", headers); // Debug
 
-      const response = await axios.post(
-        `${API_URL}/create/${userId}`,
-        data,
-        {
-          headers
-        }
-      );
+      const response = await axios.post(`${API_URL}/create/${userId}`, data, {
+        headers,
+      });
 
       return response.data;
     } catch (error) {
@@ -103,7 +100,6 @@ const AchievementService = {
       throw error;
     }
   },
-
 
   // Update Achievement
   updateAchievement: async (id, achievementData) => {

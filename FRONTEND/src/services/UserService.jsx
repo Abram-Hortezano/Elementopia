@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/user";
-// const API_URL = "https://elementopia.onrender.com/api/user";
+// const API_URL = "http://localhost:8080/api/user";
+const API_URL = "https://elementopia.onrender.com/api/user";
 
 // Get token from localStorage
 const getAuthHeader = () => {
@@ -65,13 +65,16 @@ const UserService = {
 
     try {
       const response = await axios.post(
-        `${API_URL}/join-section`, 
-        { sectionCode }, 
+        `${API_URL}/join-section`,
+        { sectionCode },
         { headers: getAuthHeader() }
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to join section:", error.response?.data || error.message);
+      console.error(
+        "Failed to join section:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
