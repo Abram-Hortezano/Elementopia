@@ -46,7 +46,7 @@ export default function Login({ onLoginSuccess, onSwitchToSignup }) {
           if (response.role === "STUDENT") {
             navigate("/student-home-page");
           } else if (response.role === "TEACHER") {
-            navigate("/teacher-home-page");
+            navigate("/teacher/room");
           } else {
             setMessage("Unknown role. Cannot redirect.");
           }
