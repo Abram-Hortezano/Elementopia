@@ -19,7 +19,6 @@ import StudentCardMinigame from "./STUDENT/StudentCardMinigame";
 
 // Teacher Pages
 import PageLayout from "./TEACHER/TeacherPageLayout";
-import TeacherAnalyticsPage from "./TEACHER/TeacherAnalyticsPage";
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
 import TeacherGameRoomPage from "./TEACHER/TeacherGameRoomPage";
 import TeacherRoomPage from "./TEACHER/TeacherRoomPage";
@@ -151,14 +150,6 @@ export default function App() {
           element={
             <PrivateRoute allowedRoles={["TEACHER"]}>
               <PageLayout />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/teacher/analytics"
-          element={
-            <PrivateRoute allowedRoles={["TEACHER"]}>
-              <TeacherAnalyticsPage />
             </PrivateRoute>
           }
         />
