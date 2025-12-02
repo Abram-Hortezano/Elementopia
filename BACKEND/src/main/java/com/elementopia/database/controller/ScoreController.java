@@ -8,9 +8,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/score")
+@CrossOrigin(origins = "*")
 public class ScoreController {
 
     @Autowired
@@ -50,6 +52,22 @@ public class ScoreController {
             @RequestBody ScoreDTO request
     ) {
         return ResponseEntity.ok(scoreService.addScore(userId, request.getScore()));
+    }
+
+    /** 
+     * Add challenge score - NEW ENDPOINT
+     * Body: { "points": 100 }
+     */
+    @PostMapping("/challenge/{userId}")
+    public ResponseEntity<ScoreEntity> addChallengeScore(
+            @PathVariable Long userId,
+            @RequestBody Map<String, Integer> body
+    ) {
+        Integer points = body.get("points");
+        if (points == null) {
+            points = 100; // Default to 100 points
+        }
+        return ResponseEntity.ok(scoreService.addChallengeScore(userId, points));
     }
 
     /** Delete score record */
