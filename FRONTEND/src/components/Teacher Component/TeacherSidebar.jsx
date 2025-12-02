@@ -15,10 +15,8 @@ import {
 import { Link, useLocation } from "react-router-dom"; // ✅ Import useLocation
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import home from "../../assets/img/home.png";
 import room from "../../assets/img/room.png";
 import career from "../../assets/img/career.png";
-import sandBox from "../../assets/img/sandBox.png";
 import chemSimulation from "../../assets/img/chemSimulation.png";
 
 const drawerWidth = 180;
@@ -43,15 +41,15 @@ const Drawer = styled(MuiDrawer)(({ theme, open }) => ({
 }));
 
 const menuItems = [
-  { text: "Home", icon: home, path: "/teacher/analytics" },
+ // { text: "Home", icon: home, path: "/teacher/analytics" },
   { text: "Room", icon: room, path: "/teacher/room" },
-  { text: "Career", icon: career, path: "/teacher/career" },
-  {
+  { text: "Career", icon: career, path: "/teacher/career-page" },
+  /*{
     text: "Chem-Simulation",
     icon: chemSimulation,
     path: "/teacher/Chem-Simulation",
-  },
-  { text: "Sandbox", icon: sandBox, path: "/teacher/sandbox" },
+  },*/
+  //{ text: "Sandbox", icon: sandBox, path: "/teacher/sandbox" },
 ];
 
 const TeacherSidebar = ({ open, handleDrawerOpen, handleDrawerClose }) => {
