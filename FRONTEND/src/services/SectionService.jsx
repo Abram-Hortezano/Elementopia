@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const BASE_URL = "https://elementopia.onrender.com/section";
-const API_URL = "http://localhost:8080/api/section";
+const API_URL = "https://elementopia.onrender.com/section";
+// const API_URL = "http://localhost:8080/api/section";
 
 const getAuthHeader = () => {
   let token = localStorage.getItem("token");
