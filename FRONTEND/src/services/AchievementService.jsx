@@ -1,18 +1,29 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/achievement";
-// const API_URL = "https://elementopia.onrender.com/api/achievement";
+// const API_URL = "http://localhost:8080/api/achievement";
+const API_URL = "https://elementopia.onrender.com/api/achievement";
 
 const getAuthHeader = () => {
-  try {
-    const user = JSON.parse(sessionStorage.getItem("user"));
-    const token = user?.token;
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  } catch (e) {
-    console.error("Error parsing user from sessionStorage", e);
-    return {};
+  const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
+
+  if (userStr) {
+    try {
+      const userObj = JSON.parse(userStr);
+      const token = userObj.token || (typeof userObj === 'string' ? userObj : null);
+
+      if (token) {
+        return {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json",
+        };
+      }
+    } catch (e) {
+      console.warn("Error parsing user token for AchievementService:", e);
+    }
   }
+  return {};
 };
+
 
 const AchievementService = {
   // Get All Achievements
@@ -71,23 +82,28 @@ const AchievementService = {
 
   // Create Achievement
   createAchievement: async (userId, data) => {
-    console.log("Creating Achievement for user:", userId);
     try {
-      const response = await axios.post(`${API_URL}/create/${userId}`, data, {
-        headers: {
-          ...getAuthHeader(),
-        },
-      });
+      const headers = getAuthHeader();
+      console.log("Auth Headers:", headers); // Debug
+
+      const response = await axios.post(
+        `${API_URL}/create/${userId}`,
+        data,
+        {
+          headers
+        }
+      );
 
       return response.data;
     } catch (error) {
       console.error(
         "Failed to create achievement:",
-        error.response?.data || error.message || error
+        error.response?.data || error.message
       );
       throw error;
     }
   },
+
 
   // Update Achievement
   updateAchievement: async (id, achievementData) => {

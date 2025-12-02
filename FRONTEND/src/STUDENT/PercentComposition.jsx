@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import "../assets/css/PercentComposition.css";
 
 const compounds = [
@@ -22,30 +22,31 @@ const compounds = [
   },
 ];
 
-export default function PercentComposition() {
+export default function PercentComposition({ onComplete = () => {} }) {
   const [started, setStarted] = useState(false);
   const [mission, setMission] = useState(1);
   const [selectedCompound, setSelectedCompound] = useState(null);
   const [feedback, setFeedback] = useState("");
   const [completed, setCompleted] = useState(false);
-  const [onComplete, setOnComplete] = useState(() => () => {});
 
-  // --- Challenge 1: Build the Compound ---
+  // drag / build state (unchanged)
   const [droppedAtoms, setDroppedAtoms] = useState([]);
 
   const handleDropAtom = (atom) => {
+    if (!selectedCompound) return;
     if (droppedAtoms.length < selectedCompound.elements.length) {
       setDroppedAtoms((prev) => [...prev, atom]);
     }
   };
 
-  // --- Challenge 2: Match % Composition ---
+  // match % state (unchanged)
   const [compositionAnswers, setCompositionAnswers] = useState({});
   const handleDropPercent = (element, percent) => {
     setCompositionAnswers((prev) => ({ ...prev, [element]: percent }));
   };
 
   const checkCompositionAnswers = () => {
+    if (!selectedCompound) return;
     const correct = selectedCompound.composition;
     let allCorrect = true;
 
@@ -57,20 +58,52 @@ export default function PercentComposition() {
     }
 
     setFeedback(allCorrect ? "✅ Excellent! Correct composition!" : "❌ Check your values again.");
-    if (allCorrect) setTimeout(() => setMission(3), 1500);
+
+    if (allCorrect) {
+      // small delay to let the user see the "correct" feedback before moving on
+      const t = setTimeout(() => {
+        setMission(3);
+        setFeedback("");
+      }, 1200);
+      timers.current.push(t);
+    }
   };
 
-  // --- Challenge 3: Identify the Highest Contributor ---
+  // timers ref for cleanup
+  const timers = useRef([]);
+
+  // cleanup on unmount
+  useEffect(() => {
+    return () => {
+      timers.current.forEach((id) => clearTimeout(id));
+      timers.current = [];
+    };
+  }, []);
+
+  // --- Completion: show celebration then call parent onComplete (same style as MolesToGrams) ---
   const handleHighestSelect = (el) => {
+    if (!selectedCompound) return;
+
     if (el === selectedCompound.highest) {
       setFeedback("🎉 Correct! You've completed the composition analysis!");
-      setTimeout(() => {
+
+      // brief delay before showing celebration
+      const t1 = setTimeout(() => {
         setCompleted(true);
-        // Auto-exit after 4 seconds of showing celebration
-        setTimeout(() => {
-          if (onComplete) onComplete();
-        }, 4000);
-      }, 1000);
+
+        // after celebration delay, call parent onComplete exactly like MolesToGrams
+        const t2 = setTimeout(() => {
+          try {
+            onComplete(); // <-- important: MapTree passes handleLessonComplete as onComplete
+          } catch (err) {
+            console.error("onComplete error:", err);
+          }
+        }, 3500); // 3.5s to allow celebration to show
+
+        timers.current.push(t2);
+      }, 900);
+
+      timers.current.push(t1);
     } else {
       setFeedback("❌ Not quite! Try again.");
     }
@@ -79,8 +112,14 @@ export default function PercentComposition() {
   const startLesson = () => {
     setStarted(true);
     setSelectedCompound(compounds[Math.floor(Math.random() * compounds.length)]);
+    setMission(1);
+    setDroppedAtoms([]);
+    setCompositionAnswers({});
+    setFeedback("");
+    setCompleted(false);
   };
 
+  // ------------------ COMPLETION SCREEN ------------------
   if (completed) {
     return (
       <div className="percentcomp-wrapper">
@@ -91,16 +130,18 @@ export default function PercentComposition() {
             <p className="celebration-message">
               Outstanding work, chemist! You've mastered percent composition analysis.
             </p>
+
             <div className="celebration-stats">
               <div className="stat-item">
                 <div className="stat-value">3/3</div>
                 <div className="stat-label">Missions Completed</div>
               </div>
               <div className="stat-item">
-                <div className="stat-value">{selectedCompound.name}</div>
+                <div className="stat-value">{selectedCompound?.name}</div>
                 <div className="stat-label">Compound Analyzed</div>
               </div>
             </div>
+
             <div className="confetti">
               {[...Array(50)].map((_, i) => (
                 <div
@@ -109,7 +150,9 @@ export default function PercentComposition() {
                   style={{
                     left: `${Math.random() * 100}%`,
                     animationDelay: `${Math.random() * 3}s`,
-                    background: ['#bb8fce', '#a569bd', '#8e44ad', '#a8e6cf', '#84dbb7'][Math.floor(Math.random() * 5)]
+                    background: ["#bb8fce", "#a569bd", "#8e44ad", "#a8e6cf", "#84dbb7"][
+                      Math.floor(Math.random() * 5)
+                    ],
                   }}
                 />
               ))}
@@ -120,6 +163,7 @@ export default function PercentComposition() {
     );
   }
 
+  // ------------------ GAME UI (unchanged drag behavior) ------------------
   return (
     <div className="percentcomp-wrapper">
       {!started ? (
@@ -136,44 +180,43 @@ export default function PercentComposition() {
         </div>
       ) : (
         <div className="challenge-container">
+          {/* PROGRESS BAR */}
           <div className="mission-progress">
-            <div className={`mission-step ${mission >= 1 ? 'active' : ''} ${mission > 1 ? 'completed' : ''}`}>
+            <div className={`mission-step ${mission >= 1 ? "active" : ""} ${mission > 1 ? "completed" : ""}`}>
               <div className="step-number">1</div>
               <div className="step-label">Build</div>
             </div>
-            <div className="progress-line"></div>
-            <div className={`mission-step ${mission >= 2 ? 'active' : ''} ${mission > 2 ? 'completed' : ''}`}>
+            <div className="progress-line" />
+            <div className={`mission-step ${mission >= 2 ? "active" : ""} ${mission > 2 ? "completed" : ""}`}>
               <div className="step-number">2</div>
               <div className="step-label">Match</div>
             </div>
-            <div className="progress-line"></div>
-            <div className={`mission-step ${mission >= 3 ? 'active' : ''}`}>
+            <div className="progress-line" />
+            <div className={`mission-step ${mission >= 3 ? "active" : ""}`}>
               <div className="step-number">3</div>
               <div className="step-label">Identify</div>
             </div>
           </div>
 
-          <h2>{selectedCompound.name}</h2>
+          <h2>{selectedCompound?.name}</h2>
 
-          {/* Mission 1: Build the Molecule */}
+          {/* Mission 1 */}
           {mission === 1 && (
             <div className="challenge-panel">
               <h3>Mission 1: Build the Molecule</h3>
+
               <div className="explanation-box">
                 <strong>📚 What you'll learn:</strong> Understanding a compound's structure is the first step 
-                to analyzing its composition. Each molecule is made of specific atoms bonded together. 
-                For <strong>{selectedCompound.name}</strong>, you need <strong>{selectedCompound.elements.join(", ")}</strong>.
+                to analyzing composition. Use the atom tiles to build {selectedCompound?.name}.
               </div>
-              
+
               <div className="compound-zone">
                 {droppedAtoms.map((a, i) => (
                   <div key={i} className={`atom-tile ${a.toLowerCase()}`}>
                     {a}
                   </div>
                 ))}
-                {droppedAtoms.length === 0 && (
-                  <div className="drop-hint">Drop atoms here to build the molecule</div>
-                )}
+                {droppedAtoms.length === 0 && <div className="drop-hint">Drop atoms here</div>}
               </div>
 
               <div className="atom-bin">
@@ -182,7 +225,9 @@ export default function PercentComposition() {
                     key={atom}
                     className="atom-draggable"
                     draggable
-                    onDragStart={(e) => e.dataTransfer.setData("text/plain", atom)}
+                    onDragStart={(e) => {
+                      e.dataTransfer.setData("text/plain", atom);
+                    }}
                     onClick={() => handleDropAtom(atom)}
                   >
                     {atom}
@@ -192,21 +237,22 @@ export default function PercentComposition() {
 
               <button
                 className="complete-btn"
+                disabled={!selectedCompound || droppedAtoms.length < selectedCompound.elements.length}
                 onClick={() => {
                   setMission(2);
                   setFeedback("");
                 }}
-                disabled={droppedAtoms.length < selectedCompound.elements.length}
               >
                 Confirm Structure →
               </button>
             </div>
           )}
 
-          {/* Mission 2: Match % Composition */}
+          {/* Mission 2 */}
           {mission === 2 && (
             <div className="challenge-panel">
-              <h3>Mission 2: Match Each Element to its % Composition</h3>
+              <h3>Mission 2: Match % Composition</h3>
+
               <div className="composition-dropzone">
                 {Object.keys(selectedCompound.composition).map((el) => (
                   <div key={el} className="composition-slot">
@@ -220,9 +266,7 @@ export default function PercentComposition() {
                       }}
                       onDragOver={(e) => e.preventDefault()}
                     >
-                      {compositionAnswers[el]
-                        ? `${compositionAnswers[el]}%`
-                        : "Drop % here"}
+                      {compositionAnswers[el] ? `${compositionAnswers[el]}%` : "Drop % here"}
                     </div>
                   </div>
                 ))}
@@ -247,13 +291,12 @@ export default function PercentComposition() {
             </div>
           )}
 
-          {/* Mission 3: Identify the Highest Contributor */}
+          {/* Mission 3 */}
           {mission === 3 && (
             <div className="challenge-panel">
               <h3>Mission 3: Identify the Highest Contributor</h3>
               <p className="mission-question">
-                Which element contributes the most to the total mass of{" "}
-                {selectedCompound.name}?
+                Which element contributes the most to the total mass of {selectedCompound.name}?
               </p>
               <div className="element-options">
                 {Object.keys(selectedCompound.composition).map((el) => (
@@ -270,7 +313,6 @@ export default function PercentComposition() {
             </div>
           )}
 
-          {/* Feedback Message */}
           {feedback && <div className="feedback-box">{feedback}</div>}
         </div>
       )}
