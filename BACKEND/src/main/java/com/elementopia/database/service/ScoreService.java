@@ -31,8 +31,6 @@ public class ScoreService {
     @Autowired
     private LessonCompletionService lessonCompletionService;
 
-    private static final int MAX_SCORE = 1800; // 18 challenges × 100 points
-
     /** Create a new score record for a user, initialized to zero. */
     public ScoreEntity createScore(Long userId) {
         UserEntity user = userRepo.findById(userId)
@@ -49,21 +47,23 @@ public class ScoreService {
         return scoreRepo.save(score);
     }
 
-    /** Get a user's score. Creates one if it doesn't exist. */
+    /** Get a user's score. */
     public ScoreEntity getByUserId(Long userId) {
         return scoreRepo.findByUser_UserId(userId)
-                .orElseGet(() -> createScore(userId));
+                .orElseThrow(() -> new NoSuchElementException("Score not found"));
     }
 
-    public List<ScoreEntity> getAllScores() {
-        return scoreRepo.findAll();
+    public List<ScoreDTO> getAllScoresDTO() {
+        return scoreRepo.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     /** Replace a user's career score. */
     public ScoreEntity updateScore(Long userId, Integer newScore) {
         ScoreEntity score = getByUserId(userId);
         score.setCareerScore(newScore);
-        updatePercentage(score);
         return scoreRepo.save(score);
     }
 
@@ -71,29 +71,7 @@ public class ScoreService {
     public ScoreEntity addScore(Long userId, Integer delta) {
         ScoreEntity score = getByUserId(userId);
         score.setCareerScore(score.getCareerScore() + delta);
-        updatePercentage(score);
         return scoreRepo.save(score);
-    }
-
-    /** 
-     * Add points when a challenge is completed.
-     * This is the main method to call from the frontend.
-     */
-    public ScoreEntity addChallengeScore(Long userId, Integer points) {
-        ScoreEntity score = getByUserId(userId);
-        score.setCareerScore(score.getCareerScore() + points);
-        updatePercentage(score);
-        return scoreRepo.save(score);
-    }
-
-    /** 
-     * Recalculate and set the percentage based on current score.
-     */
-    private void updatePercentage(ScoreEntity score) {
-        double percentage = (score.getCareerScore() * 100.0) / MAX_SCORE;
-        // Cap at 100%
-        if (percentage > 100) percentage = 100;
-        score.setPercentage(String.format("%.1f%%", percentage));
     }
 
     /** Delete a user's score record. */
@@ -102,20 +80,28 @@ public class ScoreService {
         scoreRepo.delete(score);
     }
 
-    /** Legacy method - kept for backward compatibility */
+
     public ScoreEntity updateScoreWithLesson(Long userId, ScoreDTO request) {
+
         ScoreEntity score = getByUserId(userId);
 
         // 1. Update career score
         score.setCareerScore(score.getCareerScore() + request.getScore());
 
         // 2. Update percentage
-        updatePercentage(score);
+        score.setPercentage(request.getPercentage());
 
         // 3. Log lesson completion
         lessonCompletionService.completeLesson(userId, request.getLessonId());
 
         // 4. Save updated score
         return scoreRepo.save(score);
+    }
+    public ScoreDTO toDTO(ScoreEntity entity) {
+        ScoreDTO dto = new ScoreDTO();
+        dto.setUserId(entity.getUser().getUserId());
+        dto.setScore(entity.getCareerScore());
+        dto.setPercentage(entity.getPercentage());
+        return dto;
     }
 }
