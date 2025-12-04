@@ -45,6 +45,9 @@ const StudentList = ({ room, onBack, onClose }) => {
         })
         .filter(Boolean);
 
+      // Debug: Show student IDs
+      console.log("Student IDs from class:", validStudents.map(v => ({ id: v.id })));
+
       // 3. Fetch all lesson completions
       const completionsPromises = validStudents.map(vs =>
         lessonCompletionService
@@ -61,54 +64,77 @@ const StudentList = ({ room, onBack, onClose }) => {
         completionsResults.map(r => [r.id, r.completions])
       );
 
-      // 4. Fetch all scores (FIXED)
+      // 4. Fetch all scores
       let allScores = [];
       try {
         allScores = await ScoreService.getAllScores();
+        console.log("All scores fetched:", allScores);
+        console.log("Score object structure:", allScores[0] || "No scores");
       } catch (e) {
         console.warn("Could not fetch scores", e);
       }
 
-// 5. Format final student list
-const formattedStudents = validStudents.map(({ raw, id }) => {
-  const completions = completionsById[id] || [];
-  const uniqueCompleted = new Set(
-    completions.map(c => c.lessonId || c.lesson?.id)
-  ).size;
+      // Debug: Show all user IDs from scores
+      console.log("User IDs from scores:", allScores.map(s => ({
+        userId: s.userId,
+        user_id: s.user_id,
+        userID: s.userID,
+        score: s.score,
+        careerScore: s.careerScore,
+        id: s.id
+      })));
 
-  const percentage = Math.round(
-    (uniqueCompleted / (lessonsCount || 1)) * 100
-  );
+      // 5. Format final student list
+      const formattedStudents = validStudents.map(({ raw, id }) => {
+        const completions = completionsById[id] || [];
+        const uniqueCompleted = new Set(
+          completions.map(c => c.lessonId || c.lesson?.id)
+        ).size;
 
-  // Extract score from fetched score list
-const studentScores = allScores.filter(
-  sc => sc.user_id === id || sc.userId === id
-);
+        const percentage = Math.round(
+          (uniqueCompleted / (lessonsCount || 1)) * 100
+        );
 
-const totalPoints = studentScores.reduce(
-  (sum, sc) => sum + (sc.careerScore || 0),
-  0
-);
+        // Extract score from fetched score list
+        const studentScores = allScores.filter(sc => {
+          // Try multiple possible ID fields
+          const scoreUserId = sc.userId || sc.user_id || sc.userID || sc.id;
+          const isMatch = Number(scoreUserId) === Number(id);
+          
+          if (isMatch) {
+            console.log(`Match found for student ${id}:`, sc);
+          }
+          
+          return isMatch;
+        });
 
+        console.log(`Student ${id} matching scores:`, studentScores);
 
+        // Calculate total points - try multiple possible score fields
+        const totalPoints = studentScores.reduce((sum, sc) => {
+          // Try different possible score field names
+          const scoreValue = sc.score || sc.careerScore || sc.points || sc.totalScore || 0;
+          return sum + Number(scoreValue);
+        }, 0);
 
-  // ✅ ADDED CONSOLE LOG
-  console.log(`StudentID ${id} → Score: ${totalPoints}`, studentScores);
+        console.log(`StudentID ${id} → Total Points: ${totalPoints}`);
 
-  return {
-    id,
-    studentId: `STU${id.toString().padStart(3, "0")}`,
-    name: `${raw.firstName || raw.user?.firstName || ""} ${
-      raw.lastName || raw.user?.lastName || ""
-    }`.trim(),
-    email: raw.email || raw.user?.email || "—",
-    progress: Math.min(percentage, 100),
-    score: totalPoints,
-    status: "Active",
-    lastActivity: "N/A",
-  };
-});
+        return {
+          id,
+          studentId: `STU${id.toString().padStart(3, "0")}`,
+          name: `${raw.firstName || raw.user?.firstName || ""} ${
+            raw.lastName || raw.user?.lastName || ""
+          }`.trim(),
+          email: raw.email || raw.user?.email || "—",
+          progress: Math.min(percentage, 100),
+          score: totalPoints,
+          status: "Active",
+          lastActivity: "N/A",
+        };
+      });
 
+      // Debug: Show final student data
+      console.log("Final formatted students:", formattedStudents);
 
       setStudents(formattedStudents);
     } catch (err) {
