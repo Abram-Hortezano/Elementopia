@@ -23,6 +23,7 @@ import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
 import TeacherGameRoomPage from "./TEACHER/TeacherGameRoomPage";
 import TeacherRoomPage from "./TEACHER/TeacherRoomPage";
 import TeacherSandbox from "./TEACHER/TeacherSandboxPage";
+import TeacherDiscoveryPage from "./TEACHER/TeacherDiscoveryPage";
 
 // Misc
 import ProfilePageMain from "./pages/profile-page";
@@ -182,6 +183,15 @@ export default function App() {
           element={
             <PrivateRoute allowedRoles={["TEACHER"]}>
               <TeacherGameRoomPage />
+            </PrivateRoute>
+          }
+        />
+
+        <Route
+          path="/teacher/discovery"
+          element={
+            <PrivateRoute allowedRoles={["TEACHER"]}>
+              <TeacherDiscoveryPage />
             </PrivateRoute>
           }
         />
