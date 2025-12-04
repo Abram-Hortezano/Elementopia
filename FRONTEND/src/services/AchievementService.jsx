@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// const API_URL = "http://localhost:8080/api/achievement";
-const API_URL = "https://elementopia.onrender.com/api/achievement";
+const API_URL = "http://localhost:8080/api/achievement";
+// const API_URL = "https://elementopia.onrender.com/api/achievement";
 
 const getAuthHeader = () => {
   const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
