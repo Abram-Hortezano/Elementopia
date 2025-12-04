@@ -17,7 +17,7 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import room from "../../assets/img/room.png";
 import career from "../../assets/img/career.png";
-import chemSimulation from "../../assets/img/chemSimulation.png";
+import discovery from "../../assets/img/discovery.png";
 
 const drawerWidth = 180;
 const closedWidth = 60;
@@ -44,6 +44,7 @@ const menuItems = [
  // { text: "Home", icon: home, path: "/teacher/analytics" },
   { text: "Room", icon: room, path: "/teacher/room" },
   { text: "Career", icon: career, path: "/teacher/career-page" },
+   { text: "Discovery", icon: discovery, path: "/teacher/discovery" },
   /*{
     text: "Chem-Simulation",
     icon: chemSimulation,
