@@ -5,6 +5,7 @@ import UserService from "../services/UserService";
 import LessonCompletionService from "../services/lessonCompletionService"; 
 import SectionService from "../services/SectionService";
 import AchievementService from "../services/AchievementService";
+import ScoreService from "../services/ScoreService";
 
 // --- LESSON IMPORTS ---
 import AtomBuilder from "../STUDENT/AtomBuilder";
@@ -465,6 +466,11 @@ export default function MapTree() {
       
       setTotalScore(calculatedScore);
       
+      // 🆕 SYNC SCORE WITH BACKEND
+      if (currentUser?.userId) {
+        await syncScore(completedIds, currentUser.userId);
+      }
+      
       // Check for new achievements
       await checkAchievements(completedIds, calculatedScore);
       
@@ -476,6 +482,56 @@ export default function MapTree() {
       console.warn("Could not load user completions on login.", err.response?.data || err.message);
       setCompletedNodes(new Set());
       setTotalScore(0);
+    }
+  };
+  
+  // Sync backend score with completed challenges
+  const syncScore = async (completedNodes, userId) => {
+    try {
+      // Calculate expected score from completed challenges
+      const challengeNodes = nodes.filter(n => n.label.includes("★"));
+      const completedChallenges = challengeNodes.filter(n => completedNodes.has(n.id));
+      const expectedScore = completedChallenges.length * 100;
+
+      console.log(`🔄 Syncing score: Expected ${expectedScore} points from ${completedChallenges.length} challenges`);
+
+      // Get current backend score
+      try {
+        const currentScore = await ScoreService.getScore(userId);
+        console.log(`📊 Backend score: ${currentScore.careerScore}`);
+
+        // If scores don't match, update backend
+        if (currentScore.careerScore !== expectedScore) {
+          console.log(`⚠️ Score mismatch! Updating backend from ${currentScore.careerScore} to ${expectedScore}`);
+          
+          // Calculate the difference and add it
+          const difference = expectedScore - currentScore.careerScore;
+          if (difference > 0) {
+            await ScoreService.addChallengeScore(userId, difference);
+            console.log(`✅ Added ${difference} points to sync score`);
+          } else {
+            // If backend has more points than expected, we might need to adjust
+            // For now, just log it
+            console.log(`⚠️ Backend has more points than expected. Manual review needed.`);
+          }
+        } else {
+          console.log(`✅ Score already synced: ${expectedScore} points`);
+        }
+      } catch (error) {
+        // Score doesn't exist, create it with the correct value
+        if (error.response?.status === 404 || error.message?.includes("not found")) {
+          console.log(`📝 Creating score record with ${expectedScore} points`);
+          await ScoreService.createScore(userId);
+          if (expectedScore > 0) {
+            await ScoreService.addChallengeScore(userId, expectedScore);
+          }
+          console.log(`✅ Score created and synced`);
+        } else {
+          throw error;
+        }
+      }
+    } catch (error) {
+      console.error("Failed to sync score:", error);
     }
   };
 
@@ -557,7 +613,21 @@ export default function MapTree() {
           return;
         }
 
+        // Save lesson completion
         await LessonCompletionService.completeLesson(validStudentId, parseInt(lessonId));
+        
+        // 🆕 ADD CHALLENGE SCORE IF IT'S A CHALLENGE
+        if (activeLesson.label.includes("★")) {
+          try {
+            await ScoreService.addChallengeScore(currentUser.userId, 100);
+            console.log(`✅ Added 100 points to career score`);
+          } catch (error) {
+            console.error("Failed to update score:", error);
+            // Don't block completion if score save fails
+          }
+        }
+        
+        // Reload progress
         await loadUserProgress(validStudentId);
       } catch (err) {
         if (err.message?.includes("Lesson already completed")) {

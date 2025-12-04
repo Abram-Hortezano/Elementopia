@@ -30,9 +30,10 @@ public class ScoreController {
 
     /** Get all scores */
     @GetMapping("/all")
-    public ResponseEntity<List<ScoreEntity>> getAllScores() {
-        return ResponseEntity.ok(scoreService.getAllScores());
+    public ResponseEntity<List<ScoreDTO>> getAllScores() {
+        return ResponseEntity.ok(scoreService.getAllScoresDTO());
     }
+
 
     /** Replace a user's score using ScoreDTO */
     @PutMapping("/update/{userId}")
