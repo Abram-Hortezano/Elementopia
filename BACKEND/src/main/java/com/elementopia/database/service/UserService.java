@@ -47,7 +47,7 @@ public class UserService {
         // Map Student
         if (user.getStudent() != null) {
             StudentDTO studentDTO = new StudentDTO();
-            studentDTO.setStudentId(user.getStudent().getStudentId());
+            studentDTO.setUserId(user.getStudent().getStudentId());
             studentDTO.setSection(user.getStudent().getSection());
             studentDTO.setFirstName(user.getStudent().getFirstName());
             studentDTO.setLastName(user.getStudent().getLastName());
