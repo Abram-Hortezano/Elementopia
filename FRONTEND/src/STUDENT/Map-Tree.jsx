@@ -551,6 +551,7 @@ export default function MapTree() {
         const lessonId = Object.keys(backendToNodeMap).find(
           key => backendToNodeMap[key] === activeLesson.id
         );
+        console.log(`Node ID: ${activeLesson.id}, Mapped Backend Lesson ID: ${lessonId}`);
 
         if (!lessonId) {
           console.error(`Could not find backend lesson ID for node ${activeLesson.id}`);
@@ -558,6 +559,7 @@ export default function MapTree() {
         }
 
         await LessonCompletionService.completeLesson(validStudentId, parseInt(lessonId));
+
         await loadUserProgress(validStudentId);
       } catch (err) {
         if (err.message?.includes("Lesson already completed")) {

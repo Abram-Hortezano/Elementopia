@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "https://elementopia.onrender.com/api/lesson-completion";
-// const API_URL = "http://localhost:8080/api/lesson-completion";
+// const API_URL = "https://elementopia.onrender.com/api/lesson-completion";
+const API_URL = "http://localhost:8080/api/lesson-completion";
 
 const getAuthHeader = () => {
   const userStr =
@@ -31,6 +31,7 @@ const getAuthHeader = () => {
 const LessonCompletionService = {
   // Complete a lesson (POST /complete)
   completeLesson: async (studentId, lessonId) => {
+    console.log("Completing lesson:", { studentId, lessonId });
     try {
       const completionData = { studentId, lessonId };
 
