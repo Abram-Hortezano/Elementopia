@@ -1,14 +1,20 @@
 import axios from "axios";
 
+<<<<<<< HEAD
 const API_URL = "https://elementopia.onrender.com/api/section";
 // const API_URL = "http://localhost:8080/api/section";
+=======
+// const API_URL = "https://elementopia.onrender.com/section";
+const API_URL = "http://localhost:8080/api/section";
+>>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
 
 const getAuthHeader = () => {
   let token = localStorage.getItem("token");
 
   if (!token) {
     try {
-      const userStr = localStorage.getItem("user") || sessionStorage.getItem("user");
+      const userStr =
+        localStorage.getItem("user") || sessionStorage.getItem("user");
       if (userStr) {
         const user = JSON.parse(userStr);
         token = user.token || user.accessToken;
@@ -65,7 +71,10 @@ const SectionService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to join section:", error.response?.data || error.message);
+      console.error(
+        "Failed to join section:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -87,9 +96,18 @@ const SectionService = {
   // Get Teacher ID
   getTeacherId: async () => {
     try {
+<<<<<<< HEAD
       const response = await axios.get(`https://elementopia.onrender.com/api/teacher/me`, {
         headers: getAuthHeader(),
       });
+=======
+      const response = await axios.get(
+        `http://localhost:8080/api/teacher/me`,
+        {
+          headers: getAuthHeader(),
+        }
+      );
+>>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
       return response.data;
     } catch (error) {
       console.error("Failed to get teacher info:", error);
@@ -118,8 +136,8 @@ const SectionService = {
       });
       return response.data;
     } catch (error) {
-        // Return empty array if fails 
-        return [];
+      // Return empty array if fails
+      return [];
     }
   },
 

@@ -43,7 +43,7 @@ const TeacherRoomPage = () => {
           marginTop: "50px",
         }}
       >
-        <RoomList/>
+        <RoomList />
       </Box>
     </Box>
   );

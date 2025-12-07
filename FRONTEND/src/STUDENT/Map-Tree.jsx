@@ -607,6 +607,7 @@ export default function MapTree() {
         const lessonId = Object.keys(backendToNodeMap).find(
           key => backendToNodeMap[key] === activeLesson.id
         );
+        console.log(`Node ID: ${activeLesson.id}, Mapped Backend Lesson ID: ${lessonId}`);
 
         if (!lessonId) {
           console.error(`Could not find backend lesson ID for node ${activeLesson.id}`);
@@ -615,6 +616,7 @@ export default function MapTree() {
 
         // Save lesson completion
         await LessonCompletionService.completeLesson(validStudentId, parseInt(lessonId));
+<<<<<<< HEAD
         
         // 🆕 ADD CHALLENGE SCORE IF IT'S A CHALLENGE
         if (activeLesson.label.includes("★")) {
@@ -628,6 +630,9 @@ export default function MapTree() {
         }
         
         // Reload progress
+=======
+
+>>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
         await loadUserProgress(validStudentId);
       } catch (err) {
         if (err.message?.includes("Lesson already completed")) {

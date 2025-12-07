@@ -65,13 +65,16 @@ const UserService = {
 
     try {
       const response = await axios.post(
-        `${API_URL}/join-section`, 
-        { sectionCode }, 
+        `${API_URL}/join-section`,
+        { sectionCode },
         { headers: getAuthHeader() }
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to join section:", error.response?.data || error.message);
+      console.error(
+        "Failed to join section:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
