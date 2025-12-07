@@ -30,4 +30,8 @@ public class StudentEntity {
     @JoinColumn(name = "section_id")
     @JsonBackReference
     private SectionEntity section;
+
+     public Long getUserId() {
+        return user != null ? user.getUserId() : null;
+    }
 }

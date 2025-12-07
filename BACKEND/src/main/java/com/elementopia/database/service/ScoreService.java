@@ -53,8 +53,11 @@ public class ScoreService {
                 .orElseThrow(() -> new NoSuchElementException("Score not found"));
     }
 
-    public List<ScoreEntity> getAllScores() {
-        return scoreRepo.findAll();
+    public List<ScoreDTO> getAllScoresDTO() {
+        return scoreRepo.findAll()
+                .stream()
+                .map(this::toDTO)
+                .toList();
     }
 
     /** Replace a user's career score. */
@@ -93,5 +96,12 @@ public class ScoreService {
 
         // 4. Save updated score
         return scoreRepo.save(score);
+    }
+    public ScoreDTO toDTO(ScoreEntity entity) {
+        ScoreDTO dto = new ScoreDTO();
+        dto.setUserId(entity.getUser().getUserId());
+        dto.setScore(entity.getCareerScore());
+        dto.setPercentage(entity.getPercentage());
+        return dto;
     }
 }

@@ -9,4 +9,5 @@ public class StudentDTO {
     private String firstName;
     private String lastName;
     private SectionEntity section;
+    private Long userId;
 }

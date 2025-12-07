@@ -1,100 +1,214 @@
 import React, { useState, useEffect } from 'react';
-import '../../assets/css/StudentList.css'; 
+import '../../assets/css/StudentList.css';
 import SectionService from '../../services/SectionService';
 import LessonService from '../../services/LessonService';
 import lessonCompletionService from '../../services/lessonCompletionService';
+import ScoreService from '../../services/ScoreService';
+import UserService from '../../services/UserService';
+import StudentService from '../../services/StudentService';
 
 const StudentList = ({ room, onBack, onClose }) => {
   const [students, setStudents] = useState([]);
+  const [filteredStudents, setFilteredStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [activeDropdown, setActiveDropdown] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [studentsPerPage] = useState(10);
 
-  // Constants
-  const TOTAL_MODULES = 10; // Adjust based on actual lesson count
+  const TOTAL_MODULES = 10;
 
   useEffect(() => {
-    if (room?.roomCode) {
+    if (room?.sectionId || room?.roomCode) {
       fetchStudents();
     }
   }, [room]);
+
+  useEffect(() => {
+    const filtered = students.filter(student =>
+      student.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      student.userId.toString().toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (student.studentId && student.studentId.toString().toLowerCase().includes(searchTerm.toLowerCase())) ||
+      (student.email && student.email.toLowerCase().includes(searchTerm.toLowerCase()))
+    );
+    setFilteredStudents(filtered);
+    setCurrentPage(1);
+  }, [students, searchTerm]);
 
   const fetchStudents = async () => {
     try {
       setLoading(true);
       setError("");
-      // 1. Fetch Lab Details (Students)
-      const labData = await SectionService.getClassMembers(room.roomCode);
-      const rawStudents = labData.students || [];
-      // 2. Fetch total lessons to compute percentages accurately
-      let lessonsCount = TOTAL_MODULES;
+
+      let allStudentsFromStudentService = [];
+      try {
+        allStudentsFromStudentService = await StudentService.getAllStudents();
+      } catch (studentError) {
+        allStudentsFromStudentService = [];
+      }
+
+      let allUsers = [];
+      try {
+        allUsers = await UserService.getAllUsers();
+      } catch (userError) {
+        allUsers = [];
+      }
+
+      let allScores = [];
+      try {
+        allScores = await ScoreService.getAllScores();
+      } catch (scoreError) {
+        allScores = [];
+      }
+
+      const userMap = {};
+      allUsers.forEach(user => {
+        const userId = user.userId || user.id;
+        if (userId) {
+          userMap[userId] = {
+            userId: userId,
+            username: user.username,
+            email: user.email,
+            firstName: user.firstName,
+            lastName: user.lastName
+          };
+        }
+      });
+
+      const scoreMap = {};
+      allScores.forEach(score => {
+        const userId = score.userId || 
+                      score.user?.userId || 
+                      score.user?.id || 
+                      score.student?.userId ||
+                      score.studentId;
+        
+        if (userId) {
+          const numericUserId = Number(userId);
+          const scoreValue = score.careerScore || score.score || score.totalScore || score.points || 0;
+          scoreMap[numericUserId] = {
+            value: scoreValue,
+            details: score
+          };
+        }
+      });
+
+      const roomSectionId = room?.sectionId || room?.id;
+
+      const matchedStudents = allStudentsFromStudentService.filter(student => {
+        const studentUserId = student.userId;
+        
+        if (!studentUserId || !userMap[studentUserId]) {
+          return false;
+        }
+
+        if (!student.section) {
+          return false;
+        }
+
+        const studentSectionId = student.section.sectionId || 
+                                 student.section.id || 
+                                 student.section?.section?.sectionId || 
+                                 student.section?.section?.id;
+        
+        return studentSectionId == roomSectionId;
+      });
+
+      const processedStudents = await Promise.all(
+        matchedStudents.map(async (student) => {
+          const userId = Number(student.userId);
+          const user = userMap[userId];
+          
+          if (!user) {
+            return null;
+          }
+
+          const scoreData = scoreMap[userId];
+          const userScore = scoreData ? scoreData.value : 0;
+
+          let completions = [];
+          try {
+            const completionId = student.studentId || userId;
+            completions = await lessonCompletionService.getUserCompletions(completionId);
+          } catch (error) {
+            completions = [];
+          }
+
+          let lessonsCount = TOTAL_MODULES;
           try {
             const lessons = await LessonService.getAllLessons();
             lessonsCount = Array.isArray(lessons) ? lessons.length : lessonsCount;
-          } catch (e) {
-            console.warn('Could not fetch total lessons, keeping default totalModules', e);
-            lessonsCount = TOTAL_MODULES;
-          }
+          } catch {}
 
-          // 3. Fetch each student's completions in parallel and merge data
-          const validStudents = rawStudents.map((s) => {
-            const sId = s.studentId || s.userId || s.id;
-            return sId ? { raw: s, id: sId } : null;
-          }).filter(Boolean);
+          const uniqueCompleted = new Set(
+            completions.map(c => c.lessonId || c.lesson?.id)
+          ).size;
 
-          // Fetch completions for all students in parallel
-          const completionsPromises = validStudents.map(vs =>
-            lessonCompletionService.getUserCompletions(vs.id).then(data => ({ id: vs.id, completions: data || [] })).catch(err => {
-              console.warn(`Could not load completions for student ${vs.id}`, err);
-              return { id: vs.id, completions: [] };
-            })
-          );
+          const percentage = Math.round((uniqueCompleted / (lessonsCount || 1)) * 100);
 
-          const completionsResults = await Promise.all(completionsPromises);
-          const completionsById = Object.fromEntries(completionsResults.map(r => [r.id, r.completions]));
+          const sectionId = student.section?.sectionId || student.section?.id;
+          const sectionName = student.section?.className || student.section?.name || 'N/A';
+          const sectionCode = student.section?.roomCode || student.section?.code || 'N/A';
 
-          // Fetch all scores once to compute total points per student (optional)
-          let allScores = [];
-          try {
-            allScores = await LessonService.getAllScores();
-          } catch (e) {
-            console.warn('Could not fetch lesson scores for students', e);
-          }
+          return {
+            id: student.studentId || userId,
+            userId: userId,
+            studentId: student.studentId,
+            name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || 
+                  user.username || 
+                  `User ${userId}`,
+            username: user.username,
+            email: user.email,
+            progress: Math.min(percentage, 100),
+            score: userScore,
+            completionsCount: completions.length,
+            status: "Active",
+            hasScore: scoreData !== undefined,
+            scoreDetails: scoreData ? scoreData.details : null,
+            sectionId: sectionId,
+            sectionName: sectionName,
+            sectionCode: sectionCode
+          };
+        })
+      );
 
-          const formattedStudents = validStudents.map(({ raw, id: sId }) => {
-            const studentCompletions = completionsById[sId] || [];
+      const validStudents = processedStudents.filter(Boolean);
+      const sortedStudents = validStudents.sort((a, b) => b.score - a.score);
 
-            // Unique lesson IDs completed for this student
-            const uniqueCompleted = new Set(studentCompletions.map(c => c.lessonId || c.lesson?.id)).size;
-            const denominator = lessonsCount || 1;
-            const percentage = Math.round((uniqueCompleted / denominator) * 100);
+      setStudents(sortedStudents);
+      setFilteredStudents(sortedStudents);
 
-            // Total points from the pre-fetched scores
-            const studentScores = allScores.filter(score => score.student?.studentId === sId || score.student?.id === sId);
-            const totalPoints = studentScores.reduce((sum, sc) => sum + (sc.score || 0), 0);
+    } catch (error) {
+      setError(`Error: ${error.message || "Could not load student list. Please try again."}`);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-            return {
-              id: sId,
-              studentId: `STU${sId.toString().padStart(3, '0')}`,
-              name: `${raw.firstName || raw.user?.firstName || ''} ${raw.lastName || raw.user?.lastName || ''}`.trim(),
-              email: raw.email || raw.user?.email || '—',
-              progress: Math.min(percentage, 100),
-              score: totalPoints,
-              status: 'Active',
-              lastActivity: 'N/A',
-            };
-          });
+  const refreshStudentScore = async (student) => {
+    try {
+      const scoreData = await ScoreService.getScore(student.userId);
+      const newScore = scoreData.careerScore || scoreData.score || scoreData.totalScore || scoreData.points || 0;
+      
+      setStudents(prev => prev.map(s => 
+        s.userId === student.userId 
+          ? { ...s, score: newScore, scoreDetails: scoreData, hasScore: true }
+          : s
+      ));
+      
+      setFilteredStudents(prev => prev.map(s => 
+        s.userId === student.userId 
+          ? { ...s, score: newScore, scoreDetails: scoreData, hasScore: true }
+          : s
+      ));
+      
+      return newScore;
+    } catch (error) {
+      return null;
+    }
+  };
 
-          setStudents(formattedStudents);
-        } catch (err) {
-          console.error("Failed to fetch students:", err);
-          setError("Could not load student list. Please try again.");
-        } finally {
-          setLoading(false);
-        }
-      };
-
-  // --- UI HANDLERS ---
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest('.dropdown-container')) {
@@ -107,6 +221,11 @@ const StudentList = ({ room, onBack, onClose }) => {
     };
   }, []);
 
+  const indexOfLastStudent = currentPage * studentsPerPage;
+  const indexOfFirstStudent = indexOfLastStudent - studentsPerPage;
+  const currentStudents = filteredStudents.slice(indexOfFirstStudent, indexOfLastStudent);
+  const totalPages = Math.ceil(filteredStudents.length / studentsPerPage);
+
   const toggleDropdown = (studentId, event) => {
     event.stopPropagation();
     setActiveDropdown(activeDropdown === studentId ? null : studentId);
@@ -114,14 +233,29 @@ const StudentList = ({ room, onBack, onClose }) => {
 
   const handleViewProfile = (student) => {
     setActiveDropdown(null);
-    alert(`Viewing profile for ${student.name}\nScore: ${student.score}\nProgress: ${student.progress}%`);
+    alert(`Student Profile\n\nName: ${student.name}\nUser ID: ${student.userId}\nStudent ID: ${student.studentId || 'N/A'}\nEmail: ${student.email || 'N/A'}\nSection: ${student.sectionName}\nSection ID: ${student.sectionId || 'N/A'}\nProgress: ${student.progress}%\nScore: ${student.score}\nCompleted Lessons: ${student.completionsCount || 0}\nHas Score Record: ${student.hasScore ? 'Yes' : 'No'}`);
+  };
+
+  const handleRefreshScore = async (student) => {
+    setActiveDropdown(null);
+    try {
+      const newScore = await refreshStudentScore(student);
+      if (newScore !== null) {
+        alert(`✅ Score refreshed for ${student.name}\nNew Score: ${newScore}`);
+      } else {
+        alert(`❌ Could not refresh score for ${student.name}\nStudent may not have a score record yet.`);
+      }
+    } catch (err) {
+      alert(`❌ Error refreshing score: ${err.message}`);
+    }
   };
 
   const handleRemoveStudent = async (student) => {
     setActiveDropdown(null);
-    if (window.confirm(`Are you sure you want to remove ${student.name}?`)) {
-       // Logic to remove student API call would go here
-       setStudents(prev => prev.filter(s => s.id !== student.id));
+    if (window.confirm(`Are you sure you want to remove ${student.name}?\nThis action cannot be undone.`)) {
+      setStudents(prev => prev.filter(s => s.id !== student.id));
+      setFilteredStudents(prev => prev.filter(s => s.id !== student.id));
+      alert(`${student.name} has been removed from the class.`);
     }
   };
 
@@ -129,6 +263,34 @@ const StudentList = ({ room, onBack, onClose }) => {
     if (progress >= 80) return 'progress-high';
     if (progress >= 50) return 'progress-medium';
     return 'progress-low';
+  };
+
+  const getScoreColor = (score) => {
+    if (score >= 1000) return '#10b981';
+    if (score >= 500) return '#3b82f6';
+    if (score >= 100) return '#f59e0b';
+    return '#ef4444';
+  };
+
+  const getScoreBadge = (score) => {
+    let badgeText = '';
+    let badgeClass = '';
+    
+    if (score >= 1000) {
+      badgeText = '🏆 Master';
+      badgeClass = 'score-badge-master';
+    } else if (score >= 500) {
+      badgeText = '⭐ Advanced';
+      badgeClass = 'score-badge-advanced';
+    } else if (score >= 100) {
+      badgeText = '📚 Learner';
+      badgeClass = 'score-badge-learner';
+    } else {
+      badgeText = '🌱 Beginner';
+      badgeClass = 'score-badge-beginner';
+    }
+    
+    return <span className={`score-badge ${badgeClass}`}>{badgeText}</span>;
   };
 
   const getStatusBadge = (status) => {
@@ -141,10 +303,90 @@ const StudentList = ({ room, onBack, onClose }) => {
     return index >= students.length - 2 ? 'bottom' : 'top';
   };
 
+  const handlePageChange = (pageNumber) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const renderPagination = () => {
+    if (totalPages <= 1) return null;
+
+    const pageNumbers = [];
+    const maxVisiblePages = 5;
+    let startPage = Math.max(1, currentPage - Math.floor(maxVisiblePages / 2));
+    let endPage = Math.min(totalPages, startPage + maxVisiblePages - 1);
+
+    if (endPage - startPage + 1 < maxVisiblePages) {
+      startPage = Math.max(1, endPage - maxVisiblePages + 1);
+    }
+
+    for (let i = startPage; i <= endPage; i++) {
+      pageNumbers.push(i);
+    }
+
+    return (
+      <div className="pagination-container">
+        <button
+          className="pagination-btn"
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}
+        >
+          ← Previous
+        </button>
+
+        <div className="page-numbers">
+          {startPage > 1 && (
+            <>
+              <button
+                className={`page-number ${1 === currentPage ? 'active' : ''}`}
+                onClick={() => handlePageChange(1)}
+              >
+                1
+              </button>
+              {startPage > 2 && <span className="page-ellipsis">...</span>}
+            </>
+          )}
+
+          {pageNumbers.map(number => (
+            <button
+              key={number}
+              className={`page-number ${number === currentPage ? 'active' : ''}`}
+              onClick={() => handlePageChange(number)}
+            >
+              {number}
+            </button>
+          ))}
+
+          {endPage < totalPages && (
+            <>
+              {endPage < totalPages - 1 && <span className="page-ellipsis">...</span>}
+              <button
+                className={`page-number ${totalPages === currentPage ? 'active' : ''}`}
+                onClick={() => handlePageChange(totalPages)}
+              >
+                {totalPages}
+              </button>
+            </>
+          )}
+        </div>
+
+        <button
+          className="pagination-btn"
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}
+        >
+          Next →
+        </button>
+      </div>
+    );
+  };
+
   if (loading) {
     return (
       <div className="student-list-container">
-        <div className="loading" style={{color:'white'}}>Loading students...</div>
+        <div className="loading" style={{color:'white'}}>
+          <div className="loading-spinner"></div>
+          Loading students and scores...
+        </div>
       </div>
     );
   }
@@ -158,14 +400,26 @@ const StudentList = ({ room, onBack, onClose }) => {
           </button>
           <div className="room-info">
             <h2>{room.className}</h2>
-            <p>Code: <span className="room-code-badge">{room.roomCode}</span></p>
+            <p>
+              {room.sectionId && (
+                <>Section ID: <span className="room-id-badge">{room.sectionId}</span></>
+              )}
+              {room.roomCode && (
+                <>Code: <span className="room-code-badge">{room.roomCode}</span></>
+              )}
+            </p>
           </div>
         </div>
         <div className="header-right">
-          <span className="student-count">Total Students: {students.length}</span>
-          <button className="btn-secondary" onClick={fetchStudents}>
-            Refresh
-          </button>
+          <div className="search-container">
+            <input
+              type="text"
+              placeholder="Search by name, ID, username, or email..."
+              className="search-input"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
         </div>
       </div>
 
@@ -175,6 +429,7 @@ const StudentList = ({ room, onBack, onClose }) => {
         <table className="students-table">
           <thead>
             <tr>
+              <th>Rank</th>
               <th>ID</th>
               <th>Student Name</th>
               <th>Email</th>
@@ -185,65 +440,118 @@ const StudentList = ({ room, onBack, onClose }) => {
             </tr>
           </thead>
           <tbody>
-            {students.map(student => (
-              <tr key={student.id}>
-                <td><span className="student-id">{student.studentId}</span></td>
-                <td>
-                  <div className="student-info">
-                    <div className="student-name">{student.name}</div>
-                  </div>
-                </td>
-                <td><span className="student-email">{student.email}</span></td>
-                
-                {/* PROGRESS BAR UI */}
-                <td>
-                  <div className="progress-container">
-                    <div className="progress-bar">
-                      <div 
-                        className={`progress-fill ${getProgressBarClass(student.progress)}`}
-                        style={{ width: `${student.progress}%`, backgroundColor: student.progress >= 80 ? '#4caf50' : '#6c5dd3' }}
-                      ></div>
+            {currentStudents.map((student, index) => {
+              const rank = indexOfFirstStudent + index + 1;
+              return (
+                <tr key={student.id}>
+                  <td>
+                    <div className="rank-container">
+                      {rank <= 3 ? (
+                        <span className={`rank rank-${rank}`}>
+                          {rank === 1 ? '🥇' : rank === 2 ? '🥈' : '🥉'}
+                        </span>
+                      ) : (
+                        <span className="rank-number">#{rank}</span>
+                      )}
                     </div>
-                    <span className="progress-text">{student.progress}%</span>
-                  </div>
-                </td>
-                <td>
-                  <span className={`score`}>{student.score}</span>
-                </td>
-
-                <td>{getStatusBadge(student.status)}</td>
-                <td>
-                  <div className="dropdown-container">
-                    <button 
-                      className="dropdown-trigger"
-                      onClick={(e) => toggleDropdown(student.id, e)}
-                    >
-                      ⋮
-                    </button>
-                    {activeDropdown === student.id && (
-                      <div className={`dropdown-menu ${getDropdownPosition(student.id)}`}>
-                        <button className="dropdown-item view" onClick={() => handleViewProfile(student)}>
-                          <span className="icon">👤</span> Profile
-                        </button>
-                        <button className="dropdown-item remove" onClick={() => handleRemoveStudent(student)}>
-                          <span className="icon">🚫</span> Remove
-                        </button>
+                  </td>
+                  <td>
+                    <div className="id-container">
+                      <span className="student-id">STU{student.studentId ? student.studentId.toString().padStart(3, '0') : 'N/A'}</span>
+                    </div>
+                  </td>
+                  <td>
+                    <div className="student-info">
+                      <div className="student-name">{student.name}</div>
+                    </div>
+                  </td>
+                  <td><span className="student-email">{student.email || '—'}</span></td>
+                  
+                  <td>
+                    <div className="progress-container">
+                      <div className="progress-bar">
+                        <div 
+                          className={`progress-fill ${getProgressBarClass(student.progress)}`}
+                          style={{ width: `${student.progress}%` }}
+                        ></div>
                       </div>
-                    )}
-                  </div>
-                </td>
-              </tr>
-            ))}
+                      <span className="progress-text">{student.progress}%</span>
+                    </div>
+                  </td>
+                  
+                  <td>
+                    <div className="score-container">
+                      <span 
+                        className="score-value" 
+                        style={{ color: getScoreColor(student.score), fontWeight: 'bold' }}
+                      >
+                        {student.score}
+                      </span>
+                      <span className="score-label">points</span>
+                      {!student.hasScore && (
+                        <span className="no-score-warning" style={{fontSize: '10px', color: '#ff9800'}}>
+                          No score record
+                        </span>
+                      )}
+                    </div>
+                  </td>
+                  <td>{getStatusBadge(student.status)}</td>
+                  <td>
+                    <div className="dropdown-container">
+                      <button 
+                        className="dropdown-trigger"
+                        onClick={(e) => toggleDropdown(student.id, e)}
+                      >
+                        ⋮
+                      </button>
+                      {activeDropdown === student.id && (
+                        <div className={`dropdown-menu ${getDropdownPosition(student.id)}`}>
+                          <button className="dropdown-item view" onClick={() => handleViewProfile(student)}>
+                            <span className="icon">👤</span> View Profile
+                          </button>
+                          <button className="dropdown-item refresh" onClick={() => handleRefreshScore(student)}>
+                            <span className="icon">🔄</span> Refresh Score
+                          </button>
+                          <div className="dropdown-divider"></div>
+                          <button className="dropdown-item remove" onClick={() => handleRemoveStudent(student)}>
+                            <span className="icon">🚫</span> Remove Student
+                          </button>
+                        </div>
+                      )}
+                    </div>
+                  </td>
+                </tr>
+              );
+            })}
           </tbody>
         </table>
 
-        {students.length === 0 && (
+        {filteredStudents.length === 0 && (
           <div className="no-students">
-            No students found in this section yet.
-            <br/>
-            Share the code <strong>{room.roomCode}</strong> to invite them!
+            <div className="no-students-icon">👨‍🎓</div>
+            <h3>No students enrolled yet</h3>
+            <p>
+              {room.sectionId && (
+                <>Section ID: <strong>{room.sectionId}</strong><br /></>
+              )}
+              Share the class code <strong className="highlight-code">{room.roomCode}</strong> with your students to invite them!
+            </p>
+            <button className="btn-primary" onClick={fetchStudents}>
+              Check Again
+            </button>
           </div>
         )}
+
+        {renderPagination()}
+
+        <div className="pagination-info">
+          Showing {indexOfFirstStudent + 1} to {Math.min(indexOfLastStudent, filteredStudents.length)} of {filteredStudents.length} students
+          {filteredStudents.length > 0 && (
+            <span style={{marginLeft: '20px', color: '#4caf50'}}>
+              {filteredStudents.filter(s => s.hasScore).length} have score records
+            </span>
+          )}
+        </div>
       </div>
     </div>
   );
