@@ -544,7 +544,7 @@ export default function MapTree() {
         if (userData.role === "STUDENT" && !userData.student) {
           try {
             const userSession = JSON.parse(sessionStorage.getItem("user") || localStorage.getItem("user"));
-            await axios.post("http://localhost:8080/api/student/add", {
+            await axios.post("https://elementopia.onrender.com/api/student/add", {
               firstName: userData.firstName,
               lastName: userData.lastName,
               user: { userId: userData.userId || userData.id } 
