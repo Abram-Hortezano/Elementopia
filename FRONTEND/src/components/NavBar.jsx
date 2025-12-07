@@ -74,10 +74,6 @@ const Navbar = ({ open }) => {
           anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
           transformOrigin={{ vertical: "top", horizontal: "right" }}
         >
-          <MenuItem onClick={() => navigate("/student/profile")}>
-            Profile
-          </MenuItem>
-          <MenuItem onClick={handleMenuClose}>Settings</MenuItem>
           <MenuItem onClick={handleLogout}>Logout</MenuItem>
         </Menu>
       </Toolbar>
