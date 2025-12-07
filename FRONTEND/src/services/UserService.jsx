@@ -58,7 +58,6 @@ const UserService = {
     // Enter "TEST-123" in the modal to unlock immediately.
     // This is NOT saved, so a refresh will lock you out again.
     if (sectionCode === "TEST-123") {
-      console.log("🔓 Test Code Accepted: Unlocking Map (Temporary)");
       return Promise.resolve({ message: "Test Section Joined Successfully" });
     }
     // ---------------------------------------

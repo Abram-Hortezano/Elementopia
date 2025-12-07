@@ -34,7 +34,6 @@ const LessonService = {
   // Called by Map-Tree.jsx to save progress
   saveLessonProgress: async (payload) => {
     try {
-      console.log("📡 Sending Progress Payload:", payload);
       // Endpoint: /api/lesson-scores
       const response = await axios.post(
         `${BASE_URL}/lesson-scores`,

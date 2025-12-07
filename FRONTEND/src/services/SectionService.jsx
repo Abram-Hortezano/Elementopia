@@ -52,8 +52,6 @@ const SectionService = {
   // Join Section
   joinSection: async (sectionCode, studentId) => {
     try {
-      console.log("Sending Join Request:", { sectionCode, studentId }); // Debug Log
-
       const response = await axios.post(
         `${API_URL}/join`,
         {
@@ -91,12 +89,9 @@ const SectionService = {
   // Get Teacher ID
   getTeacherId: async () => {
     try {
-      const response = await axios.get(
-        `http://localhost:8080/api/teacher/me`,
-        {
-          headers: getAuthHeader(),
-        }
-      );
+      const response = await axios.get(`http://localhost:8080/api/teacher/me`, {
+        headers: getAuthHeader(),
+      });
       return response.data;
     } catch (error) {
       console.error("Failed to get teacher info:", error);
