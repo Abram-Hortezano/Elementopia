@@ -6,22 +6,15 @@ import LoginCard from "./STUDENT/login-card";
 import RegisterCard from "./STUDENT/register-card";
 import AboutUs from "./STUDENT/about-us";
 import StudentHomePage from "./STUDENT/StudentHomePage";
-// import StudentRoomPage from "./STUDENT/StudentRoomPage"; removed
 import StudentCareerPage from "./STUDENT/StudentCareerPage";
 import StudentDiscoveryPage from "./STUDENT/StudentDiscoveryPage";
-// import StudentGameRoomPage from "./STUDENT/StudentGameRoomPage"; removed
 import StudentSandboxPage from "./STUDENT/StudentSandboxPage";
 import ChallengePage from "./components/Student Components/ChallengePage";
 
 // Teacher Pages
-// import PageLayout from "./TEACHER/TeacherPageLayout"; removed
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
 import TeacherGameRoomPage from "./TEACHER/TeacherGameRoomPage";
 import TeacherRoomPage from "./TEACHER/TeacherRoomPage";
-// import TeacherSandbox from "./TEACHER/TeacherSandboxPage"; removed
-
-// Misc
-// import ProfilePageMain from "./pages/profile-page"; removed from NavBar
 
 // Utils
 import PrivateRoute from "./components/utils/PrivateRoute";
@@ -66,14 +59,6 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        {/* <Route
-          path="/student/game-room"
-          element={
-            <PrivateRoute allowedRoles={["STUDENT"]}>
-              <StudentGameRoomPage />
-            </PrivateRoute>
-          }
-        />*/}
         <Route
           path="/student/sandbox"
           element={
@@ -98,40 +83,7 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        {/* <Route
-          path="/student/game1"
-          element={
-            <PrivateRoute allowedRoles={["STUDENT"]}>
-              <StudentElementMatcher />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/student/game2"
-          element={
-            <PrivateRoute allowedRoles={["STUDENT"]}>
-              <StudentStateChanges />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/student/game3"
-          element={
-            <PrivateRoute allowedRoles={["STUDENT"]}>
-              <StudentCardMinigame />
-            </PrivateRoute>
-          }
-        /> */}
-
-        {/* Teacher Routes - Protected */}
-        {/* <Route
-          path="/teacher-home-page"
-          element={
-            <PrivateRoute allowedRoles={["TEACHER"]}>
-              <PageLayout />
-            </PrivateRoute>
-          }
-        /> */}
+ 
         <Route
           path="/teacher/career-page"
           element={
