@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import axios from "axios";
 import "../assets/css/Map-tree.css";
 import UserService from "../services/UserService";
@@ -575,216 +575,185 @@ export default function MapTree() {
   const [newAchievement, setNewAchievement] = useState(null);
   const [scoreLoading, setScoreLoading] = useState(false);
 
-  // Fetch total score from backend - memoized with useCallback
-  const fetchTotalScore = useCallback(
-    async (userId) => {
-      try {
-        const scoreData = await ScoreService.getScore(userId);
+  // Fetch total score from backend
+  const fetchTotalScore = async (userId) => {
+    try {
+      const scoreData = await ScoreService.getScore(userId);
 
-        if (scoreData?.careerScore !== undefined) {
-          setTotalScore(scoreData.careerScore);
-        } else if (scoreData?.score !== undefined) {
-          setTotalScore(scoreData.score);
-        } else if (scoreData?.totalScore !== undefined) {
-          setTotalScore(scoreData.totalScore);
-        } else if (scoreData?.points !== undefined) {
-          setTotalScore(scoreData.points);
+      // Handle different response formats
+      if (scoreData && scoreData.careerScore !== undefined) {
+        setTotalScore(scoreData.careerScore);
+      } else if (scoreData && scoreData.score !== undefined) {
+        setTotalScore(scoreData.score);
+      } else if (scoreData && scoreData.totalScore !== undefined) {
+        setTotalScore(scoreData.totalScore);
+      } else if (scoreData && scoreData.points !== undefined) {
+        setTotalScore(scoreData.points);
+      }
+
+      return scoreData;
+    } catch (error) {
+      console.warn("Could not load score from backend:", error);
+      return null;
+    }
+  };
+
+  // Load user achievements
+  const loadAchievements = async (userId) => {
+    try {
+      const achievements = await AchievementService.getAchievementsByUser(
+        userId
+      );
+      const earned = new Set(achievements.map((a) => a.achievementId || a.id));
+      setEarnedAchievements(earned);
+    } catch (error) {
+      console.error("Failed to load achievements:", error);
+    }
+  };
+
+  // Check for new achievements
+  const checkAchievements = async (completedNodes, scoreFromBackend) => {
+    if (!currentUser?.userId) return;
+
+    // Use the backend score if available
+    const scoreToCheck = scoreFromBackend || totalScore;
+
+    const newlyEarned = [];
+
+    for (const [key, achievement] of Object.entries(ACHIEVEMENTS)) {
+      // Skip if already earned
+      if (earnedAchievements.has(achievement.id)) continue;
+
+      // Check if condition is met
+      if (achievement.condition(completedNodes, scoreToCheck)) {
+        newlyEarned.push(achievement);
+
+        try {
+          // Save to backend
+          await AchievementService.createAchievement(currentUser.userId, {
+            title: achievement.title,
+            description: achievement.description,
+            codeName: achievement.id,
+          });
+        } catch (error) {
+          console.error(`Failed to save achievement ${achievement.id}:`, error);
+        }
+      }
+    }
+
+    // Update state and show notification
+    if (newlyEarned.length > 0) {
+      setEarnedAchievements((prev) => {
+        const updated = new Set(prev);
+        newlyEarned.forEach((a) => updated.add(a.id));
+        return updated;
+      });
+
+      // Show first new achievement
+      setNewAchievement(newlyEarned[0]);
+      setTimeout(() => setNewAchievement(null), 5000);
+    }
+  };
+
+  const loadUserProgress = async (studentId) => {
+    try {
+      const completions = await LessonCompletionService.getUserCompletions(
+        studentId
+      );
+
+      const completedIds = new Set();
+      (completions || []).forEach((c) => {
+        let mappedId = null;
+
+        const possibleKeys = [
+          c.lessonId,
+          c.lesson?.id,
+          c.lesson?.lessonId,
+          c.completionId,
+        ];
+        for (const key of possibleKeys) {
+          if (key != null && backendToNodeMap[key]) {
+            mappedId = backendToNodeMap[key];
+            break;
+          }
         }
 
-        return scoreData;
-      } catch (error) {
-        console.warn("Could not load score from backend:", error);
-        return null;
-      }
-    },
-    [setTotalScore]
-  );
-
-  // Load user achievements - memoized
-  const loadAchievements = useCallback(
-    async (userId) => {
-      try {
-        const achievements = await AchievementService.getAchievementsByUser(
-          userId
-        );
-        const earned = new Set(
-          achievements.map((a) => a.achievementId || a.id)
-        );
-        setEarnedAchievements(earned);
-      } catch (error) {
-        console.error("Failed to load achievements:", error);
-      }
-    },
-    [setEarnedAchievements]
-  );
-
-  // Check for new achievements - memoized
-  const checkAchievements = useCallback(
-    async (completedNodes, scoreFromBackend) => {
-      if (!currentUser?.userId) return;
-
-      // Use the backend score if available
-      const scoreToCheck = scoreFromBackend || totalScore;
-
-      const newlyEarned = [];
-
-      for (const [achievement] of Object.entries(ACHIEVEMENTS)) {
-        // Skip if already earned
-        if (earnedAchievements.has(achievement.id)) continue;
-
-        // Check if condition is met
-        if (achievement.condition(completedNodes, scoreToCheck)) {
-          newlyEarned.push(achievement);
-
-          try {
-            // Save to backend
-            await AchievementService.createAchievement(currentUser.userId, {
-              title: achievement.title,
-              description: achievement.description,
-              codeName: achievement.id,
-            });
-          } catch (error) {
-            console.error(
-              `Failed to save achievement ${achievement.id}:`,
-              error
+        if (mappedId == null) {
+          const lessonName =
+            c.lesson?.name ||
+            c.lessonName ||
+            c.name ||
+            c.title ||
+            c.label ||
+            c.lessonCode;
+          if (lessonName) {
+            const nodeMatch = nodes.find(
+              (n) =>
+                n.lesson &&
+                n.lesson.toLowerCase() === String(lessonName).toLowerCase()
             );
-          }
-        }
-      }
-
-      // Update state and show notification
-      if (newlyEarned.length > 0) {
-        setEarnedAchievements((prev) => {
-          const updated = new Set(prev);
-          newlyEarned.forEach((a) => updated.add(a.id));
-          return updated;
-        });
-
-        // Show first new achievement
-        setNewAchievement(newlyEarned[0]);
-        setTimeout(() => setNewAchievement(null), 5000);
-      }
-    },
-    [
-      currentUser,
-      totalScore,
-      earnedAchievements,
-      setEarnedAchievements,
-      setNewAchievement,
-    ]
-  );
-
-  // Load user progress - memoized
-  const loadUserProgress = useCallback(
-    async (studentId) => {
-      try {
-        const completions = await LessonCompletionService.getUserCompletions(
-          studentId
-        );
-
-        const completedIds = new Set();
-        (completions || []).forEach((c) => {
-          let mappedId = null;
-
-          const possibleKeys = [
-            c.lessonId,
-            c.lesson?.id,
-            c.lesson?.lessonId,
-            c.completionId,
-          ];
-          for (const key of possibleKeys) {
-            if (key != null && backendToNodeMap[key]) {
-              mappedId = backendToNodeMap[key];
-              break;
-            }
-          }
-
-          if (mappedId == null) {
-            const lessonName =
-              c.lesson?.name ||
-              c.lessonName ||
-              c.name ||
-              c.title ||
-              c.label ||
-              c.lessonCode;
-            if (lessonName) {
-              const nodeMatch = nodes.find(
+            if (nodeMatch) mappedId = nodeMatch.id;
+            else {
+              const looseMatch = nodes.find(
                 (n) =>
                   n.lesson &&
-                  n.lesson.toLowerCase() === String(lessonName).toLowerCase()
+                  String(lessonName)
+                    .toLowerCase()
+                    .includes(n.lesson.toLowerCase())
               );
-              if (nodeMatch) mappedId = nodeMatch.id;
-              else {
-                const looseMatch = nodes.find(
-                  (n) =>
-                    n.lesson &&
-                    String(lessonName)
-                      .toLowerCase()
-                      .includes(n.lesson.toLowerCase())
-                );
-                if (looseMatch) mappedId = looseMatch.id;
-              }
+              if (looseMatch) mappedId = looseMatch.id;
             }
           }
-
-          if (mappedId == null) {
-            console.warn(
-              "Could not map completion to a lesson. Completion object:",
-              c
-            );
-          } else {
-            completedIds.add(mappedId);
-          }
-        });
-
-        setCompletedNodes(completedIds);
-
-        // Calculate challenge-based score as fallback
-        const challengeNodes = nodes.filter((n) => n.label.includes("★"));
-        const completedChallenges = challengeNodes.filter((n) =>
-          completedIds.has(n.id)
-        );
-        const calculatedScore = completedChallenges.length * 100;
-
-        // Try to get score from backend first
-        const userId = currentUser?.userId || currentUser?.id;
-        if (userId) {
-          try {
-            const backendScoreData = await fetchTotalScore(userId);
-            if (!backendScoreData) {
-              // If backend fetch failed, use calculated score
-              setTotalScore(calculatedScore);
-            }
-          } catch (scoreError) {
-            console.warn("Using calculated score as fallback:", scoreError);
-            setTotalScore(calculatedScore);
-          }
-        } else {
-          setTotalScore(calculatedScore);
         }
 
-        // Check for new achievements
-        await checkAchievements(completedIds, totalScore);
-      } catch (err) {
-        console.warn(
-          "Could not load user completions on login.",
-          err.response?.data || err.message
-        );
-        setCompletedNodes(new Set());
-        setTotalScore(0);
-      }
-    },
-    [
-      currentUser,
-      fetchTotalScore,
-      checkAchievements,
-      totalScore,
-      setCompletedNodes,
-      setTotalScore,
-    ]
-  );
+        if (mappedId == null) {
+          console.warn(
+            "Could not map completion to a lesson. Completion object:",
+            c
+          );
+        } else {
+          completedIds.add(mappedId);
+        }
+      });
 
-  // Initial data loading effect - FIXED: Added all dependencies
+      setCompletedNodes(completedIds);
+
+      // Calculate challenge-based score as fallback
+      const challengeNodes = nodes.filter((n) => n.label.includes("★"));
+      const completedChallenges = challengeNodes.filter((n) =>
+        completedIds.has(n.id)
+      );
+      const calculatedScore = completedChallenges.length * 100;
+
+      // Try to get score from backend first
+      const userId = currentUser?.userId || currentUser?.id;
+      if (userId) {
+        try {
+          const backendScoreData = await fetchTotalScore(userId);
+          if (!backendScoreData) {
+            // If backend fetch failed, use calculated score
+            setTotalScore(calculatedScore);
+          }
+        } catch (scoreError) {
+          console.warn("Using calculated score as fallback:", scoreError);
+          setTotalScore(calculatedScore);
+        }
+      } else {
+        setTotalScore(calculatedScore);
+      }
+
+      // Check for new achievements
+      await checkAchievements(completedIds, totalScore);
+    } catch (err) {
+      console.warn(
+        "Could not load user completions on login.",
+        err.response?.data || err.message
+      );
+      setCompletedNodes(new Set());
+      setTotalScore(0);
+    }
+  };
+
   useEffect(() => {
     const initData = async () => {
       try {
@@ -828,10 +797,7 @@ export default function MapTree() {
             try {
               await ScoreService.createScore(userId);
             } catch (scoreError) {
-              console.warn(
-                "Score update failed, but lesson completion saved:",
-                scoreError
-              );
+              console.warn("Score record already exists or error:", scoreError);
             }
           }
 
@@ -847,7 +813,6 @@ export default function MapTree() {
           setHasAccess(false);
         }
       } catch (err) {
-        console.warn("Access check failed:", err);
         setHasAccess(false);
       } finally {
         setCheckingAccess(false);
@@ -855,9 +820,9 @@ export default function MapTree() {
     };
 
     initData();
-  }, [loadAchievements, loadUserProgress]);
+  }, []);
 
-  // Real-time score sync effect - FIXED: Added fetchTotalScore dependency
+  // Real-time score sync effect
   useEffect(() => {
     if (!hasAccess || !currentUser?.userId) return;
 
@@ -872,7 +837,7 @@ export default function MapTree() {
     }, 30000);
 
     return () => clearInterval(interval);
-  }, [hasAccess, currentUser, fetchTotalScore]);
+  }, [hasAccess, currentUser]);
 
   const isPrerequisiteChainComplete = (nodeId) => {
     let currentId = nodeId;

@@ -508,7 +508,6 @@ export default function MapTree() {
       );
       const earned = new Set(achievements.map((a) => a.achievementId || a.id));
       setEarnedAchievements(earned);
-      console.log(`🏆 Loaded ${earned.size} achievements`);
     } catch (error) {
       console.error("Failed to load achievements:", error);
     }
@@ -535,10 +534,8 @@ export default function MapTree() {
             description: achievement.description,
             codeName: achievement.id,
           });
-
-          console.log(`🏆 Achievement Unlocked: ${achievement.title}`);
         } catch (error) {
-          console.error(`Failed to save achievement ${achievement.id}:`, error);
+          console.warn("error", error);
         }
       }
     }
@@ -564,10 +561,6 @@ export default function MapTree() {
         const completions = await LessonCompletionService.getUserCompletions(
           userId
         );
-        console.log("--- START DEBUG: LOADED COMPLETIONS ---");
-        console.log("Raw Server Data:", completions);
-        console.log("Raw Server Data Sample:", completions && completions[0]);
-        console.log("--- END DEBUG ---");
 
         const completedIds = new Set();
         (completions || []).forEach((c) => {
@@ -620,7 +613,6 @@ export default function MapTree() {
               c
             );
           } else {
-            console.log(`Mapping: c=${JSON.stringify(c)} → nodeId=${mappedId}`);
             completedIds.add(mappedId);
           }
         });
@@ -638,18 +630,6 @@ export default function MapTree() {
 
         // Check for new achievements
         await checkAchievements(completedIds, calculatedScore);
-
-        console.log(
-          `✅ Loaded ${completedIds.size} completed lessons for user ID: ${userId}`
-        );
-        console.log(
-          `⭐ Completed ${completedChallenges.length}/${challengeNodes.length} challenges`
-        );
-        console.log(`🏆 Total Score: ${calculatedScore} points`);
-        console.log(
-          "Completed Node IDs:",
-          Array.from(completedIds).sort((a, b) => a - b)
-        );
       } else {
         // If no user ID, start with empty progress
         setCompletedNodes(new Set());

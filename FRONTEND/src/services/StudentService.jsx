@@ -4,12 +4,14 @@ const API_URL = "http://localhost:8080/api/student";
 //const API_URL = "https://elementopia.onrender.com/api/student";
 
 const getAuthHeader = () => {
-  const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
+  const userStr =
+    sessionStorage.getItem("user") || localStorage.getItem("user");
 
   if (userStr) {
     try {
       const userObj = JSON.parse(userStr);
-      const token = userObj.token || (typeof userObj === 'string' ? userObj : null);
+      const token =
+        userObj.token || (typeof userObj === "string" ? userObj : null);
 
       if (token) {
         return {
@@ -26,12 +28,11 @@ const getAuthHeader = () => {
   return {
     headers: {
       "Content-Type": "application/json",
-    }
+    },
   };
 };
 
 const StudentService = {
-  
   /**
    * Get all students
    * @returns {Promise<Array>} List of student objects
@@ -41,7 +42,10 @@ const StudentService = {
       const response = await axios.get(`${API_URL}/getAll`, getAuthHeader());
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch students:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch students:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -53,10 +57,16 @@ const StudentService = {
    */
   getStudentById: async (studentId) => {
     try {
-      const response = await axios.get(`${API_URL}/${studentId}`, getAuthHeader());
+      const response = await axios.get(
+        `${API_URL}/${studentId}`,
+        getAuthHeader()
+      );
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch student:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch student:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -70,7 +80,7 @@ const StudentService = {
     try {
       const allStudents = await StudentService.getAllStudents();
       // Find student by userId in the array
-      const student = allStudents.find(s => s.userId === userId);
+      const student = allStudents.find((s) => s.userId === userId);
       return student || null;
     } catch (error) {
       console.error("Failed to fetch student by userId:", error);
@@ -90,10 +100,13 @@ const StudentService = {
         {},
         getAuthHeader()
       );
-      console.log(`✅ Assigned student role to user ${userId}`);
+
       return response.data;
     } catch (error) {
-      console.error("Failed to assign student role:", error.response?.data || error.message);
+      console.error(
+        "Failed to assign student role:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -109,10 +122,13 @@ const StudentService = {
         `${API_URL}/delete/${studentId}`,
         getAuthHeader()
       );
-      console.log(`🗑️ Deleted student ${studentId}`);
+
       return response.data;
     } catch (error) {
-      console.error("Failed to delete student:", error.response?.data || error.message);
+      console.error(
+        "Failed to delete student:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -128,7 +144,6 @@ const StudentService = {
       // First try to get existing student by userId
       const existingStudent = await StudentService.getStudentByUserId(userId);
       if (existingStudent) {
-        console.log("Student already exists for user:", userId);
         return existingStudent;
       }
 
@@ -136,21 +151,27 @@ const StudentService = {
       try {
         return await StudentService.assignStudentRole(userId);
       } catch (assignError) {
-        console.warn("Failed to assign student role, trying to find in all students:", assignError);
-        
+        console.warn(
+          "Failed to assign student role, trying to find in all students:",
+          assignError
+        );
+
         // Fallback: Check all students again with more flexible matching
         const allStudents = await StudentService.getAllStudents();
-        const foundStudent = allStudents.find(s => 
-          s.userId === userId || 
-          s.user?.userId === userId ||
-          s.user?.id === userId
+        const foundStudent = allStudents.find(
+          (s) =>
+            s.userId === userId ||
+            s.user?.userId === userId ||
+            s.user?.id === userId
         );
-        
+
         if (foundStudent) {
           return foundStudent;
         }
-        
-        throw new Error(`No student found for user ${userId} and cannot create one`);
+
+        throw new Error(
+          `No student found for user ${userId} and cannot create one`
+        );
       }
     } catch (error) {
       console.error("Failed to create or get student:", error);
@@ -167,10 +188,10 @@ const StudentService = {
     try {
       const students = await StudentService.getAllStudents();
       const allScores = await scoreService.getAllScores();
-      
+
       // Create a map of userId to score
       const scoreMap = {};
-      allScores.forEach(score => {
+      allScores.forEach((score) => {
         const userId = score.userId || score.user?.userId || score.user?.id;
         if (userId) {
           scoreMap[userId] = score.careerScore || score.score || 0;
@@ -178,9 +199,9 @@ const StudentService = {
       });
 
       // Merge student data with scores
-      return students.map(student => ({
+      return students.map((student) => ({
         ...student,
-        score: student.userId ? (scoreMap[student.userId] || 0) : 0
+        score: student.userId ? scoreMap[student.userId] || 0 : 0,
       }));
     } catch (error) {
       console.error("Failed to get students with scores:", error);
@@ -197,13 +218,18 @@ const StudentService = {
     try {
       const students = await StudentService.getAllStudents();
       const lowerSearchTerm = searchTerm.toLowerCase();
-      
-      return students.filter(student => 
-        (student.firstName && student.firstName.toLowerCase().includes(lowerSearchTerm)) ||
-        (student.lastName && student.lastName.toLowerCase().includes(lowerSearchTerm)) ||
-        (student.email && student.email.toLowerCase().includes(lowerSearchTerm)) ||
-        (student.username && student.username.toLowerCase().includes(lowerSearchTerm)) ||
-        (student.userId && student.userId.toString().includes(searchTerm))
+
+      return students.filter(
+        (student) =>
+          (student.firstName &&
+            student.firstName.toLowerCase().includes(lowerSearchTerm)) ||
+          (student.lastName &&
+            student.lastName.toLowerCase().includes(lowerSearchTerm)) ||
+          (student.email &&
+            student.email.toLowerCase().includes(lowerSearchTerm)) ||
+          (student.username &&
+            student.username.toLowerCase().includes(lowerSearchTerm)) ||
+          (student.userId && student.userId.toString().includes(searchTerm))
       );
     } catch (error) {
       console.error("Failed to search students:", error);
@@ -219,15 +245,17 @@ const StudentService = {
   getStudentsBySection: async (sectionId) => {
     try {
       const students = await StudentService.getAllStudents();
-      return students.filter(student => 
-        student.section && 
-        (student.section.sectionId === sectionId || student.section.id === sectionId)
+      return students.filter(
+        (student) =>
+          student.section &&
+          (student.section.sectionId === sectionId ||
+            student.section.id === sectionId)
       );
     } catch (error) {
       console.error("Failed to get students by section:", error);
       throw error;
     }
-  }
+  },
 };
 
 export default StudentService;

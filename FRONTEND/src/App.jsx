@@ -60,14 +60,7 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/student/sandbox"
-          element={
-            <PrivateRoute allowedRoles={["STUDENT"]}>
-              <StudentSandboxPage />
-            </PrivateRoute>
-          }
-        />
+
         <Route
           path="/student/Chem-Simulation"
           element={
