@@ -1,6 +1,6 @@
 import axios from "axios";
 
-// const API_URL = "https://elementopia.onrender.com/section";
+// const API_URL = "https://elementopia.onrender.com/api/section";
 const API_URL = "http://localhost:8080/api/section";
 
 const getAuthHeader = () => {

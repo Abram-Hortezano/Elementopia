@@ -25,10 +25,9 @@ const Navbar = ({ open }) => {
   };
 
   const handleLogout = () => {
-    // sessionStorage.removeItem("user");
-    localStorage.clear();
     sessionStorage.clear();
-
+    localStorage.clear();
+    // sessionStorage.removeItem("user");
     navigate("/");
   };
 

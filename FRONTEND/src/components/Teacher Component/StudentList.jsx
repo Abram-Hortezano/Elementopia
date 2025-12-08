@@ -10,8 +10,7 @@ const StudentList = ({ room, onBack, onClose }) => {
   const [error, setError] = useState("");
   const [activeDropdown, setActiveDropdown] = useState(null);
 
-  // Constants
-  const TOTAL_MODULES = 10; // Adjust based on actual lesson count
+  const TOTAL_MODULES = 10;
 
   useEffect(() => {
     if (room?.roomCode) {
@@ -23,10 +22,12 @@ const StudentList = ({ room, onBack, onClose }) => {
     try {
       setLoading(true);
       setError("");
-      // 1. Fetch Lab Details (Students)
+
+      // 1. Fetch students in class
       const labData = await SectionService.getClassMembers(room.roomCode);
       const rawStudents = labData.students || [];
-      // 2. Fetch total lessons to compute percentages accurately
+
+      // 2. Fetch lessons count
       let lessonsCount = TOTAL_MODULES;
       try {
         const lessons = await LessonService.getAllLessons();
@@ -191,6 +192,7 @@ const StudentList = ({ room, onBack, onClose }) => {
             </p>
           </div>
         </div>
+
         <div className="header-right">
           <span className="student-count">
             Total Students: {students.length}
@@ -229,6 +231,7 @@ const StudentList = ({ room, onBack, onClose }) => {
               <th>Actions</th>
             </tr>
           </thead>
+
           <tbody>
             {students.map((student) => (
               <tr key={student.id}>
@@ -262,11 +265,14 @@ const StudentList = ({ room, onBack, onClose }) => {
                     <span className="progress-text">{student.progress}%</span>
                   </div>
                 </td>
+
+                {/* Score */}
                 <td>
-                  <span className={`score`}>{student.score}</span>
+                  <span className="score">{student.score}</span>
                 </td>
 
                 <td>{getStatusBadge(student.status)}</td>
+
                 <td>
                   <div className="dropdown-container">
                     <button
@@ -275,6 +281,7 @@ const StudentList = ({ room, onBack, onClose }) => {
                     >
                       ⋮
                     </button>
+
                     {activeDropdown === student.id && (
                       <div
                         className={`dropdown-menu ${getDropdownPosition(
