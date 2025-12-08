@@ -661,7 +661,7 @@ export default function MapTree() {
               sessionStorage.getItem("user") || localStorage.getItem("user")
             );
             await axios.post(
-              "http://localhost:8080/api/student/add",
+              "https://elementopia.onrender.com/api/student/add",
               {
                 firstName: userData.firstName,
                 lastName: userData.lastName,

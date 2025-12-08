@@ -1,7 +1,7 @@
 import axios from "axios";
 
-const API_URL = "http://localhost:8080/api/student";
-//const API_URL = "https://elementopia.onrender.com/api/student";
+// const API_URL = "http://localhost:8080/api/student";
+const API_URL = "https://elementopia.onrender.com/api/student";
 
 const getAuthHeader = () => {
   const userStr =
@@ -139,7 +139,7 @@ const StudentService = {
    * @param {Object} studentData - Optional student data
    * @returns {Promise<Object>} Student object
    */
-  createOrGetStudent: async (userId, studentData = {}) => {
+  createOrGetStudent: async (userId = {}) => {
     try {
       // First try to get existing student by userId
       const existingStudent = await StudentService.getStudentByUserId(userId);

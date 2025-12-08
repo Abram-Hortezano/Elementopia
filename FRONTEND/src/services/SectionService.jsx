@@ -120,7 +120,7 @@ const SectionService = {
       });
       return response.data;
     } catch (error) {
-      // Return empty array if fails
+      console.warn(error);
       return [];
     }
   },
