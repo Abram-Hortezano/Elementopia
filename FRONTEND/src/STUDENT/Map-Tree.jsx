@@ -505,14 +505,11 @@ export default function MapTree() {
 
         if (userData.role === "STUDENT" && !userData.student) {
           try {
-<<<<<<< HEAD
-            const userSession = JSON.parse(sessionStorage.getItem("user") || localStorage.getItem("user"));
-            await axios.post("https://elementopia.onrender.com/api/student/add", {
-=======
+            // const userSession = JSON.parse(sessionStorage.getItem("user") || localStorage.getItem("user"));
+            // await axios.post("https://elementopia.onrender.com/api/student/add", {
             // FIXED: Use localStorage token instead of sessionStorage 'user' object
             const token = localStorage.getItem("token");
             await axios.post("http://localhost:8080/api/student/add", {
->>>>>>> da630a33ee0bc17957d9c32073f216188f169921
               firstName: userData.firstName,
               lastName: userData.lastName,
               user: { userId: userData.userId || userData.id } 
@@ -583,15 +580,10 @@ export default function MapTree() {
         console.log(`Node ID: ${activeLesson.id}, Mapped Backend Lesson ID: ${lessonId}`);
 
         if (!lessonId) return;
-
-<<<<<<< HEAD
         // Save lesson completion
         await LessonCompletionService.completeLesson(validStudentId, parseInt(lessonId));
-<<<<<<< HEAD
-=======
         console.log(`Saving completion for lesson ID: ${lessonId}, Node ID: ${activeLesson.id}`);
         await LessonCompletionService.completeLesson(userId, parseInt(lessonId));
->>>>>>> da630a33ee0bc17957d9c32073f216188f169921
         
         // 3. Update scores if it's a challenge
         if (activeLesson.label.includes("★")) {
@@ -602,16 +594,9 @@ export default function MapTree() {
           }
         }
         
-<<<<<<< HEAD
-        // Reload progress
-=======
-
->>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
         await loadUserProgress(validStudentId);
-=======
         // 4. Reload progress
         await loadUserProgress(userId);
->>>>>>> da630a33ee0bc17957d9c32073f216188f169921
       } catch (err) {
         // Handle "already completed" gracefully
         if (err.message?.includes("Lesson already completed") || err.response?.status === 409) {
