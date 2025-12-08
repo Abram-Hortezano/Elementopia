@@ -1,15 +1,17 @@
 import axios from "axios";
 
-// const API_URL = "http://localhost:8080/api/score";
-const API_URL = "https://elementopia.onrender.com/api/score";
+const API_URL = "http://localhost:8080/api/score";
+// const API_URL = "https://elementopia.onrender.com/api/score";
 
 const getAuthHeader = () => {
-  const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
+  const userStr =
+    sessionStorage.getItem("user") || localStorage.getItem("user");
 
   if (userStr) {
     try {
       const userObj = JSON.parse(userStr);
-      const token = userObj.token || (typeof userObj === 'string' ? userObj : null);
+      const token =
+        userObj.token || (typeof userObj === "string" ? userObj : null);
 
       if (token) {
         return {
@@ -26,12 +28,11 @@ const getAuthHeader = () => {
   return {
     headers: {
       "Content-Type": "application/json",
-    }
+    },
   };
 };
 
 const ScoreService = {
-  
   /**
    * Get a user's score
    * @param {number} userId - User's ID
@@ -41,7 +42,10 @@ const ScoreService = {
       const response = await axios.get(`${API_URL}/${userId}`, getAuthHeader());
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch score:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch score:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -61,7 +65,10 @@ const ScoreService = {
       console.log(`💯 Added ${points} points to career score`);
       return response.data;
     } catch (error) {
-      console.error("Failed to add challenge score:", error.response?.data || error.message);
+      console.error(
+        "Failed to add challenge score:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -74,7 +81,10 @@ const ScoreService = {
       const response = await axios.get(`${API_URL}/all`, getAuthHeader());
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch all scores:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch all scores:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -91,7 +101,10 @@ const ScoreService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to update score:", error.response?.data || error.message);
+      console.error(
+        "Failed to update score:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -109,11 +122,17 @@ const ScoreService = {
       return response.data;
     } catch (error) {
       // If score already exists, that's okay
-      if (error.response?.status === 400 || error.message?.includes("already exists")) {
+      if (
+        error.response?.status === 400 ||
+        error.message?.includes("already exists")
+      ) {
         console.log("Score already exists for user");
         return null;
       }
-      console.error("Failed to create score:", error.response?.data || error.message);
+      console.error(
+        "Failed to create score:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
