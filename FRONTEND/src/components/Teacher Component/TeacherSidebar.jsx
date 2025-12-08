@@ -12,16 +12,12 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom"; // ✅ Import useLocation
 import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import room from "../../assets/img/room.png";
 import career from "../../assets/img/career.png";
-<<<<<<< HEAD
-import discovery from "../../assets/img/discovery.png";
-=======
 import chemSimulation from "../../assets/img/chemSimulation.png";
->>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
 
 const drawerWidth = 180;
 const closedWidth = 60;
@@ -48,10 +44,6 @@ const menuItems = [
  // { text: "Home", icon: home, path: "/teacher/analytics" },
   { text: "Room", icon: room, path: "/teacher/room" },
   { text: "Career", icon: career, path: "/teacher/career-page" },
-<<<<<<< HEAD
-   { text: "Discovery", icon: discovery, path: "/teacher/discovery" },
-=======
->>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
   /*{
     text: "Chem-Simulation",
     icon: chemSimulation,

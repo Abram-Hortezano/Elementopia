@@ -1,17 +1,7 @@
 import axios from "axios";
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 // const BASE_URL = "http://localhost:8080/api";
 const BASE_URL = "https://elementopia.onrender.com/api";
-=======
-const BASE_URL = "http://localhost:8080/api";
-// const BASE_URL = "https://elementopia.onrender.com/api/";
->>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
-=======
-const BASE_URL = "http://localhost:8080/api";
-// const BASE_URL = "https://elementopia.onrender.com/api";
->>>>>>> da630a33ee0bc17957d9c32073f216188f169921
 
 const getAuthHeader = () => {
   const userStr =

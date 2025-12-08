@@ -1,17 +1,8 @@
 import axios from "axios";
 
-<<<<<<< HEAD
-<<<<<<< HEAD
 const API_URL = "https://elementopia.onrender.com/api/section";
 // const API_URL = "http://localhost:8080/api/section";
-=======
-// const API_URL = "https://elementopia.onrender.com/section";
-const API_URL = "http://localhost:8080/api/section";
->>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
-=======
-// const API_URL = "https://elementopia.onrender.com/api/section";
-const API_URL = "http://localhost:8080/api/section";
->>>>>>> da630a33ee0bc17957d9c32073f216188f169921
+
 
 const getAuthHeader = () => {
   let token = localStorage.getItem("token");
@@ -99,24 +90,10 @@ const SectionService = {
   // Get Teacher ID
   getTeacherId: async () => {
     try {
-<<<<<<< HEAD
-<<<<<<< HEAD
+
       const response = await axios.get(`https://elementopia.onrender.com/api/teacher/me`, {
         headers: getAuthHeader(),
       });
-=======
-      const response = await axios.get(
-        `http://localhost:8080/api/teacher/me`,
-        {
-          headers: getAuthHeader(),
-        }
-      );
->>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
-=======
-      const response = await axios.get(`http://localhost:8080/api/teacher/me`, {
-        headers: getAuthHeader(),
-      });
->>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
       return response.data;
     } catch (error) {
       console.error("Failed to get teacher info:", error);

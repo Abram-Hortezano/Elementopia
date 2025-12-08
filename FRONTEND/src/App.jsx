@@ -15,14 +15,11 @@ import ChallengePage from "./components/Student Components/ChallengePage";
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
 import TeacherGameRoomPage from "./TEACHER/TeacherGameRoomPage";
 import TeacherRoomPage from "./TEACHER/TeacherRoomPage";
-<<<<<<< HEAD
-import TeacherSandbox from "./TEACHER/TeacherSandboxPage";
+// import TeacherSandbox from "./TEACHER/TeacherSandboxPage";
 import TeacherDiscoveryPage from "./TEACHER/TeacherDiscoveryPage";
 
 // Misc
-import ProfilePageMain from "./pages/profile-page";
-=======
->>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
+// import ProfilePageMain from "./pages/profile-page";
 
 // Utils
 import PrivateRoute from "./components/utils/PrivateRoute";
