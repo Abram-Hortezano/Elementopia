@@ -580,27 +580,24 @@ export default function MapTree() {
     async (userId) => {
       try {
         const scoreData = await ScoreService.getScore(userId);
-        console.log("📊 Backend Score Data:", scoreData);
 
-        // Handle different response formats
-        if (scoreData && scoreData.careerScore !== undefined) {
+        if (scoreData?.careerScore !== undefined) {
           setTotalScore(scoreData.careerScore);
-        } else if (scoreData && scoreData.score !== undefined) {
+        } else if (scoreData?.score !== undefined) {
           setTotalScore(scoreData.score);
-        } else if (scoreData && scoreData.totalScore !== undefined) {
+        } else if (scoreData?.totalScore !== undefined) {
           setTotalScore(scoreData.totalScore);
-        } else if (scoreData && scoreData.points !== undefined) {
+        } else if (scoreData?.points !== undefined) {
           setTotalScore(scoreData.points);
         }
 
-        console.log(`✅ Loaded total score from backend: ${totalScore} points`);
         return scoreData;
       } catch (error) {
         console.warn("Could not load score from backend:", error);
         return null;
       }
     },
-    [setTotalScore, totalScore]
+    [setTotalScore]
   );
 
   // Load user achievements - memoized
@@ -768,18 +765,6 @@ export default function MapTree() {
 
         // Check for new achievements
         await checkAchievements(completedIds, totalScore);
-
-        console.log(
-          `✅ Loaded ${completedIds.size} completed lessons for student ID: ${studentId}`
-        );
-        console.log(
-          `⭐ Completed ${completedChallenges.length}/${challengeNodes.length} challenges`
-        );
-        console.log(`🏆 Total Score: ${totalScore} points`);
-        console.log(
-          "Completed Node IDs:",
-          Array.from(completedIds).sort((a, b) => a - b)
-        );
       } catch (err) {
         console.warn(
           "Could not load user completions on login.",
@@ -842,9 +827,11 @@ export default function MapTree() {
           if (userId) {
             try {
               await ScoreService.createScore(userId);
-              console.log("✅ Score record created/verified for user");
             } catch (scoreError) {
-              console.log("Score record already exists or error:", scoreError);
+              console.warn(
+                "Score update failed, but lesson completion saved:",
+                scoreError
+              );
             }
           }
 
@@ -860,6 +847,7 @@ export default function MapTree() {
           setHasAccess(false);
         }
       } catch (err) {
+        console.warn("Access check failed:", err);
         setHasAccess(false);
       } finally {
         setCheckingAccess(false);
@@ -948,11 +936,7 @@ export default function MapTree() {
           try {
             // Add 100 points for completing a challenge
             const result = await handleScoreUpdate(userId, 100);
-            if (result.success) {
-              console.log(
-                `✅ Challenge completed! Added 100 points for ${activeLesson.label}`
-              );
-            } else {
+            if (!result.success) {
               console.warn(
                 "Score update failed, but lesson completion saved:",
                 result.error

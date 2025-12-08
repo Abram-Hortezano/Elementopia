@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/score";
-// const API_URL = "https://elementopia.onrender.com/api/score";
+//const API_URL = "https://elementopia.onrender.com/api/score";
 
 const getAuthHeader = () => {
   const userStr =
@@ -51,18 +51,17 @@ const ScoreService = {
   },
 
   /**
-   * Add points when a challenge is completed
+   * Add points when a challenge is completed - UPDATED to match backend
    * @param {number} userId - User's ID
    * @param {number} points - Points to add (default: 100)
    */
   addChallengeScore: async (userId, points = 100) => {
     try {
       const response = await axios.post(
-        `${API_URL}/challenge/${userId}`,
-        { points },
+        `${API_URL}/add/${userId}`, // Changed from /challenge to /add
+        { score: points }, // Changed from { points } to { score: points }
         getAuthHeader()
       );
-      console.log(`💯 Added ${points} points to career score`);
       return response.data;
     } catch (error) {
       console.error(
@@ -126,7 +125,6 @@ const ScoreService = {
         error.response?.status === 400 ||
         error.message?.includes("already exists")
       ) {
-        console.log("Score already exists for user");
         return null;
       }
       console.error(
@@ -134,6 +132,27 @@ const ScoreService = {
         error.response?.data || error.message
       );
       throw error;
+    }
+  },
+
+  /**
+   * Helper method to handle score updates with retry logic
+   */
+  updateScoreWithRetry: async (userId, points = 100) => {
+    try {
+      return await ScoreService.addChallengeScore(userId, points);
+    } catch (error) {
+      console.warn("First attempt failed, trying create then update...", error);
+
+      try {
+        // Try to create score record first
+        await ScoreService.createScore(userId);
+        // Then add points
+        return await ScoreService.addChallengeScore(userId, points);
+      } catch (createError) {
+        console.error("Failed to update score even after retry:", createError);
+        throw createError;
+      }
     }
   },
 };
