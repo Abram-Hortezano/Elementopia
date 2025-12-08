@@ -349,6 +349,18 @@ const LessonIcon = ({ iconType, isCompleted, isLocked }) => {
   return getIconContent();
 };
 
+// --- HELPER FUNCTION: HANDLE SCORE UPDATES ---
+const handleScoreUpdate = async (userId, points = 100) => {
+  try {
+    // Use the retry method that will try to create score if it doesn't exist
+    const result = await ScoreService.updateScoreWithRetry(userId, points);
+    return { success: true, data: result };
+  } catch (error) {
+    console.error("Failed to update score even with retry:", error);
+    return { success: false, error };
+  }
+};
+
 // --- MAIN COMPONENT ---
 export default function MapTree() {
   const [completedNodes, setCompletedNodes] = useState(new Set());
@@ -360,7 +372,36 @@ export default function MapTree() {
   const [currentPage, setCurrentPage] = useState(0);
   const [earnedAchievements, setEarnedAchievements] = useState(new Set());
   const [newAchievement, setNewAchievement] = useState(null);
+  const [scoreLoading, setScoreLoading] = useState(false);
 
+<<<<<<< HEAD
+=======
+  // Fetch total score from backend
+  const fetchTotalScore = async (userId) => {
+    try {
+      const scoreData = await ScoreService.getScore(userId);
+      console.log("📊 Backend Score Data:", scoreData);
+      
+      // Handle different response formats
+      if (scoreData && scoreData.careerScore !== undefined) {
+        setTotalScore(scoreData.careerScore);
+      } else if (scoreData && scoreData.score !== undefined) {
+        setTotalScore(scoreData.score);
+      } else if (scoreData && scoreData.totalScore !== undefined) {
+        setTotalScore(scoreData.totalScore);
+      } else if (scoreData && scoreData.points !== undefined) {
+        setTotalScore(scoreData.points);
+      }
+      
+      console.log(`✅ Loaded total score from backend: ${totalScore} points`);
+      return scoreData;
+    } catch (error) {
+      console.warn("Could not load score from backend:", error);
+      return null;
+    }
+  };
+
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
   // Load user achievements
   const loadAchievements = async (userId) => {
     try {
@@ -374,15 +415,23 @@ export default function MapTree() {
   };
 
   // Check for new achievements
-  const checkAchievements = async (completedNodes, totalScore) => {
+  const checkAchievements = async (completedNodes, scoreFromBackend) => {
     if (!currentUser?.userId) return;
 
+    // Use the backend score if available
+    const scoreToCheck = scoreFromBackend || totalScore;
+    
     const newlyEarned = [];
 
     for (const [key, achievement] of Object.entries(ACHIEVEMENTS)) {
       if (earnedAchievements.has(achievement.id)) continue;
 
+<<<<<<< HEAD
       if (achievement.condition(completedNodes, totalScore)) {
+=======
+      // Check if condition is met
+      if (achievement.condition(completedNodes, scoreToCheck)) {
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
         newlyEarned.push(achievement);
         
         try {
@@ -450,18 +499,47 @@ export default function MapTree() {
 
       setCompletedNodes(completedIds);
       
+<<<<<<< HEAD
+=======
+      // Calculate challenge-based score as fallback
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
       const challengeNodes = nodes.filter(n => n.label.includes("★"));
       const completedChallenges = challengeNodes.filter(n => completedIds.has(n.id));
       const calculatedScore = completedChallenges.length * 100;
       
-      setTotalScore(calculatedScore);
+      // Try to get score from backend first
+      const userId = currentUser?.userId || currentUser?.id;
+      if (userId) {
+        try {
+          const backendScoreData = await fetchTotalScore(userId);
+          if (!backendScoreData) {
+            // If backend fetch failed, use calculated score
+            setTotalScore(calculatedScore);
+          }
+        } catch (scoreError) {
+          console.warn("Using calculated score as fallback:", scoreError);
+          setTotalScore(calculatedScore);
+        }
+      } else {
+        setTotalScore(calculatedScore);
+      }
       
+<<<<<<< HEAD
       if (currentUser?.userId) {
         await syncScore(completedIds, currentUser.userId);
       }
       
       await checkAchievements(completedIds, calculatedScore);
       
+=======
+      // Check for new achievements
+      await checkAchievements(completedIds, totalScore);
+      
+      console.log(`✅ Loaded ${completedIds.size} completed lessons for student ID: ${studentId}`);
+      console.log(`⭐ Completed ${completedChallenges.length}/${challengeNodes.length} challenges`);
+      console.log(`🏆 Total Score: ${totalScore} points`);
+      console.log("Completed Node IDs:", Array.from(completedIds).sort((a, b) => a - b));
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
     } catch (err) {
       console.warn("Could not load user completions on login.", err.response?.data || err.message);
       setCompletedNodes(new Set());
@@ -523,8 +601,32 @@ export default function MapTree() {
 
         if (userData.student && userData.student.section) {
           setHasAccess(true);
+<<<<<<< HEAD
           const validUserId = userData.userId || userData.id;
           if (validUserId) await loadUserProgress(validUserId);
+=======
+          const validStudentId = userData.student.studentId || userData.student.id;
+          
+          // Ensure score record exists
+          const userId = userData.userId || userData.id;
+          if (userId) {
+            try {
+              await ScoreService.createScore(userId);
+              console.log("✅ Score record created/verified for user");
+            } catch (scoreError) {
+              console.log("Score record already exists or error:", scoreError);
+            }
+          }
+          
+          // Load achievements
+          if (userId) {
+            await loadAchievements(userId);
+          }
+          
+          if (validStudentId) {
+            await loadUserProgress(validStudentId);
+          }
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
         } else {
           setHasAccess(false);
         }
@@ -537,6 +639,23 @@ export default function MapTree() {
 
     initData();
   }, []);
+
+  // Real-time score sync effect
+  useEffect(() => {
+    if (!hasAccess || !currentUser?.userId) return;
+
+    // Sync scores every 30 seconds while on the map
+    const interval = setInterval(async () => {
+      try {
+        const userId = currentUser.userId || currentUser.id;
+        await fetchTotalScore(userId);
+      } catch (error) {
+        console.warn("Background score sync failed:", error);
+      }
+    }, 30000);
+
+    return () => clearInterval(interval);
+  }, [hasAccess, currentUser]);
 
   const isPrerequisiteChainComplete = (nodeId) => {
     let currentId = nodeId;
@@ -566,11 +685,20 @@ export default function MapTree() {
   const handleLessonComplete = async () => {
     if (activeLesson && currentUser) {
       try {
+<<<<<<< HEAD
         // 1. Get the User ID securely
         const userId = currentUser.userId || currentUser.id;
         
         if (!userId) {
           console.error("Missing User ID");
+=======
+        setScoreLoading(true);
+        const validStudentId = currentUser.student?.studentId || currentUser.student?.id;
+        const userId = currentUser.userId || currentUser.id;
+        
+        if (!validStudentId || !userId) {
+          console.error("Missing student or user ID");
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
           return;
         }
 
@@ -579,6 +707,7 @@ export default function MapTree() {
         );
         console.log(`Node ID: ${activeLesson.id}, Mapped Backend Lesson ID: ${lessonId}`);
 
+<<<<<<< HEAD
         if (!lessonId) return;
         // Save lesson completion
         await LessonCompletionService.completeLesson(validStudentId, parseInt(lessonId));
@@ -597,6 +726,37 @@ export default function MapTree() {
         await loadUserProgress(validStudentId);
         // 4. Reload progress
         await loadUserProgress(userId);
+=======
+        if (!lessonId) {
+          console.error(`Could not find backend lesson ID for node ${activeLesson.id}`);
+          return;
+        }
+
+        // Save lesson completion
+        await LessonCompletionService.completeLesson(validStudentId, parseInt(lessonId));
+
+        // If it's a challenge (star node), add score points
+        if (activeLesson.label.includes("★")) {
+          try {
+            // Add 100 points for completing a challenge
+            const result = await handleScoreUpdate(userId, 100);
+            if (result.success) {
+              console.log(`✅ Challenge completed! Added 100 points for ${activeLesson.label}`);
+            } else {
+              console.warn("Score update failed, but lesson completion saved:", result.error);
+            }
+          } catch (scoreError) {
+            console.warn("Failed to save score, but lesson completion saved:", scoreError);
+          }
+        }
+
+        // Reload progress and scores
+        await loadUserProgress(validStudentId);
+        
+        // Update total score from backend
+        await fetchTotalScore(userId);
+        
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
       } catch (err) {
         // Handle "already completed" gracefully
         if (err.message?.includes("Lesson already completed") || err.response?.status === 409) {
@@ -605,6 +765,8 @@ export default function MapTree() {
         } else {
           console.error("Failed to save progress:", err);
         }
+      } finally {
+        setScoreLoading(false);
       }
     }
     setActiveLesson(null);
@@ -624,8 +786,20 @@ export default function MapTree() {
             setHasAccess(true);
             const updatedUser = await UserService.getCurrentUser();
             setCurrentUser(updatedUser);
+<<<<<<< HEAD
             const validUserId = updatedUser.userId || updatedUser.id;
             await loadUserProgress(validUserId);
+=======
+            const validStudentId = updatedUser.student?.studentId || updatedUser.student?.id;
+            
+            // Ensure score record exists
+            const userId = updatedUser.userId || updatedUser.id;
+            if (userId) {
+              await ScoreService.createScore(userId);
+            }
+            
+            await loadUserProgress(validStudentId);
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
           }}
         />
       )}
@@ -637,10 +811,12 @@ export default function MapTree() {
             <div className="map-score-main">
               <span className="map-score-label">Learning Score:</span>
               <span className="map-score-value">{totalScore}</span>
+              <span className="map-score-sync-indicator" title="Synced with backend">✓</span>
+              {scoreLoading && <span className="map-score-loading">⏳</span>}
             </div>
             <div className="map-score-details">
               <span className="map-score-stars">
-                ★ {totalScore / 100} / {nodes.filter(n => n.label.includes("★")).length} Challenges
+                ★ {Math.floor(totalScore / 100)} / {nodes.filter(n => n.label.includes("★")).length} Challenges
               </span>
               <span className="map-page-indicator">
                 Page {currentPage + 1} of {PAGES.length}

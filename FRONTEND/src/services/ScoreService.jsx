@@ -1,7 +1,11 @@
 import axios from "axios";
 
 const API_URL = "http://localhost:8080/api/score";
+<<<<<<< HEAD
 // const API_URL = "https://elementopia.onrender.com/api/score";
+=======
+//const API_URL = "https://elementopia.onrender.com/api/score";
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
 
 const getAuthHeader = () => {
   const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
@@ -47,15 +51,24 @@ const ScoreService = {
   },
 
   /**
+<<<<<<< HEAD
    * Add points when a challenge is completed
+=======
+   * Add points when a challenge is completed - UPDATED to match backend
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
    * @param {number} userId - User's ID
    * @param {number} points - Points to add (default: 100)
    */
   addChallengeScore: async (userId, points = 100) => {
     try {
       const response = await axios.post(
+<<<<<<< HEAD
         `${API_URL}/challenge/${userId}`,
         { points },
+=======
+        `${API_URL}/add/${userId}`,  // Changed from /challenge to /add
+        { score: points },           // Changed from { points } to { score: points }
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
         getAuthHeader()
       );
       console.log(`💯 Added ${points} points to career score`);
@@ -117,6 +130,30 @@ const ScoreService = {
       throw error;
     }
   },
+<<<<<<< HEAD
+=======
+
+  /**
+   * Helper method to handle score updates with retry logic
+   */
+  updateScoreWithRetry: async (userId, points = 100) => {
+    try {
+      return await ScoreService.addChallengeScore(userId, points);
+    } catch (error) {
+      console.warn("First attempt failed, trying create then update...");
+      
+      try {
+        // Try to create score record first
+        await ScoreService.createScore(userId);
+        // Then add points
+        return await ScoreService.addChallengeScore(userId, points);
+      } catch (createError) {
+        console.error("Failed to update score even after retry:", createError);
+        throw createError;
+      }
+    }
+  }
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
 };
 
 export default ScoreService;

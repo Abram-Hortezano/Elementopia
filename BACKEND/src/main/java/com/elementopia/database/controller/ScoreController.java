@@ -29,7 +29,11 @@ public class ScoreController {
     }
 
     /** Get all scores */
+<<<<<<< HEAD
     @GetMapping("/all")
+=======
+   @GetMapping("/all")
+>>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
     public ResponseEntity<List<ScoreDTO>> getAllScores() {
         return ResponseEntity.ok(scoreService.getAllScoresDTO());
     }
