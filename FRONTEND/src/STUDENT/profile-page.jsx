@@ -80,7 +80,6 @@ export default function ProfilePage() {
           grade: user.gradeLevel || "",
           role: user.role || "Student",
         });
-        console.log("id: ", user.userId);
       } catch (error) {
         console.error("Error loading user data:", error);
         navigate("/login");
@@ -102,8 +101,7 @@ export default function ProfilePage() {
         gradeLevel: userData.grade,
       };
 
-      const response = await UserService.updateProfile(userData.id, updateData);
-      console.log("Update response:", response);
+      await UserService.updateProfile(userData.id, updateData);
 
       // Refresh user data after update
       const updatedUser = await UserService.getCurrentUser();

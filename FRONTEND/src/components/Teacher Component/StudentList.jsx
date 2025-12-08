@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from 'react';
 import '../../assets/css/StudentList.css';
 import SectionService from '../../services/SectionService';
@@ -9,6 +10,13 @@ import ScoreService from '../../services/ScoreService';
 import UserService from '../../services/UserService';
 import StudentService from '../../services/StudentService';
 >>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
+=======
+import React, { useState, useEffect } from "react";
+import "../../assets/css/StudentList.css";
+import SectionService from "../../services/SectionService";
+import LessonService from "../../services/LessonService";
+import lessonCompletionService from "../../services/lessonCompletionService";
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
 
 const StudentList = ({ room, onBack, onClose }) => {
   const [students, setStudents] = useState([]);
@@ -55,6 +63,7 @@ const StudentList = ({ room, onBack, onClose }) => {
         const lessons = await LessonService.getAllLessons();
         lessonsCount = Array.isArray(lessons) ? lessons.length : lessonsCount;
       } catch (e) {
+<<<<<<< HEAD
         console.warn("Lesson fetch failed, using default", e);
       }
 
@@ -337,15 +346,110 @@ const StudentList = ({ room, onBack, onClose }) => {
   };
 
 >>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
+=======
+        console.warn(
+          "Could not fetch total lessons, keeping default totalModules",
+          e
+        );
+        lessonsCount = TOTAL_MODULES;
+      }
+
+      // 3. Fetch each student's completions in parallel and merge data
+      const validStudents = rawStudents
+        .map((s) => {
+          const sId = s.studentId || s.userId || s.id;
+          return sId ? { raw: s, id: sId } : null;
+        })
+        .filter(Boolean);
+
+      // Fetch completions for all students in parallel
+      const completionsPromises = validStudents.map((vs) =>
+        lessonCompletionService
+          .getUserCompletions(vs.id)
+          .then((data) => ({ id: vs.id, completions: data || [] }))
+          .catch((err) => {
+            console.warn(
+              `Could not load completions for student ${vs.id}`,
+              err
+            );
+            return { id: vs.id, completions: [] };
+          })
+      );
+
+      const completionsResults = await Promise.all(completionsPromises);
+      const completionsById = Object.fromEntries(
+        completionsResults.map((r) => [r.id, r.completions])
+      );
+
+      // Fetch all scores once to compute total points per student (optional)
+      let allScores = [];
+      try {
+        allScores = await LessonService.getAllScores();
+      } catch (e) {
+        console.warn("Could not fetch lesson scores for students", e);
+      }
+
+      const formattedStudents = validStudents.map(({ raw, id: sId }) => {
+        const studentCompletions = completionsById[sId] || [];
+
+        // Unique lesson IDs completed for this student
+        const uniqueCompleted = new Set(
+          studentCompletions.map((c) => c.lessonId || c.lesson?.id)
+        ).size;
+        const denominator = lessonsCount || 1;
+        const percentage = Math.round((uniqueCompleted / denominator) * 100);
+
+        // Total points from the pre-fetched scores
+        const studentScores = allScores.filter(
+          (score) =>
+            score.student?.studentId === sId || score.student?.id === sId
+        );
+        const totalPoints = studentScores.reduce(
+          (sum, sc) => sum + (sc.score || 0),
+          0
+        );
+
+        return {
+          id: sId,
+          studentId: `STU${sId.toString().padStart(3, "0")}`,
+          name: `${raw.firstName || raw.user?.firstName || ""} ${
+            raw.lastName || raw.user?.lastName || ""
+          }`.trim(),
+          email: raw.email || raw.user?.email || "—",
+          progress: Math.min(percentage, 100),
+          score: totalPoints,
+          status: "Active",
+          lastActivity: "N/A",
+        };
+      });
+
+      setStudents(formattedStudents);
+    } catch (err) {
+      console.error("Failed to fetch students:", err);
+      setError("Could not load student list. Please try again.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // --- UI HANDLERS ---
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".dropdown-container")) {
         setActiveDropdown(null);
       }
     };
+<<<<<<< HEAD
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
+=======
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
   }, []);
 
   const indexOfLastStudent = currentPage * studentsPerPage;
@@ -360,6 +464,7 @@ const StudentList = ({ room, onBack, onClose }) => {
 
   const handleViewProfile = (student) => {
     setActiveDropdown(null);
+<<<<<<< HEAD
     alert(`Student Profile\n\nName: ${student.name}\nUser ID: ${student.userId}\nStudent ID: ${student.studentId || 'N/A'}\nEmail: ${student.email || 'N/A'}\nSection: ${student.sectionName}\nSection ID: ${student.sectionId || 'N/A'}\nProgress: ${student.progress}%\nScore: ${student.score}\nCompleted Lessons: ${student.completionsCount || 0}\nHas Score Record: ${student.hasScore ? 'Yes' : 'No'}`);
   };
 
@@ -375,10 +480,16 @@ const StudentList = ({ room, onBack, onClose }) => {
     } catch (err) {
       alert(`❌ Error refreshing score: ${err.message}`);
     }
+=======
+    alert(
+      `Viewing profile for ${student.name}\nScore: ${student.score}\nProgress: ${student.progress}%`
+    );
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
   };
 
   const handleRemoveStudent = async (student) => {
     setActiveDropdown(null);
+<<<<<<< HEAD
 <<<<<<< HEAD
     if (window.confirm(`Remove ${student.name}?`)) {
       setStudents(prev => prev.filter(s => s.id !== student.id));
@@ -388,6 +499,11 @@ const StudentList = ({ room, onBack, onClose }) => {
       setFilteredStudents(prev => prev.filter(s => s.id !== student.id));
       alert(`${student.name} has been removed from the class.`);
 >>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
+=======
+    if (window.confirm(`Are you sure you want to remove ${student.name}?`)) {
+      // Logic to remove student API call would go here
+      setStudents((prev) => prev.filter((s) => s.id !== student.id));
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
     }
   };
 
@@ -395,6 +511,7 @@ const StudentList = ({ room, onBack, onClose }) => {
     if (progress >= 80) return "progress-high";
     if (progress >= 50) return "progress-medium";
     return "progress-low";
+<<<<<<< HEAD
   };
 
   const getScoreColor = (score) => {
@@ -427,10 +544,18 @@ const StudentList = ({ room, onBack, onClose }) => {
 
   const getStatusBadge = (status) => {
     const statusClass = status === "Active" ? "status-active" : "status-inactive";
+=======
+  };
+
+  const getStatusBadge = (status) => {
+    const statusClass =
+      status === "Active" ? "status-active" : "status-inactive";
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
     return <span className={`status-badge ${statusClass}`}>{status}</span>;
   };
 
   const getDropdownPosition = (studentId) => {
+<<<<<<< HEAD
     const index = students.findIndex(s => s.id === studentId);
     return index >= students.length - 2 ? "bottom" : "top";
   };
@@ -510,11 +635,16 @@ const StudentList = ({ room, onBack, onClose }) => {
         </button>
       </div>
     );
+=======
+    const index = students.findIndex((s) => s.id === studentId);
+    return index >= students.length - 2 ? "bottom" : "top";
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
   };
 
   if (loading) {
     return (
       <div className="student-list-container">
+<<<<<<< HEAD
 <<<<<<< HEAD
         <div className="loading" style={{ color: "white" }}>
           Loading students...
@@ -523,6 +653,10 @@ const StudentList = ({ room, onBack, onClose }) => {
           <div className="loading-spinner"></div>
           Loading students and scores...
 >>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
+=======
+        <div className="loading" style={{ color: "white" }}>
+          Loading students...
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
         </div>
       </div>
     );
@@ -539,6 +673,7 @@ const StudentList = ({ room, onBack, onClose }) => {
             <h2>{room.className}</h2>
             <p>
 <<<<<<< HEAD
+<<<<<<< HEAD
               Code: <span className="room-code-badge">{room.roomCode}</span>
 =======
               {room.sectionId && (
@@ -548,11 +683,15 @@ const StudentList = ({ room, onBack, onClose }) => {
                 <>Code: <span className="room-code-badge">{room.roomCode}</span></>
               )}
 >>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
+=======
+              Code: <span className="room-code-badge">{room.roomCode}</span>
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
             </p>
           </div>
         </div>
 
         <div className="header-right">
+<<<<<<< HEAD
 <<<<<<< HEAD
           <span className="student-count">Total Students: {students.length}</span>
           <button className="btn-secondary" onClick={fetchStudents}>Refresh</button>
@@ -567,10 +706,19 @@ const StudentList = ({ room, onBack, onClose }) => {
             />
           </div>
 >>>>>>> f591f7050b89e8b55c8a5b556fcac5a858dcef76
+=======
+          <span className="student-count">
+            Total Students: {students.length}
+          </span>
+          <button className="btn-secondary" onClick={fetchStudents}>
+            Refresh
+          </button>
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
         </div>
       </div>
 
       {error && (
+<<<<<<< HEAD
         <div className="error-banner" style={{
           background: "#fca5a5",
           color: "#7f1d1d",
@@ -578,6 +726,18 @@ const StudentList = ({ room, onBack, onClose }) => {
           borderRadius: "5px",
           marginBottom: "15px"
         }}>
+=======
+        <div
+          className="error-banner"
+          style={{
+            background: "#fca5a5",
+            color: "#7f1d1d",
+            padding: "10px",
+            borderRadius: "5px",
+            marginBottom: "15px",
+          }}
+        >
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
           {error}
         </div>
       )}
@@ -599,28 +759,54 @@ const StudentList = ({ room, onBack, onClose }) => {
 
           <tbody>
 <<<<<<< HEAD
+<<<<<<< HEAD
             {students.map(student => (
               <tr key={student.id}>
                 <td><span className="student-id">{student.studentId}</span></td>
 
+=======
+            {students.map((student) => (
+              <tr key={student.id}>
+                <td>
+                  <span className="student-id">{student.studentId}</span>
+                </td>
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
                 <td>
                   <div className="student-info">
                     <div className="student-name">{student.name}</div>
                   </div>
                 </td>
+<<<<<<< HEAD
 
                 <td><span className="student-email">{student.email}</span></td>
 
                 {/* Progress */}
+=======
+                <td>
+                  <span className="student-email">{student.email}</span>
+                </td>
+
+                {/* PROGRESS BAR UI */}
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
                 <td>
                   <div className="progress-container">
                     <div className="progress-bar">
                       <div
+<<<<<<< HEAD
                         className={`progress-fill ${getProgressBarClass(student.progress)}`}
                         style={{
                           width: `${student.progress}%`,
                           backgroundColor:
                             student.progress >= 80 ? "#4caf50" : "#6c5dd3"
+=======
+                        className={`progress-fill ${getProgressBarClass(
+                          student.progress
+                        )}`}
+                        style={{
+                          width: `${student.progress}%`,
+                          backgroundColor:
+                            student.progress >= 80 ? "#4caf50" : "#6c5dd3",
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
                         }}
                       ></div>
                     </div>
@@ -645,12 +831,31 @@ const StudentList = ({ room, onBack, onClose }) => {
                     </button>
 
                     {activeDropdown === student.id && (
+<<<<<<< HEAD
                       <div className={`dropdown-menu ${getDropdownPosition(student.id)}`}>
                         <button className="dropdown-item view" onClick={() => handleViewProfile(student)}>
                           👤 Profile
                         </button>
                         <button className="dropdown-item remove" onClick={() => handleRemoveStudent(student)}>
                           🚫 Remove
+=======
+                      <div
+                        className={`dropdown-menu ${getDropdownPosition(
+                          student.id
+                        )}`}
+                      >
+                        <button
+                          className="dropdown-item view"
+                          onClick={() => handleViewProfile(student)}
+                        >
+                          <span className="icon">👤</span> Profile
+                        </button>
+                        <button
+                          className="dropdown-item remove"
+                          onClick={() => handleRemoveStudent(student)}
+                        >
+                          <span className="icon">🚫</span> Remove
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
                         </button>
 =======
             {currentStudents.map((student, index) => {

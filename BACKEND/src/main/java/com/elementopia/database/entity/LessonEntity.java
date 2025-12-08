@@ -22,10 +22,6 @@ public class LessonEntity {
 
     @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private List<TopicEntity> topics = new ArrayList<>();
-
-    @OneToMany(mappedBy = "lesson", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
     private List<LessonCompletionEntity> completions = new ArrayList<>();
 
 }

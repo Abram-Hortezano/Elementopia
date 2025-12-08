@@ -53,7 +53,6 @@ const LessonCompletionService = {
 <<<<<<< HEAD
   // Complete a lesson (POST /complete)
   completeLesson: async (studentId, lessonId) => {
-    console.log("Completing lesson:", { studentId, lessonId });
     try {
       const completionData = { studentId, lessonId };
 

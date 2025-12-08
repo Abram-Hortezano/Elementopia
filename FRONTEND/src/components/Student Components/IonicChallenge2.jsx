@@ -145,7 +145,6 @@ export default function IonicChallenge2({ onComplete }) {
         } else {
           // ✅ All challenges complete → Notify MapTree
           if (onComplete) {
-            console.log("✅ IonicChallenge2 completed, calling onComplete()");
             onComplete();
           }
           setShowCongrats(false);
@@ -179,7 +178,9 @@ export default function IonicChallenge2({ onComplete }) {
   return (
     <DndContext onDragStart={handleDragStart} onDragEnd={handleDragEnd}>
       <div className="ionic-lesson-modal ionic-bonding-challenge">
-        <div className={`ionic-challenge-box ${bondFormed ? "ionic-bonded" : ""}`}>
+        <div
+          className={`ionic-challenge-box ${bondFormed ? "ionic-bonded" : ""}`}
+        >
           <h3>
             Challenge {challenge}: {current.title}
           </h3>
@@ -199,14 +200,18 @@ export default function IonicChallenge2({ onComplete }) {
             <div className="ionic-congrats-banner">🎉 {current.message}</div>
           )}
 
-          <div className={`ionic-workspace ${bondFormed ? "ionic-bonded" : ""}`}>
+          <div
+            className={`ionic-workspace ${bondFormed ? "ionic-bonded" : ""}`}
+          >
             <DropZone
               id={current.atom1}
               className={`ionic-atom ionic-left-atom ionic-${current.atom1} ${
                 bondFormed ? "ionic-final-state" : ""
               }`}
             >
-              <div className="ionic-atom-symbol">{getSymbol(current.atom1)}</div>
+              <div className="ionic-atom-symbol">
+                {getSymbol(current.atom1)}
+              </div>
               {renderElectronsOn(current.atom1, items, activeId)}
             </DropZone>
 
@@ -216,7 +221,9 @@ export default function IonicChallenge2({ onComplete }) {
                 bondFormed ? "ionic-final-state ionic-opposite" : ""
               }`}
             >
-              <div className="ionic-atom-symbol">{getSymbol(current.atom2)}</div>
+              <div className="ionic-atom-symbol">
+                {getSymbol(current.atom2)}
+              </div>
               {renderElectronsOn(current.atom2, items, activeId)}
             </DropZone>
 
@@ -245,7 +252,9 @@ export default function IonicChallenge2({ onComplete }) {
       </div>
 
       <DragOverlay>
-        {activeId ? <div className="ionic-electron ionic-is-dragging"></div> : null}
+        {activeId ? (
+          <div className="ionic-electron ionic-is-dragging"></div>
+        ) : null}
       </DragOverlay>
     </DndContext>
   );
@@ -255,7 +264,10 @@ export default function IonicChallenge2({ onComplete }) {
 function DropZone({ id, children, className }) {
   const { setNodeRef, isOver } = useDroppable({ id });
   return (
-    <div ref={setNodeRef} className={`${className} ${isOver ? "ionic-hovering" : ""}`}>
+    <div
+      ref={setNodeRef}
+      className={`${className} ${isOver ? "ionic-hovering" : ""}`}
+    >
       {children}
     </div>
   );
@@ -302,7 +314,9 @@ function renderElectronsOn(atomId, items, activeId) {
   const total = electrons.length;
   return electrons.map(([id], i) => {
     const angle = total > 0 ? (i / total) * 360 : 0;
-    return <Electron key={id} id={id} angle={angle} isHidden={id === activeId} />;
+    return (
+      <Electron key={id} id={id} angle={angle} isHidden={id === activeId} />
+    );
   });
 }
 

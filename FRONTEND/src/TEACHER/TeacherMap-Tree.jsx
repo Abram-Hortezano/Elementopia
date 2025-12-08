@@ -1,12 +1,16 @@
 import React, { useState, useEffect } from "react";
+<<<<<<< HEAD
 import axios from "axios"; 
 <<<<<<< HEAD
 import "../assets/css/TeacherMap-tree.css";
 =======
+=======
+import axios from "axios";
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
 import "../assets/css/Map-tree.css";
 >>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
 import UserService from "../services/UserService";
-import LessonCompletionService from "../services/lessonCompletionService"; 
+import LessonCompletionService from "../services/lessonCompletionService";
 import SectionService from "../services/SectionService";
 import AchievementService from "../services/AchievementService";
 
@@ -41,163 +45,352 @@ import PCChallenge3 from "../components/Student Components/PCChallenge3";
 // --- ENHANCED NODE MAP WITH BETTER POSITIONING ---
 const nodes = [
   // Page 1: Atomic Structure
-  { id: 1, label: "The Atom", position: { top: "10%", left: "5%" }, lesson: "AtomBuilder", iconType: "atom" },
-  { id: 7, label: "★", position: { top: "25%", left: "18%" }, lesson: "AtomChallenge1" },
-  { id: 8, label: "★", position: { top: "40%", left: "30%" }, lesson: "AtomChallenge2" },
-  { id: 9, label: "★", position: { top: "30%", left: "42%" }, lesson: "AtomChallenge3" },
-  { id: 2, label: "Ionic Bonding", position: { top: "18%", left: "55%" }, lesson: "IonicBonding", iconType: "ionic" },
-  { id: 10, label: "★", position: { top: "12%", left: "68%" }, lesson: "IonicChallenge1" },
-  { id: 11, label: "★", position: { top: "23%", left: "79%" }, lesson: "IonicChallenge2" },
-  { id: 12, label: "★", position: { top: "65%", left: "80%" }, lesson: "IonicChallenge3" },
+  {
+    id: 1,
+    label: "The Atom",
+    position: { top: "10%", left: "5%" },
+    lesson: "AtomBuilder",
+    iconType: "atom",
+  },
+  {
+    id: 7,
+    label: "★",
+    position: { top: "25%", left: "18%" },
+    lesson: "AtomChallenge1",
+  },
+  {
+    id: 8,
+    label: "★",
+    position: { top: "40%", left: "30%" },
+    lesson: "AtomChallenge2",
+  },
+  {
+    id: 9,
+    label: "★",
+    position: { top: "30%", left: "42%" },
+    lesson: "AtomChallenge3",
+  },
+  {
+    id: 2,
+    label: "Ionic Bonding",
+    position: { top: "18%", left: "55%" },
+    lesson: "IonicBonding",
+    iconType: "ionic",
+  },
+  {
+    id: 10,
+    label: "★",
+    position: { top: "12%", left: "68%" },
+    lesson: "IonicChallenge1",
+  },
+  {
+    id: 11,
+    label: "★",
+    position: { top: "23%", left: "79%" },
+    lesson: "IonicChallenge2",
+  },
+  {
+    id: 12,
+    label: "★",
+    position: { top: "65%", left: "80%" },
+    lesson: "IonicChallenge3",
+  },
 
   // Page 2: Chemical Bonding - IMPROVED ROAD DESIGN
-  { id: 3, label: "Covalent Bonding", position: { top: "10%", left: "5%" }, lesson: "CovalentBonding", iconType: "covalent" },
-  { id: 13, label: "★", position: { top: "25%", left: "18%" }, lesson: "CovalentChallenge1" },
-  { id: 14, label: "★", position: { top: "38%", left: "30%" }, lesson: "CovalentChallenge2" },
-  { id: 15, label: "★", position: { top: "50%", left: "42%" }, lesson: "CovalentChallenge3" },
-  { id: 4, label: "Molar Mass", position: { top: "55%", left: "55%" }, lesson: "MoleMass", iconType: "mole" },
-  { id: 16, label: "★", position: { top: "55%", left: "68%" }, lesson: "MoleMassChallenge1" },
-  { id: 17, label: "★", position: { top: "30%", left: "68%" }, lesson: "MoleMassChallenge2" },
-  { id: 18, label: "★", position: { top: "5%", left: "68%" }, lesson: "MoleMassChallenge3" },
+  {
+    id: 3,
+    label: "Covalent Bonding",
+    position: { top: "10%", left: "5%" },
+    lesson: "CovalentBonding",
+    iconType: "covalent",
+  },
+  {
+    id: 13,
+    label: "★",
+    position: { top: "25%", left: "18%" },
+    lesson: "CovalentChallenge1",
+  },
+  {
+    id: 14,
+    label: "★",
+    position: { top: "38%", left: "30%" },
+    lesson: "CovalentChallenge2",
+  },
+  {
+    id: 15,
+    label: "★",
+    position: { top: "50%", left: "42%" },
+    lesson: "CovalentChallenge3",
+  },
+  {
+    id: 4,
+    label: "Molar Mass",
+    position: { top: "55%", left: "55%" },
+    lesson: "MoleMass",
+    iconType: "mole",
+  },
+  {
+    id: 16,
+    label: "★",
+    position: { top: "55%", left: "68%" },
+    lesson: "MoleMassChallenge1",
+  },
+  {
+    id: 17,
+    label: "★",
+    position: { top: "30%", left: "68%" },
+    lesson: "MoleMassChallenge2",
+  },
+  {
+    id: 18,
+    label: "★",
+    position: { top: "5%", left: "68%" },
+    lesson: "MoleMassChallenge3",
+  },
 
   // Page 3: Quantitative Chemistry - ADDED TROPHY NODE
-  { id: 5, label: "Moles to Grams", position: { top: "10%", left: "5%" }, lesson: "MolesToGrams", iconType: "conversion" },
-  { id: 19, label: "★", position: { top: "25%", left: "18%" }, lesson: "MTGChallenge1" },
-  { id: 20, label: "★", position: { top: "38%", left: "30%" }, lesson: "MTGChallenge2" },
-  { id: 21, label: "★", position: { top: "50%", left: "42%" }, lesson: "MTGChallenge3" },
-  { id: 6, label: "% Composition", position: { top: "55%", left: "55%" }, lesson: "PercentComposition", iconType: "percentage" },
-  { id: 22, label: "★", position: { top: "55%", left: "68%" }, lesson: "PCChallenge1" },
-  { id: 23, label: "★", position: { top: "30%", left: "68%" }, lesson: "PCChallenge2" },
-  { id: 24, label: "★", position: { top: "5%", left: "68%" }, lesson: "PCChallenge3" },
-  
+  {
+    id: 5,
+    label: "Moles to Grams",
+    position: { top: "10%", left: "5%" },
+    lesson: "MolesToGrams",
+    iconType: "conversion",
+  },
+  {
+    id: 19,
+    label: "★",
+    position: { top: "25%", left: "18%" },
+    lesson: "MTGChallenge1",
+  },
+  {
+    id: 20,
+    label: "★",
+    position: { top: "38%", left: "30%" },
+    lesson: "MTGChallenge2",
+  },
+  {
+    id: 21,
+    label: "★",
+    position: { top: "50%", left: "42%" },
+    lesson: "MTGChallenge3",
+  },
+  {
+    id: 6,
+    label: "% Composition",
+    position: { top: "55%", left: "55%" },
+    lesson: "PercentComposition",
+    iconType: "percentage",
+  },
+  {
+    id: 22,
+    label: "★",
+    position: { top: "55%", left: "68%" },
+    lesson: "PCChallenge1",
+  },
+  {
+    id: 23,
+    label: "★",
+    position: { top: "30%", left: "68%" },
+    lesson: "PCChallenge2",
+  },
+  {
+    id: 24,
+    label: "★",
+    position: { top: "5%", left: "68%" },
+    lesson: "PCChallenge3",
+  },
+
   // Trophy node for completion - appears when all lessons are completed
-  { id: 25, label: "🏆", position: { top: "80%", left: "85%" }, lesson: null, isTrophy: true },
+  {
+    id: 25,
+    label: "🏆",
+    position: { top: "80%", left: "85%" },
+    lesson: null,
+    isTrophy: true,
+  },
 ];
 
 // --- PAGE CONFIGURATION WITH IMPROVED ROAD DESIGNS ---
 const PAGES = [
-  { 
-    title: "Atomic Structure", 
+  {
+    title: "Atomic Structure",
     subtitle: "Build your foundation",
     nodes: [1, 7, 8, 9, 2, 10, 11, 12],
-    background: "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
-    path: "M 5,10 C 18,25 30,40 42,30 C 55,18 68,12 79,23 C 80,65 80,65 80,65"
+    background:
+      "linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%)",
+    path: "M 5,10 C 18,25 30,40 42,30 C 55,18 68,12 79,23 C 80,65 80,65 80,65",
   },
-  { 
-    title: "Chemical Bonding", 
+  {
+    title: "Chemical Bonding",
     subtitle: "Connect and create",
     nodes: [3, 13, 14, 15, 4, 16, 17, 18],
-    background: "linear-gradient(135deg, #0f3460 0%, #1a1a2e 50%, #16213e 100%)",
-    path: "M 5,10 C 18,25 30,38 42,50 C 55,55 68,55 68,30 C 68,5 68,5 68,5 M 42,50 C 55,55 68,55 68,30"
+    background:
+      "linear-gradient(135deg, #0f3460 0%, #1a1a2e 50%, #16213e 100%)",
+    path: "M 5,10 C 18,25 30,38 42,50 C 55,55 68,55 68,30 C 68,5 68,5 68,5 M 42,50 C 55,55 68,55 68,30",
   },
-  { 
-    title: "Quantitative Chemistry", 
+  {
+    title: "Quantitative Chemistry",
     subtitle: "Measure and calculate",
     nodes: [5, 19, 20, 21, 6, 22, 23, 24, 25],
-    background: "linear-gradient(135deg, #16213e 0%, #0f3460 50%, #1a1a2e 100%)",
-    path: "M 5,10 C 18,25 30,38 42,50 C 55,55 68,55 68,30 C 68,5 68,5 68,5 M 42,50 C 55,55 68,55 68,30 M 68,5 L 85,80"
-  }
+    background:
+      "linear-gradient(135deg, #16213e 0%, #0f3460 50%, #1a1a2e 100%)",
+    path: "M 5,10 C 18,25 30,38 42,50 C 55,55 68,55 68,30 C 68,5 68,5 68,5 M 42,50 C 55,55 68,55 68,30 M 68,5 L 85,80",
+  },
 ];
 
 // --- UPDATED PREREQUISITES WITH TROPHY ---
 const prerequisites = {
-  1: null, 7: 1, 8: 7, 9: 8,
-  2: 9, 10: 2, 11: 10, 12: 11,
-  3: 12, 13: 3, 14: 13, 15: 14,
-  4: 15, 16: 4, 17: 16, 18: 17,
-  5: 18, 19: 5, 20: 19, 21: 20,
-  6: 21, 22: 6, 23: 22, 24: 23,
+  1: null,
+  7: 1,
+  8: 7,
+  9: 8,
+  2: 9,
+  10: 2,
+  11: 10,
+  12: 11,
+  3: 12,
+  13: 3,
+  14: 13,
+  15: 14,
+  4: 15,
+  16: 4,
+  17: 16,
+  18: 17,
+  5: 18,
+  19: 5,
+  20: 19,
+  21: 20,
+  6: 21,
+  22: 6,
+  23: 22,
+  24: 23,
   25: 24,
 };
 
 // --- BACKEND TO NODE MAP ---
 const backendToNodeMap = {
-  1: 1, 2: 7, 3: 8, 4: 9,
-  5: 2, 6: 10, 7: 11, 8: 12,
-  9: 3, 10: 13, 11: 14, 12: 15,
-  13: 4, 14: 16, 15: 17, 16: 18,
-  17: 5, 18: 19, 19: 20, 20: 21,
-  21: 6, 22: 22, 23: 23, 24: 24,
+  1: 1,
+  2: 7,
+  3: 8,
+  4: 9,
+  5: 2,
+  6: 10,
+  7: 11,
+  8: 12,
+  9: 3,
+  10: 13,
+  11: 14,
+  12: 15,
+  13: 4,
+  14: 16,
+  15: 17,
+  16: 18,
+  17: 5,
+  18: 19,
+  19: 20,
+  20: 21,
+  21: 6,
+  22: 22,
+  23: 23,
+  24: 24,
   25: 25,
 };
 
 // --- LESSON COMPONENTS ---
 const lessonComponents = {
-  AtomBuilder, AtomChallenge1, AtomChallenge2, AtomChallenge3,
-  IonicBonding, IonicChallenge1, IonicChallenge2, IonicChallenge3,
-  CovalentBonding, CovalentChallenge1, CovalentChallenge2, CovalentChallenge3,
-  MoleMass, MoleMassChallenge1, MoleMassChallenge2, MoleMassChallenge3,
-  MolesToGrams, MTGChallenge1, MTGChallenge2, MTGChallenge3,
-  PercentComposition, PCChallenge1, PCChallenge2, PCChallenge3,
+  AtomBuilder,
+  AtomChallenge1,
+  AtomChallenge2,
+  AtomChallenge3,
+  IonicBonding,
+  IonicChallenge1,
+  IonicChallenge2,
+  IonicChallenge3,
+  CovalentBonding,
+  CovalentChallenge1,
+  CovalentChallenge2,
+  CovalentChallenge3,
+  MoleMass,
+  MoleMassChallenge1,
+  MoleMassChallenge2,
+  MoleMassChallenge3,
+  MolesToGrams,
+  MTGChallenge1,
+  MTGChallenge2,
+  MTGChallenge3,
+  PercentComposition,
+  PCChallenge1,
+  PCChallenge2,
+  PCChallenge3,
 };
 
 // --- ACHIEVEMENTS ---
 const ACHIEVEMENTS = {
   FIRST_LESSON: {
-    id: 'first_lesson',
-    title: 'First Steps',
-    description: 'Complete your first lesson',
-    icon: '📚',
-    condition: (completedNodes) => completedNodes.size >= 1
+    id: "first_lesson",
+    title: "First Steps",
+    description: "Complete your first lesson",
+    icon: "📚",
+    condition: (completedNodes) => completedNodes.size >= 1,
   },
   FIRST_CHALLENGE: {
-    id: 'first_challenge',
-    title: 'Challenge Accepted',
-    description: 'Complete your first challenge',
-    icon: '⭐',
+    id: "first_challenge",
+    title: "Challenge Accepted",
+    description: "Complete your first challenge",
+    icon: "⭐",
     condition: (completedNodes) => {
-      const challenges = nodes.filter(n => n.label.includes("★"));
-      return challenges.some(c => completedNodes.has(c.id));
-    }
+      const challenges = nodes.filter((n) => n.label.includes("★"));
+      return challenges.some((c) => completedNodes.has(c.id));
+    },
   },
   THREE_CHALLENGES: {
-    id: 'three_challenges',
-    title: 'Hat Trick',
-    description: 'Complete 3 challenges',
-    icon: '🎯',
+    id: "three_challenges",
+    title: "Hat Trick",
+    description: "Complete 3 challenges",
+    icon: "🎯",
     condition: (completedNodes) => {
-      const challenges = nodes.filter(n => n.label.includes("★"));
-      return challenges.filter(c => completedNodes.has(c.id)).length >= 3;
-    }
+      const challenges = nodes.filter((n) => n.label.includes("★"));
+      return challenges.filter((c) => completedNodes.has(c.id)).length >= 3;
+    },
   },
   ATOMIC_MASTER: {
-    id: 'atomic_master',
-    title: 'Atomic Master',
-    description: 'Complete all Atom lessons',
-    icon: '⚛️',
+    id: "atomic_master",
+    title: "Atomic Master",
+    description: "Complete all Atom lessons",
+    icon: "⚛️",
     condition: (completedNodes) => {
       const atomNodes = [1, 7, 8, 9];
-      return atomNodes.every(id => completedNodes.has(id));
-    }
+      return atomNodes.every((id) => completedNodes.has(id));
+    },
   },
   SCORE_500: {
-    id: 'score_500',
-    title: 'Rising Star',
-    description: 'Earn 500 points',
-    icon: '🌟',
-    condition: (completedNodes, totalScore) => totalScore >= 500
+    id: "score_500",
+    title: "Rising Star",
+    description: "Earn 500 points",
+    icon: "🌟",
+    condition: (completedNodes, totalScore) => totalScore >= 500,
   },
   SCORE_1000: {
-    id: 'score_1000',
-    title: 'High Achiever',
-    description: 'Earn 1000 points',
-    icon: '🏆',
-    condition: (completedNodes, totalScore) => totalScore >= 1000
+    id: "score_1000",
+    title: "High Achiever",
+    description: "Earn 1000 points",
+    icon: "🏆",
+    condition: (completedNodes, totalScore) => totalScore >= 1000,
   },
   PERFECT_SCORE: {
-    id: 'perfect_score',
-    title: 'Perfect Score',
-    description: 'Earn maximum points (1800)',
-    icon: '👑',
-    condition: (completedNodes, totalScore) => totalScore >= 1800
+    id: "perfect_score",
+    title: "Perfect Score",
+    description: "Earn maximum points (1800)",
+    icon: "👑",
+    condition: (completedNodes, totalScore) => totalScore >= 1800,
   },
   ALL_COMPLETE: {
-    id: 'all_complete',
-    title: 'Chemistry Champion',
-    description: 'Complete all lessons',
-    icon: '🎓',
-    condition: (completedNodes) => completedNodes.size === nodes.length
-  }
+    id: "all_complete",
+    title: "Chemistry Champion",
+    description: "Complete all lessons",
+    icon: "🎓",
+    condition: (completedNodes) => completedNodes.size === nodes.length,
+  },
 };
 
 <<<<<<< HEAD
@@ -223,7 +416,9 @@ const SectionLockModal = ({ studentId, onJoinSuccess }) => {
       await SectionService.joinSection(code, studentId);
       onJoinSuccess();
     } catch (err) {
-      setError(err.response?.data?.message || "Invalid section code. Try again.");
+      setError(
+        err.response?.data?.message || "Invalid section code. Try again."
+      );
     } finally {
       setLoading(false);
     }
@@ -238,16 +433,20 @@ const SectionLockModal = ({ studentId, onJoinSuccess }) => {
           Join your class section to unlock the interactive learning journey
         </p>
         <form onSubmit={handleSubmit} className="map-section-modal-form">
-          <input 
-            type="text" 
+          <input
+            type="text"
             className="map-section-modal-input"
-            placeholder="Enter Section Code" 
+            placeholder="Enter Section Code"
             value={code}
             onChange={(e) => setCode(e.target.value.toUpperCase())}
             maxLength={6}
           />
           {error && <div className="map-section-modal-error">{error}</div>}
-          <button type="submit" className="map-section-modal-btn" disabled={loading}>
+          <button
+            type="submit"
+            className="map-section-modal-btn"
+            disabled={loading}
+          >
             {loading ? "Verifying..." : "Unlock Learning Map"}
           </button>
         </form>
@@ -260,7 +459,11 @@ const SectionLockModal = ({ studentId, onJoinSuccess }) => {
 // --- STAR COMPONENT WITH ORBITAL EFFECT ---
 const StarWithOrbit = ({ isCompleted, isLocked }) => {
   return (
-    <div className={`star-orbit-container ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`}>
+    <div
+      className={`star-orbit-container ${isCompleted ? "completed" : ""} ${
+        isLocked ? "locked" : ""
+      }`}
+    >
       <div className="star-orbit">
         <div className="star-core"></div>
         <div className="star-glow"></div>
@@ -275,10 +478,12 @@ const StarWithOrbit = ({ isCompleted, isLocked }) => {
 // --- ENHANCED LESSON ICONS ---
 const LessonIcon = ({ iconType, isCompleted, isLocked }) => {
   const getIconContent = () => {
-    const baseClass = `lesson-icon ${iconType} ${isCompleted ? 'completed' : ''} ${isLocked ? 'locked' : ''}`;
-    
+    const baseClass = `lesson-icon ${iconType} ${
+      isCompleted ? "completed" : ""
+    } ${isLocked ? "locked" : ""}`;
+
     switch (iconType) {
-      case 'atom':
+      case "atom":
         return (
           <div className={baseClass}>
             <div className="atom-nucleus"></div>
@@ -289,8 +494,8 @@ const LessonIcon = ({ iconType, isCompleted, isLocked }) => {
             <div className="atom-electron electron-3"></div>
           </div>
         );
-      
-      case 'ionic':
+
+      case "ionic":
         return (
           <div className={baseClass}>
             <div className="ionic-positive"></div>
@@ -300,8 +505,8 @@ const LessonIcon = ({ iconType, isCompleted, isLocked }) => {
             <div className="ionic-spark spark-2"></div>
           </div>
         );
-      
-      case 'covalent':
+
+      case "covalent":
         return (
           <div className={baseClass}>
             <div className="covalent-center"></div>
@@ -312,8 +517,8 @@ const LessonIcon = ({ iconType, isCompleted, isLocked }) => {
             <div className="covalent-orbital"></div>
           </div>
         );
-      
-      case 'mole':
+
+      case "mole":
         return (
           <div className={baseClass}>
             <div className="mole-container">
@@ -325,8 +530,8 @@ const LessonIcon = ({ iconType, isCompleted, isLocked }) => {
             </div>
           </div>
         );
-      
-      case 'conversion':
+
+      case "conversion":
         return (
           <div className={baseClass}>
             <div className="conversion-arrow"></div>
@@ -335,8 +540,8 @@ const LessonIcon = ({ iconType, isCompleted, isLocked }) => {
             <div className="conversion-glow"></div>
           </div>
         );
-      
-      case 'percentage':
+
+      case "percentage":
         return (
           <div className={baseClass}>
             <div className="percentage-symbol">%</div>
@@ -346,7 +551,7 @@ const LessonIcon = ({ iconType, isCompleted, isLocked }) => {
             <div className="percentage-slice slice-3"></div>
           </div>
         );
-      
+
       default:
         return <div className="lesson-icon default-icon">●</div>;
     }
@@ -371,16 +576,21 @@ export default function MapTree() {
   const [newAchievement, setNewAchievement] = useState(null);
 
 <<<<<<< HEAD
+<<<<<<< HEAD
   // Load user achievements
 =======
 // Load user achievements
 >>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
+=======
+  // Load user achievements
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
   const loadAchievements = async (userId) => {
     try {
-      const achievements = await AchievementService.getAchievementsByUser(userId);
-      const earned = new Set(achievements.map(a => a.achievementId || a.id));
+      const achievements = await AchievementService.getAchievementsByUser(
+        userId
+      );
+      const earned = new Set(achievements.map((a) => a.achievementId || a.id));
       setEarnedAchievements(earned);
-      console.log(`🏆 Loaded ${earned.size} achievements`);
     } catch (error) {
       console.error("Failed to load achievements:", error);
     }
@@ -399,16 +609,14 @@ export default function MapTree() {
       // Check if condition is met
       if (achievement.condition(completedNodes, totalScore)) {
         newlyEarned.push(achievement);
-        
+
         try {
           // Save to backend
           await AchievementService.createAchievement(currentUser.userId, {
             title: achievement.title,
             description: achievement.description,
-            codeName: achievement.id
+            codeName: achievement.id,
           });
-          
-          console.log(`🏆 Achievement Unlocked: ${achievement.title}`);
         } catch (error) {
           console.error(`Failed to save achievement ${achievement.id}:`, error);
         }
@@ -417,12 +625,12 @@ export default function MapTree() {
 
     // Update state and show notification
     if (newlyEarned.length > 0) {
-      setEarnedAchievements(prev => {
+      setEarnedAchievements((prev) => {
         const updated = new Set(prev);
-        newlyEarned.forEach(a => updated.add(a.id));
+        newlyEarned.forEach((a) => updated.add(a.id));
         return updated;
       });
-      
+
       // Show first new achievement
       setNewAchievement(newlyEarned[0]);
       setTimeout(() => setNewAchievement(null), 5000);
@@ -498,18 +706,20 @@ export default function MapTree() {
 =======
   const loadUserProgress = async (studentId) => {
     try {
-      const completions = await LessonCompletionService.getUserCompletions(studentId);
-      console.log("--- START DEBUG: LOADED COMPLETIONS ---");
-      console.log("Raw Server Data:", completions);
-      console.log("Raw Server Data Sample:", completions && completions[0]);
-      console.log("--- END DEBUG ---");
+      const completions = await LessonCompletionService.getUserCompletions(
+        studentId
+      );
 
       const completedIds = new Set();
-      (completions || []).forEach(c => {
-
+      (completions || []).forEach((c) => {
         let mappedId = null;
 
-        const possibleKeys = [c.lessonId, c.lesson?.id, c.lesson?.lessonId, c.completionId];
+        const possibleKeys = [
+          c.lessonId,
+          c.lesson?.id,
+          c.lesson?.lessonId,
+          c.completionId,
+        ];
         for (const key of possibleKeys) {
           if (key != null && backendToNodeMap[key]) {
             mappedId = backendToNodeMap[key];
@@ -518,44 +728,66 @@ export default function MapTree() {
         }
 
         if (mappedId == null) {
-          const lessonName = c.lesson?.name || c.lessonName || c.name || c.title || c.label || c.lessonCode;
+          const lessonName =
+            c.lesson?.name ||
+            c.lessonName ||
+            c.name ||
+            c.title ||
+            c.label ||
+            c.lessonCode;
           if (lessonName) {
-            const nodeMatch = nodes.find(n => n.lesson && n.lesson.toLowerCase() === String(lessonName).toLowerCase());
+            const nodeMatch = nodes.find(
+              (n) =>
+                n.lesson &&
+                n.lesson.toLowerCase() === String(lessonName).toLowerCase()
+            );
             if (nodeMatch) mappedId = nodeMatch.id;
             else {
-              const looseMatch = nodes.find(n => n.lesson && String(lessonName).toLowerCase().includes(n.lesson.toLowerCase()));
+              const looseMatch = nodes.find(
+                (n) =>
+                  n.lesson &&
+                  String(lessonName)
+                    .toLowerCase()
+                    .includes(n.lesson.toLowerCase())
+              );
               if (looseMatch) mappedId = looseMatch.id;
             }
           }
         }
 
         if (mappedId == null) {
-          console.warn("Could not map completion to a lesson. Completion object:", c);
+          console.warn(
+            "Could not map completion to a lesson. Completion object:",
+            c
+          );
         } else {
-          console.log(`Mapping: c=${JSON.stringify(c)} → nodeId=${mappedId}`);
           completedIds.add(mappedId);
         }
       });
 
       setCompletedNodes(completedIds);
-      
+
       // Calculate total score
-      const challengeNodes = nodes.filter(n => n.label.includes("★"));
-      const completedChallenges = challengeNodes.filter(n => completedIds.has(n.id));
+      const challengeNodes = nodes.filter((n) => n.label.includes("★"));
+      const completedChallenges = challengeNodes.filter((n) =>
+        completedIds.has(n.id)
+      );
       const calculatedScore = completedChallenges.length * 100;
-      
+
       setTotalScore(calculatedScore);
-      
+
       // Check for new achievements
       await checkAchievements(completedIds, calculatedScore);
-      
-      console.log(`✅ Loaded ${completedIds.size} completed lessons for student ID: ${studentId}`);
-      console.log(`⭐ Completed ${completedChallenges.length}/${challengeNodes.length} challenges`);
-      console.log(`🏆 Total Score: ${calculatedScore} points`);
-      console.log("Completed Node IDs:", Array.from(completedIds).sort((a, b) => a - b));
     } catch (err) {
+<<<<<<< HEAD
       console.warn("Could not load user completions on login.", err.response?.data || err.message);
 >>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
+=======
+      console.warn(
+        "Could not load user completions on login.",
+        err.response?.data || err.message
+      );
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
       setCompletedNodes(new Set());
       setTotalScore(0);
     }
@@ -576,16 +808,26 @@ export default function MapTree() {
 >>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
         if (userData.role === "STUDENT" && !userData.student) {
           try {
-            const userSession = JSON.parse(sessionStorage.getItem("user") || localStorage.getItem("user"));
-            await axios.post("http://localhost:8080/api/student/add", {
-              firstName: userData.firstName,
-              lastName: userData.lastName,
-              user: { userId: userData.userId || userData.id } 
-            }, { 
-              headers: { Authorization: `Bearer ${userSession?.token}`, "Content-Type": "application/json" } 
-            });
+            const userSession = JSON.parse(
+              sessionStorage.getItem("user") || localStorage.getItem("user")
+            );
+            await axios.post(
+              "http://localhost:8080/api/student/add",
+              {
+                firstName: userData.firstName,
+                lastName: userData.lastName,
+                user: { userId: userData.userId || userData.id },
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${userSession?.token}`,
+                  "Content-Type": "application/json",
+                },
+              }
+            );
             userData = await UserService.getCurrentUser();
             setCurrentUser(userData);
+<<<<<<< HEAD
 <<<<<<< HEAD
           } catch (e) { 
             console.warn("Auto-create failed", e);
@@ -604,11 +846,17 @@ export default function MapTree() {
         // Continue anyway - user can still access the map
 =======
           } catch (e) { console.warn("Auto-create failed", e); }
+=======
+          } catch (e) {
+            console.warn("Auto-create failed", e);
+          }
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
         }
 
         if (userData.student && userData.student.section) {
           setHasAccess(true);
-          const validStudentId = userData.student.studentId || userData.student.id;
+          const validStudentId =
+            userData.student.studentId || userData.student.id;
           if (validStudentId) await loadUserProgress(validStudentId);
         } else {
           setHasAccess(false);
@@ -655,7 +903,9 @@ export default function MapTree() {
     if (isLocked) return alert("Please complete the previous lesson first.");
 >>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
     if (node.isTrophy) {
-      alert("🎉 Congratulations! You've completed all lessons and challenges! 🎉");
+      alert(
+        "🎉 Congratulations! You've completed all lessons and challenges! 🎉"
+      );
       return;
     }
     if (node.lesson) setActiveLesson(node);
@@ -664,6 +914,7 @@ export default function MapTree() {
   const handleLessonComplete = async () => {
     if (activeLesson && currentUser) {
       try {
+<<<<<<< HEAD
 <<<<<<< HEAD
         // Try to get user ID from various possible locations
         const userId = currentUser.userId || currentUser.id || 
@@ -676,18 +927,25 @@ export default function MapTree() {
         }
 =======
         const validStudentId = currentUser.student?.studentId || currentUser.student?.id;
+=======
+        const validStudentId =
+          currentUser.student?.studentId || currentUser.student?.id;
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
         if (!validStudentId) return console.error("Missing student ID");
 >>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
 
         const lessonId = Object.keys(backendToNodeMap).find(
-          key => backendToNodeMap[key] === activeLesson.id
+          (key) => backendToNodeMap[key] === activeLesson.id
         );
 
         if (!lessonId) {
-          console.error(`Could not find backend lesson ID for node ${activeLesson.id}`);
+          console.error(
+            `Could not find backend lesson ID for node ${activeLesson.id}`
+          );
           return;
         }
 
+<<<<<<< HEAD
 <<<<<<< HEAD
         await LessonCompletionService.completeLesson(userId, parseInt(lessonId));
         
@@ -702,10 +960,17 @@ export default function MapTree() {
           }
 =======
         await LessonCompletionService.completeLesson(validStudentId, parseInt(lessonId));
+=======
+        await LessonCompletionService.completeLesson(
+          validStudentId,
+          parseInt(lessonId)
+        );
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
         await loadUserProgress(validStudentId);
       } catch (err) {
         if (err.message?.includes("Lesson already completed")) {
-          const validStudentId = currentUser.student?.studentId || currentUser.student?.id;
+          const validStudentId =
+            currentUser.student?.studentId || currentUser.student?.id;
           await loadUserProgress(validStudentId);
 >>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
         } else {
@@ -716,10 +981,17 @@ export default function MapTree() {
     setActiveLesson(null);
   };
 
-  const CurrentLessonComponent = activeLesson ? lessonComponents[activeLesson.lesson] : null;
+  const CurrentLessonComponent = activeLesson
+    ? lessonComponents[activeLesson.lesson]
+    : null;
   const currentPageData = PAGES[currentPage];
 
-  if (checkingAccess) return <div className="map-loading-container"><div className="map-loading-text">Loading Learning Journey...</div></div>;
+  if (checkingAccess)
+    return (
+      <div className="map-loading-container">
+        <div className="map-loading-text">Loading Learning Journey...</div>
+      </div>
+    );
 
   return (
     <div className="map-container">
@@ -740,12 +1012,17 @@ export default function MapTree() {
 =======
       {!hasAccess && (
         <SectionLockModal
-          studentId={currentUser?.student?.studentId || currentUser?.student?.id || currentUser?.userId}
+          studentId={
+            currentUser?.student?.studentId ||
+            currentUser?.student?.id ||
+            currentUser?.userId
+          }
           onJoinSuccess={async () => {
             setHasAccess(true);
             const updatedUser = await UserService.getCurrentUser();
             setCurrentUser(updatedUser);
-            const validStudentId = updatedUser.student?.studentId || updatedUser.student?.id;
+            const validStudentId =
+              updatedUser.student?.studentId || updatedUser.student?.id;
             await loadUserProgress(validStudentId);
           }}
         />
@@ -761,7 +1038,8 @@ export default function MapTree() {
             </div>
             <div className="map-score-details">
               <span className="map-score-stars">
-                ★ {totalScore / 100} / {nodes.filter(n => n.label.includes("★")).length} Challenges
+                ★ {totalScore / 100} /{" "}
+                {nodes.filter((n) => n.label.includes("★")).length} Challenges
               </span>
               <span className="map-page-indicator">
                 Page {currentPage + 1} of {PAGES.length}
@@ -780,7 +1058,9 @@ export default function MapTree() {
             <div className="achievement-text">
               <div className="achievement-badge">Achievement Unlocked!</div>
               <div className="achievement-title">{newAchievement.title}</div>
-              <div className="achievement-description">{newAchievement.description}</div>
+              <div className="achievement-description">
+                {newAchievement.description}
+              </div>
             </div>
           </div>
         </div>
@@ -801,10 +1081,17 @@ export default function MapTree() {
           </div>
 
           {/* NODE CONTAINER */}
-          <div className="map-node-container" style={{ background: currentPageData.background }}>
+          <div
+            className="map-node-container"
+            style={{ background: currentPageData.background }}
+          >
             {/* SVG PROGRESS PATH */}
-            <svg className="map-progress-svg" viewBox="0 0 100 100" preserveAspectRatio="none">
-              <path 
+            <svg
+              className="map-progress-svg"
+              viewBox="0 0 100 100"
+              preserveAspectRatio="none"
+            >
+              <path
                 d={currentPageData.path}
                 className="map-progress-path"
                 fill="none"
@@ -818,11 +1105,16 @@ export default function MapTree() {
             {/* NODES - ALL UNLOCKED */}
 =======
             {/* NODES */}
+<<<<<<< HEAD
 >>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
             {currentPageData.nodes.map(nodeId => {
               const node = nodes.find(n => n.id === nodeId);
+=======
+            {currentPageData.nodes.map((nodeId) => {
+              const node = nodes.find((n) => n.id === nodeId);
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
               if (!node) return null;
-              
+
               const isCompleted = completedNodes.has(node.id);
 <<<<<<< HEAD
               // All nodes are unlocked - no prerequisites
@@ -830,14 +1122,28 @@ export default function MapTree() {
               const status = isCompleted ? "completed" : "unlocked";
 =======
               const isLocked = !isPrerequisiteChainComplete(node.id);
+<<<<<<< HEAD
               const status = isCompleted ? "completed" : isLocked ? "locked" : "unlocked";
 >>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
+=======
+              const status = isCompleted
+                ? "completed"
+                : isLocked
+                ? "locked"
+                : "unlocked";
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
 
               return (
                 <div
                   key={node.id}
                   className={`map-node map-node-${status}`}
-                  data-type={node.isTrophy ? "trophy" : (node.label.includes("★") ? "challenge" : "lesson")}
+                  data-type={
+                    node.isTrophy
+                      ? "trophy"
+                      : node.label.includes("★")
+                      ? "challenge"
+                      : "lesson"
+                  }
                   style={{ top: node.position.top, left: node.position.left }}
                   onClick={() => handleNodeClick(node, isLocked)}
                 >
@@ -845,15 +1151,20 @@ export default function MapTree() {
                     {node.isTrophy ? (
                       <div className="map-trophy-icon">🏆</div>
                     ) : node.label.includes("★") ? (
-                      <StarWithOrbit isCompleted={isCompleted} isLocked={isLocked} />
+                      <StarWithOrbit
+                        isCompleted={isCompleted}
+                        isLocked={isLocked}
+                      />
                     ) : (
-                      <LessonIcon 
-                        iconType={node.iconType} 
-                        isCompleted={isCompleted} 
-                        isLocked={isLocked} 
+                      <LessonIcon
+                        iconType={node.iconType}
+                        isCompleted={isCompleted}
+                        isLocked={isLocked}
                       />
                     )}
-                    <span className="map-node-label">{node.label.replace("★", "").replace("🏆", "")}</span>
+                    <span className="map-node-label">
+                      {node.label.replace("★", "").replace("🏆", "")}
+                    </span>
                   </div>
                   {isCompleted && <div className="map-completion-badge">✓</div>}
 <<<<<<< HEAD
@@ -868,27 +1179,31 @@ export default function MapTree() {
 
           {/* PAGE NAVIGATION */}
           <div className="map-navigation">
-            <button 
+            <button
               className="map-nav-btn map-nav-prev"
-              onClick={() => setCurrentPage(prev => Math.max(0, prev - 1))}
+              onClick={() => setCurrentPage((prev) => Math.max(0, prev - 1))}
               disabled={currentPage === 0}
             >
               ← Previous
             </button>
-            
+
             <div className="map-page-dots">
               {PAGES.map((_, index) => (
                 <button
                   key={index}
-                  className={`map-page-dot ${currentPage === index ? 'active' : ''}`}
+                  className={`map-page-dot ${
+                    currentPage === index ? "active" : ""
+                  }`}
                   onClick={() => setCurrentPage(index)}
                 />
               ))}
             </div>
-            
-            <button 
+
+            <button
               className="map-nav-btn map-nav-next"
-              onClick={() => setCurrentPage(prev => Math.min(PAGES.length - 1, prev + 1))}
+              onClick={() =>
+                setCurrentPage((prev) => Math.min(PAGES.length - 1, prev + 1))
+              }
               disabled={currentPage === PAGES.length - 1}
             >
               Next →
@@ -906,7 +1221,12 @@ export default function MapTree() {
         <div className="map-lesson-modal">
           <div className="map-lesson-inner">
             <div className="map-lesson-header">
-              <button className="map-close-btn" onClick={() => setActiveLesson(null)}>✕</button>
+              <button
+                className="map-close-btn"
+                onClick={() => setActiveLesson(null)}
+              >
+                ✕
+              </button>
             </div>
             <div className="map-lesson-body">
               <CurrentLessonComponent onComplete={handleLessonComplete} />

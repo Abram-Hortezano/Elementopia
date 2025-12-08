@@ -85,7 +85,6 @@ const AchievementService = {
   createAchievement: async (userId, data) => {
     try {
       const headers = getAuthHeader();
-      console.log("Auth Headers:", headers); // Debug
 
       const response = await axios.post(`${API_URL}/create/${userId}`, data, {
         headers,

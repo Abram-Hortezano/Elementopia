@@ -62,8 +62,6 @@ const SectionService = {
   // Join Section
   joinSection: async (sectionCode, studentId) => {
     try {
-      console.log("Sending Join Request:", { sectionCode, studentId }); // Debug Log
-
       const response = await axios.post(
         `${API_URL}/join`,
         {
@@ -102,6 +100,7 @@ const SectionService = {
   getTeacherId: async () => {
     try {
 <<<<<<< HEAD
+<<<<<<< HEAD
       const response = await axios.get(`https://elementopia.onrender.com/api/teacher/me`, {
         headers: getAuthHeader(),
       });
@@ -113,6 +112,11 @@ const SectionService = {
         }
       );
 >>>>>>> 4bfa4e84b82433430b7e9332cc8c4a74c0004d7d
+=======
+      const response = await axios.get(`http://localhost:8080/api/teacher/me`, {
+        headers: getAuthHeader(),
+      });
+>>>>>>> 42b2c412b2f21dc736a10a42dac1eb12e501ae93
       return response.data;
     } catch (error) {
       console.error("Failed to get teacher info:", error);
