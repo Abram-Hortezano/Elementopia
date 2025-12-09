@@ -89,9 +89,12 @@ const SectionService = {
   // Get Teacher ID
   getTeacherId: async () => {
     try {
-      const response = await axios.get(`http://localhost:8080/api/teacher/me`, {
-        headers: getAuthHeader(),
-      });
+      const response = await axios.get(
+        `https://elementopia.onrender.com/api/teacher/me`,
+        {
+          headers: getAuthHeader(),
+        }
+      );
       return response.data;
     } catch (error) {
       console.error("Failed to get teacher info:", error);
