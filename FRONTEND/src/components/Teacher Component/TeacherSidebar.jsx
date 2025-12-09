@@ -17,7 +17,11 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import room from "../../assets/img/room.png";
 import career from "../../assets/img/career.png";
+<<<<<<< HEAD
 import chemSimulation from "../../assets/img/chemSimulation.png";
+=======
+import discovery from "../../assets/img/discovery.png";
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 
 const drawerWidth = 180;
 const closedWidth = 60;
@@ -41,9 +45,13 @@ const Drawer = styled(MuiDrawer)(({ theme, open }) => ({
 }));
 
 const menuItems = [
- // { text: "Home", icon: home, path: "/teacher/analytics" },
+  // { text: "Home", icon: home, path: "/teacher/analytics" },
   { text: "Room", icon: room, path: "/teacher/room" },
   { text: "Career", icon: career, path: "/teacher/career-page" },
+<<<<<<< HEAD
+=======
+  { text: "Discovery", icon: discovery, path: "/teacher/discovery" },
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
   /*{
     text: "Chem-Simulation",
     icon: chemSimulation,

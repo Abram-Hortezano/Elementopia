@@ -2,15 +2,20 @@ import axios from "axios";
 
 // const API_URL = "http://localhost:8080/api/score";
 const API_URL = "https://elementopia.onrender.com/api/score";
+<<<<<<< HEAD
 
+=======
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 
 const getAuthHeader = () => {
-  const userStr = sessionStorage.getItem("user") || localStorage.getItem("user");
+  const userStr =
+    sessionStorage.getItem("user") || localStorage.getItem("user");
 
   if (userStr) {
     try {
       const userObj = JSON.parse(userStr);
-      const token = userObj.token || (typeof userObj === 'string' ? userObj : null);
+      const token =
+        userObj.token || (typeof userObj === "string" ? userObj : null);
 
       if (token) {
         return {
@@ -27,12 +32,11 @@ const getAuthHeader = () => {
   return {
     headers: {
       "Content-Type": "application/json",
-    }
+    },
   };
 };
 
 const ScoreService = {
-  
   /**
    * Get a user's score
    * @param {number} userId - User's ID
@@ -42,7 +46,10 @@ const ScoreService = {
       const response = await axios.get(`${API_URL}/${userId}`, getAuthHeader());
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch score:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch score:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -55,16 +62,23 @@ const ScoreService = {
   addChallengeScore: async (userId, points = 100) => {
     try {
       const response = await axios.post(
+<<<<<<< HEAD
         `${API_URL}/challenge/${userId}`,
         { points },
         `${API_URL}/add/${userId}`,  // Changed from /challenge to /add
         { score: points },           // Changed from { points } to { score: points }
+=======
+        `${API_URL}/add/${userId}`, // Changed from /challenge to /add
+        { score: points }, // Changed from { points } to { score: points }
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
         getAuthHeader()
       );
-      console.log(`💯 Added ${points} points to career score`);
       return response.data;
     } catch (error) {
-      console.error("Failed to add challenge score:", error.response?.data || error.message);
+      console.error(
+        "Failed to add challenge score:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -77,7 +91,10 @@ const ScoreService = {
       const response = await axios.get(`${API_URL}/all`, getAuthHeader());
       return response.data;
     } catch (error) {
-      console.error("Failed to fetch all scores:", error.response?.data || error.message);
+      console.error(
+        "Failed to fetch all scores:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -94,7 +111,10 @@ const ScoreService = {
       );
       return response.data;
     } catch (error) {
-      console.error("Failed to update score:", error.response?.data || error.message);
+      console.error(
+        "Failed to update score:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -112,11 +132,16 @@ const ScoreService = {
       return response.data;
     } catch (error) {
       // If score already exists, that's okay
-      if (error.response?.status === 400 || error.message?.includes("already exists")) {
-        console.log("Score already exists for user");
+      if (
+        error.response?.status === 400 ||
+        error.message?.includes("already exists")
+      ) {
         return null;
       }
-      console.error("Failed to create score:", error.response?.data || error.message);
+      console.error(
+        "Failed to create score:",
+        error.response?.data || error.message
+      );
       throw error;
     }
   },
@@ -128,8 +153,8 @@ const ScoreService = {
     try {
       return await ScoreService.addChallengeScore(userId, points);
     } catch (error) {
-      console.warn("First attempt failed, trying create then update...");
-      
+      console.warn("First attempt failed, trying create then update...", error);
+
       try {
         // Try to create score record first
         await ScoreService.createScore(userId);
@@ -140,7 +165,11 @@ const ScoreService = {
         throw createError;
       }
     }
+<<<<<<< HEAD
   }
+=======
+  },
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 };
 
 export default ScoreService;

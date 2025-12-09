@@ -561,6 +561,32 @@ export default function MapTree() {
   const [earnedAchievements, setEarnedAchievements] = useState(new Set());
   const [newAchievement, setNewAchievement] = useState(null);
 
+<<<<<<< HEAD
+=======
+  // Fetch total score from backend
+  const fetchTotalScore = async (userId) => {
+    try {
+      const scoreData = await ScoreService.getScore(userId);
+
+      // Handle different response formats
+      if (scoreData && scoreData.careerScore !== undefined) {
+        setTotalScore(scoreData.careerScore);
+      } else if (scoreData && scoreData.score !== undefined) {
+        setTotalScore(scoreData.score);
+      } else if (scoreData && scoreData.totalScore !== undefined) {
+        setTotalScore(scoreData.totalScore);
+      } else if (scoreData && scoreData.points !== undefined) {
+        setTotalScore(scoreData.points);
+      }
+
+      return scoreData;
+    } catch (error) {
+      console.warn("Could not load score from backend:", error);
+      return null;
+    }
+  };
+
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
   // Load user achievements
   const loadAchievements = async (userId) => {
     try {
@@ -578,6 +604,12 @@ export default function MapTree() {
   const checkAchievements = async (completedNodes, totalScore) => {
     if (!currentUser?.userId) return;
 
+<<<<<<< HEAD
+=======
+    // Use the backend score if available
+    const scoreToCheck = scoreFromBackend || totalScore;
+
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
     const newlyEarned = [];
 
     for (const [key, achievement] of Object.entries(ACHIEVEMENTS)) {
@@ -678,17 +710,39 @@ export default function MapTree() {
 
       setCompletedNodes(completedIds);
 
-      // Calculate total score
+      // Calculate challenge-based score as fallback
       const challengeNodes = nodes.filter((n) => n.label.includes("★"));
       const completedChallenges = challengeNodes.filter((n) =>
         completedIds.has(n.id)
       );
       const calculatedScore = completedChallenges.length * 100;
 
+<<<<<<< HEAD
       setTotalScore(calculatedScore);
 
       // Check for new achievements
       await checkAchievements(completedIds, calculatedScore);
+=======
+      // Try to get score from backend first
+      const userId = currentUser?.userId || currentUser?.id;
+      if (userId) {
+        try {
+          const backendScoreData = await fetchTotalScore(userId);
+          if (!backendScoreData) {
+            // If backend fetch failed, use calculated score
+            setTotalScore(calculatedScore);
+          }
+        } catch (scoreError) {
+          console.warn("Using calculated score as fallback:", scoreError);
+          setTotalScore(calculatedScore);
+        }
+      } else {
+        setTotalScore(calculatedScore);
+      }
+
+      // Check for new achievements
+      await checkAchievements(completedIds, totalScore);
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
     } catch (err) {
       console.warn(
         "Could not load user completions on login.",
@@ -711,7 +765,7 @@ export default function MapTree() {
               sessionStorage.getItem("user") || localStorage.getItem("user")
             );
             await axios.post(
-              "http://localhost:8080/api/student/add",
+              "https://elementopia.onrender.com/api/student/add",
               {
                 firstName: userData.firstName,
                 lastName: userData.lastName,
@@ -735,7 +789,29 @@ export default function MapTree() {
           setHasAccess(true);
           const validStudentId =
             userData.student.studentId || userData.student.id;
+<<<<<<< HEAD
           if (validStudentId) await loadUserProgress(validStudentId);
+=======
+
+          // Ensure score record exists
+          const userId = userData.userId || userData.id;
+          if (userId) {
+            try {
+              await ScoreService.createScore(userId);
+            } catch (scoreError) {
+              console.warn("Score record already exists or error:", scoreError);
+            }
+          }
+
+          // Load achievements
+          if (userId) {
+            await loadAchievements(userId);
+          }
+
+          if (validStudentId) {
+            await loadUserProgress(validStudentId);
+          }
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
         } else {
           setHasAccess(false);
         }
@@ -779,9 +855,21 @@ export default function MapTree() {
   const handleLessonComplete = async () => {
     if (activeLesson && currentUser) {
       try {
+<<<<<<< HEAD
         const validStudentId =
           currentUser.student?.studentId || currentUser.student?.id;
         if (!validStudentId) return console.error("Missing student ID");
+=======
+        setScoreLoading(true);
+        const validStudentId =
+          currentUser.student?.studentId || currentUser.student?.id;
+        const userId = currentUser.userId || currentUser.id;
+
+        if (!validStudentId || !userId) {
+          console.error("Missing student or user ID");
+          return;
+        }
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 
         const lessonId = Object.keys(backendToNodeMap).find(
           (key) => backendToNodeMap[key] === activeLesson.id
@@ -794,12 +882,43 @@ export default function MapTree() {
           return;
         }
 
+<<<<<<< HEAD
+=======
+        // Save lesson completion
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
         await LessonCompletionService.completeLesson(
           validStudentId,
           parseInt(lessonId)
         );
 
+<<<<<<< HEAD
         await loadUserProgress(validStudentId);
+=======
+        // If it's a challenge (star node), add score points
+        if (activeLesson.label.includes("★")) {
+          try {
+            // Add 100 points for completing a challenge
+            const result = await handleScoreUpdate(userId, 100);
+            if (!result.success) {
+              console.warn(
+                "Score update failed, but lesson completion saved:",
+                result.error
+              );
+            }
+          } catch (scoreError) {
+            console.warn(
+              "Failed to save score, but lesson completion saved:",
+              scoreError
+            );
+          }
+        }
+
+        // Reload progress and scores
+        await loadUserProgress(validStudentId);
+
+        // Update total score from backend
+        await fetchTotalScore(userId);
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
       } catch (err) {
         if (err.message?.includes("Lesson already completed")) {
           const validStudentId =
@@ -840,6 +959,16 @@ export default function MapTree() {
             setCurrentUser(updatedUser);
             const validStudentId =
               updatedUser.student?.studentId || updatedUser.student?.id;
+<<<<<<< HEAD
+=======
+
+            // Ensure score record exists
+            const userId = updatedUser.userId || updatedUser.id;
+            if (userId) {
+              await ScoreService.createScore(userId);
+            }
+
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
             await loadUserProgress(validStudentId);
           }}
         />
@@ -852,10 +981,24 @@ export default function MapTree() {
             <div className="map-score-main">
               <span className="map-score-label">Learning Score:</span>
               <span className="map-score-value">{totalScore}</span>
+<<<<<<< HEAD
             </div>
             <div className="map-score-details">
               <span className="map-score-stars">
                 ★ {totalScore / 100} /{" "}
+=======
+              <span
+                className="map-score-sync-indicator"
+                title="Synced with backend"
+              >
+                ✓
+              </span>
+              {scoreLoading && <span className="map-score-loading">⏳</span>}
+            </div>
+            <div className="map-score-details">
+              <span className="map-score-stars">
+                ★ {Math.floor(totalScore / 100)} /{" "}
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
                 {nodes.filter((n) => n.label.includes("★")).length} Challenges
               </span>
               <span className="map-page-indicator">

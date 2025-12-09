@@ -1,6 +1,10 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+<<<<<<< HEAD
 import "../assets/css/Map-tree.css";
+=======
+import "../assets/css/TeacherMap-tree.css";
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 import UserService from "../services/UserService";
 import LessonCompletionService from "../services/lessonCompletionService";
 import SectionService from "../services/SectionService";
@@ -385,6 +389,7 @@ const ACHIEVEMENTS = {
   },
 };
 
+<<<<<<< HEAD
 // --- SECTION MODAL ---
 const SectionLockModal = ({ studentId, onJoinSuccess }) => {
   const [code, setCode] = useState("");
@@ -445,6 +450,8 @@ const SectionLockModal = ({ studentId, onJoinSuccess }) => {
   );
 };
 
+=======
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 // --- STAR COMPONENT WITH ORBITAL EFFECT ---
 const StarWithOrbit = ({ isCompleted, isLocked }) => {
   return (
@@ -553,7 +560,10 @@ const LessonIcon = ({ iconType, isCompleted, isLocked }) => {
 export default function MapTree() {
   const [completedNodes, setCompletedNodes] = useState(new Set());
   const [activeLesson, setActiveLesson] = useState(null);
+<<<<<<< HEAD
   const [hasAccess, setHasAccess] = useState(false);
+=======
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
   const [checkingAccess, setCheckingAccess] = useState(true);
   const [currentUser, setCurrentUser] = useState(null);
   const [totalScore, setTotalScore] = useState(0);
@@ -596,7 +606,7 @@ export default function MapTree() {
             codeName: achievement.id,
           });
         } catch (error) {
-          console.error(`Failed to save achievement ${achievement.id}:`, error);
+          console.warn("error", error);
         }
       }
     }
@@ -615,6 +625,7 @@ export default function MapTree() {
     }
   };
 
+<<<<<<< HEAD
   const loadUserProgress = async (studentId) => {
     try {
       const completions = await LessonCompletionService.getUserCompletions(
@@ -689,9 +700,92 @@ export default function MapTree() {
 
       // Check for new achievements
       await checkAchievements(completedIds, calculatedScore);
+=======
+  const loadUserProgress = async (userId) => {
+    try {
+      // For all users, load their actual progress if they have a user ID
+      if (userId) {
+        const completions = await LessonCompletionService.getUserCompletions(
+          userId
+        );
+
+        const completedIds = new Set();
+        (completions || []).forEach((c) => {
+          let mappedId = null;
+
+          const possibleKeys = [
+            c.lessonId,
+            c.lesson?.id,
+            c.lesson?.lessonId,
+            c.completionId,
+          ];
+          for (const key of possibleKeys) {
+            if (key != null && backendToNodeMap[key]) {
+              mappedId = backendToNodeMap[key];
+              break;
+            }
+          }
+
+          if (mappedId == null) {
+            const lessonName =
+              c.lesson?.name ||
+              c.lessonName ||
+              c.name ||
+              c.title ||
+              c.label ||
+              c.lessonCode;
+            if (lessonName) {
+              const nodeMatch = nodes.find(
+                (n) =>
+                  n.lesson &&
+                  n.lesson.toLowerCase() === String(lessonName).toLowerCase()
+              );
+              if (nodeMatch) mappedId = nodeMatch.id;
+              else {
+                const looseMatch = nodes.find(
+                  (n) =>
+                    n.lesson &&
+                    String(lessonName)
+                      .toLowerCase()
+                      .includes(n.lesson.toLowerCase())
+                );
+                if (looseMatch) mappedId = looseMatch.id;
+              }
+            }
+          }
+
+          if (mappedId == null) {
+            console.warn(
+              "Could not map completion to a lesson. Completion object:",
+              c
+            );
+          } else {
+            completedIds.add(mappedId);
+          }
+        });
+
+        setCompletedNodes(completedIds);
+
+        // Calculate total score
+        const challengeNodes = nodes.filter((n) => n.label.includes("★"));
+        const completedChallenges = challengeNodes.filter((n) =>
+          completedIds.has(n.id)
+        );
+        const calculatedScore = completedChallenges.length * 100;
+
+        setTotalScore(calculatedScore);
+
+        // Check for new achievements
+        await checkAchievements(completedIds, calculatedScore);
+      } else {
+        // If no user ID, start with empty progress
+        setCompletedNodes(new Set());
+        setTotalScore(0);
+      }
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
     } catch (err) {
       console.warn(
-        "Could not load user completions on login.",
+        "Could not load user completions.",
         err.response?.data || err.message
       );
       setCompletedNodes(new Set());
@@ -705,13 +799,20 @@ export default function MapTree() {
         let userData = await UserService.getCurrentUser();
         setCurrentUser(userData);
 
+<<<<<<< HEAD
+=======
+        // For all users, automatically give access to the learning map
+        // No section code required
+
+        // If user is a student and doesn't have a student record, auto-create it
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
         if (userData.role === "STUDENT" && !userData.student) {
           try {
             const userSession = JSON.parse(
               sessionStorage.getItem("user") || localStorage.getItem("user")
             );
             await axios.post(
-              "http://localhost:8080/api/student/add",
+              "https://elementopia.onrender.com/api/student/add",
               {
                 firstName: userData.firstName,
                 lastName: userData.lastName,
@@ -728,19 +829,22 @@ export default function MapTree() {
             setCurrentUser(userData);
           } catch (e) {
             console.warn("Auto-create failed", e);
+            // Continue anyway - user can still access the map
           }
         }
 
-        if (userData.student && userData.student.section) {
-          setHasAccess(true);
-          const validStudentId =
-            userData.student.studentId || userData.student.id;
-          if (validStudentId) await loadUserProgress(validStudentId);
-        } else {
-          setHasAccess(false);
+        // Load user progress if they have an ID
+        const userId = userData.userId || userData.id;
+        if (userId) {
+          await loadUserProgress(userId);
         }
       } catch (err) {
+<<<<<<< HEAD
         setHasAccess(false);
+=======
+        console.error("Error initializing user data:", err);
+        // Continue anyway - user can still access the map
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
       } finally {
         setCheckingAccess(false);
       }
@@ -749,6 +853,7 @@ export default function MapTree() {
     initData();
   }, []);
 
+<<<<<<< HEAD
   const isPrerequisiteChainComplete = (nodeId) => {
     let currentId = nodeId;
     while (currentId !== null && currentId !== undefined) {
@@ -763,10 +868,17 @@ export default function MapTree() {
     }
     return true;
   };
+=======
+  // ALL LESSONS ARE UNLOCKED - No prerequisites check
+  const isPrerequisiteChainComplete = (nodeId) => {
+    return true; // All lessons are unlocked for everyone
+  };
 
   const handleNodeClick = (node, isLocked) => {
-    if (!hasAccess) return;
-    if (isLocked) return alert("Please complete the previous lesson first.");
+    // No access check needed - everyone can access
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
+
+    // No locked check - everything is unlocked
     if (node.isTrophy) {
       alert(
         "🎉 Congratulations! You've completed all lessons and challenges! 🎉"
@@ -779,9 +891,24 @@ export default function MapTree() {
   const handleLessonComplete = async () => {
     if (activeLesson && currentUser) {
       try {
+<<<<<<< HEAD
         const validStudentId =
           currentUser.student?.studentId || currentUser.student?.id;
         if (!validStudentId) return console.error("Missing student ID");
+=======
+        // Try to get user ID from various possible locations
+        const userId =
+          currentUser.userId ||
+          currentUser.id ||
+          currentUser.student?.studentId ||
+          currentUser.student?.id;
+
+        if (!userId) {
+          console.warn("No user ID found, cannot save progress");
+          setActiveLesson(null);
+          return;
+        }
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 
         const lessonId = Object.keys(backendToNodeMap).find(
           (key) => backendToNodeMap[key] === activeLesson.id
@@ -795,15 +922,28 @@ export default function MapTree() {
         }
 
         await LessonCompletionService.completeLesson(
-          validStudentId,
+          userId,
           parseInt(lessonId)
         );
-        await loadUserProgress(validStudentId);
+
+        // Reload progress
+        await loadUserProgress(userId);
       } catch (err) {
         if (err.message?.includes("Lesson already completed")) {
+<<<<<<< HEAD
           const validStudentId =
             currentUser.student?.studentId || currentUser.student?.id;
           await loadUserProgress(validStudentId);
+=======
+          const userId =
+            currentUser.userId ||
+            currentUser.id ||
+            currentUser.student?.studentId ||
+            currentUser.student?.id;
+          if (userId) {
+            await loadUserProgress(userId);
+          }
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
         } else {
           console.error("Failed to save progress:", err);
         }
@@ -826,6 +966,7 @@ export default function MapTree() {
 
   return (
     <div className="map-container">
+<<<<<<< HEAD
       {!hasAccess && (
         <SectionLockModal
           studentId={
@@ -864,6 +1005,21 @@ export default function MapTree() {
           </div>
         </div>
       )}
+=======
+      {/* UNLOCKED ACCESS BANNER */}
+      <div className="map-access-banner">
+        <div className="map-access-display">
+          <div className="map-access-main">
+            <span className="map-access-label">🌟 All Content Unlocked 🌟</span>
+          </div>
+          <div className="map-access-details">
+            <span className="map-access-text">
+              Explore all lessons and challenges freely
+            </span>
+          </div>
+        </div>
+      </div>
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 
       {/* Achievement Notification Popup */}
       {newAchievement && (
@@ -881,9 +1037,15 @@ export default function MapTree() {
         </div>
       )}
 
+<<<<<<< HEAD
       {!activeLesson && hasAccess && (
         <div className="map-content-wrapper">
           {/* PAGE HEADER */}
+=======
+      {!activeLesson && (
+        <div className="map-content-wrapper">
+          {/* PAGE HEADER - SMALLER TITLE AND SUBTITLE */}
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
           <div className="map-page-header">
             <h1 className="map-page-title">{currentPageData.title}</h1>
             <p className="map-page-subtitle">{currentPageData.subtitle}</p>
@@ -910,18 +1072,28 @@ export default function MapTree() {
               />
             </svg>
 
+<<<<<<< HEAD
             {/* NODES */}
+=======
+            {/* NODES - ALL UNLOCKED */}
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
             {currentPageData.nodes.map((nodeId) => {
               const node = nodes.find((n) => n.id === nodeId);
               if (!node) return null;
 
               const isCompleted = completedNodes.has(node.id);
+<<<<<<< HEAD
               const isLocked = !isPrerequisiteChainComplete(node.id);
               const status = isCompleted
                 ? "completed"
                 : isLocked
                 ? "locked"
                 : "unlocked";
+=======
+              // All nodes are unlocked - no prerequisites
+              const isLocked = false;
+              const status = isCompleted ? "completed" : "unlocked";
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 
               return (
                 <div
@@ -957,7 +1129,11 @@ export default function MapTree() {
                     </span>
                   </div>
                   {isCompleted && <div className="map-completion-badge">✓</div>}
+<<<<<<< HEAD
                   {isLocked && <div className="map-locked-overlay">🔒</div>}
+=======
+                  {/* No locked overlay - everything is unlocked */}
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
                 </div>
               );
             })}
@@ -999,7 +1175,11 @@ export default function MapTree() {
       )}
 
       {/* LESSON MODAL */}
+<<<<<<< HEAD
       {activeLesson && CurrentLessonComponent && hasAccess && (
+=======
+      {activeLesson && CurrentLessonComponent && (
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
         <div className="map-lesson-modal">
           <div className="map-lesson-inner">
             <div className="map-lesson-header">
@@ -1018,4 +1198,8 @@ export default function MapTree() {
       )}
     </div>
   );
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269

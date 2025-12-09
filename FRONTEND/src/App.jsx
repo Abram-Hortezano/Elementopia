@@ -15,12 +15,17 @@ import ChallengePage from "./components/Student Components/ChallengePage";
 import TeacherCareerPage from "./TEACHER/TeacherCareerPage";
 import TeacherGameRoomPage from "./TEACHER/TeacherGameRoomPage";
 import TeacherRoomPage from "./TEACHER/TeacherRoomPage";
+<<<<<<< HEAD
 // import TeacherSandbox from "./TEACHER/TeacherSandboxPage";
 import TeacherDiscoveryPage from "./TEACHER/TeacherDiscoveryPage";
 
 // Misc
 // import ProfilePageMain from "./pages/profile-page";
 
+=======
+import TeacherDiscoveryPage from "./TEACHER/TeacherDiscoveryPage";
+
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 // Utils
 import PrivateRoute from "./components/utils/PrivateRoute";
 
@@ -64,14 +69,7 @@ export default function App() {
             </PrivateRoute>
           }
         />
-        <Route
-          path="/student/sandbox"
-          element={
-            <PrivateRoute allowedRoles={["STUDENT"]}>
-              <StudentSandboxPage />
-            </PrivateRoute>
-          }
-        /> 
+
         <Route
           path="/student/Chem-Simulation"
           element={
@@ -88,7 +86,11 @@ export default function App() {
             </PrivateRoute>
           }
         />
+<<<<<<< HEAD
  
+=======
+
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
         <Route
           path="/teacher/career-page"
           element={

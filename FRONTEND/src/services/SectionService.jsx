@@ -1,8 +1,13 @@
 import axios from "axios";
 
+<<<<<<< HEAD
 const API_URL = "https://elementopia.onrender.com/api/section";
 // const API_URL = "http://localhost:8080/api/section";
 
+=======
+// const API_URL = "https://elementopia.onrender.com/api/section";
+const API_URL = "http://localhost:8080/api/section";
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
 
 const getAuthHeader = () => {
   let token = localStorage.getItem("token");
@@ -90,8 +95,12 @@ const SectionService = {
   // Get Teacher ID
   getTeacherId: async () => {
     try {
+<<<<<<< HEAD
 
       const response = await axios.get(`https://elementopia.onrender.com/api/teacher/me`, {
+=======
+      const response = await axios.get(`http://localhost:8080/api/teacher/me`, {
+>>>>>>> b16b07a6e52f982e4721b7f14ddee6a0b2fc3269
         headers: getAuthHeader(),
       });
       return response.data;
@@ -122,7 +131,7 @@ const SectionService = {
       });
       return response.data;
     } catch (error) {
-      // Return empty array if fails
+      console.warn(error);
       return [];
     }
   },
